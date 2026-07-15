@@ -1,0 +1,65 @@
+@import "tailwindcss.html";
+
+html, body {
+  overflow-x: hidden !important;
+   padding: 0px !important;
+}
+.container{
+    margin:auto !important;
+}
+section, main, .relative, .w-full {
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+
+.panel-container {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Fullscreen like singsing.movie */
+  overflow: hidden;
+}
+
+.slides-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.slides {
+  display: flex;
+  height: 100%;
+  width: max-content; /* expands based on children */
+}
+.slides > div {
+  flex: 0 0 100vw; /* each slide takes full viewport width */
+  height: 100vh;
+  position: relative;
+}
+
+.material-icons {
+    font-size: 45px !important;
+}
+
+.logo img{
+  height: 80px;
+}
+img.footeer_logo {
+    width: 225px !important;
+    height: 158px !important;
+    object-fit: contain;
+}

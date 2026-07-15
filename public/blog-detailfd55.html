@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from travel.leadsteck.site/blog-detail.html?post=hidden-gems-india by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 23 Feb 2026 10:31:42 GMT -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog Details – Vocation Travels And Tours</title>
+  <link rel="shortcut icon" type="image/x-icon" href="assets/images/logo.png">
+  <script src="https://cdn.tailwindcss.com/"></script>
+  <link href="../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+
+  <style>
+    .logo-g.text-center {
+      display: flex;
+      justify-content: center;
+    }
+    .footer-social-links ul {
+      display: flex !important;
+      gap: 18px;
+      justify-content: center;
+    }
+    img.footeer_logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body class="relative flex flex-col min-h-screen bg-gray-100">
+  <!-- Header -->
+  <div id="header"></div>
+
+  <main class="flex-grow">
+
+    <!-- Hero Section -->
+    <section class="relative h-[60vh] w-full overflow-hidden">
+      <img id="blogHeroImg" src="assets/images/blog1.jpg" alt="Blog Details Hero" class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute inset-0 bg-black/60"></div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+        <h1 id="blogTitle" class="text-white font-bold leading-tight text-4xl md:text-6xl mb-4 drop-shadow-lg">
+          Blog Title
+        </h1>
+        <p id="blogMeta" class="text-indigo-100 text-lg md:text-xl mb-4">Published on </p>
+      </div>
+    </section>
+
+    <!-- Blog Content Section -->
+    <section class="py-16 px-6 md:px-12 lg:px-20">
+      <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 md:p-12">
+        <!-- Featured Image -->
+        <img id="blogFeaturedImg" src="#" alt="Blog Featured" class="w-full h-80 object-cover rounded-xl mb-8">
+
+        <!-- Blog Content -->
+        <div id="blogContent" class="prose max-w-none"></div>
+
+        <!-- Share Section -->
+        <div class="mt-12 border-t pt-6">
+          <h3 class="text-lg font-semibold mb-4">Share this post:</h3>
+          <div class="flex gap-4">
+            <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="#" class="text-sky-500 hover:text-sky-700"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="#" class="text-red-600 hover:text-red-800"><i class="fab fa-pinterest fa-lg"></i></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div id="footer"></div>
+
+  <!-- Scripts -->
+  <script src="../unpkg.com/alpinejs%403.15.8/dist/cdn.min.js" defer></script>
+  <script src="assets/js/main.js"></script>
+
+  <script>
+    // Step 1: Blog data object
+    const blogPosts = {
+      "top-10-destinations": {
+        title: "Top 10 Destinations for 2025",
+        date: "September 5, 2025",
+        author: "Vocation Travels",
+        heroImg: "assets/images/blog1.jpg",
+        featuredImg: "assets/images/blog1.jpg",
+        content: `
+          <p>Traveling in 2025 is all about unique experiences, hidden gems, and destinations that offer a blend of culture, adventure, and relaxation.</p>
+          <h2>1. Bali, Indonesia</h2>
+          <p>Bali continues to captivate travelers with its stunning beaches, spiritual temples, and lush rice terraces.</p>
+          <h2>2. Santorini, Greece</h2>
+          <p>The iconic whitewashed houses with blue domes make Santorini one of the most romantic destinations in the world.</p>
+          <blockquote>"Travel isn’t just about places, it’s about moments that stay with you forever."</blockquote>
+        `
+      },
+      "luxury-travel-hacks": {
+        title: "Luxury Travel Hacks",
+        date: "September 6, 2025",
+        author: "Vocation Travels",
+        heroImg: "assets/images/blog2.jpg",
+        featuredImg: "assets/images/blog2.jpg",
+        content: `
+          <p>Want to travel in style without breaking the bank? Here are some luxury hacks to make your trips unforgettable.</p>
+          <ul>
+            <li>Use airline points for business upgrades.</li>
+            <li>Book boutique hotels instead of chains.</li>
+            <li>Travel off-season for 5-star deals.</li>
+          </ul>
+        `
+      },
+      "hidden-gems-india": {
+        title: "Hidden Gems of India",
+        date: "September 7, 2025",
+        author: "Vocation Travels",
+        heroImg: "assets/images/blog3.jpg",
+        featuredImg: "assets/images/blog3.jpg",
+        content: `
+          <p>Step away from the usual tourist spots and uncover India’s best-kept secrets.</p>
+          <h2>1. Ziro Valley, Arunachal Pradesh</h2>
+          <p>A paradise for nature lovers and music festival fans.</p>
+          <h2>2. Gokarna, Karnataka</h2>
+          <p>Chill vibes, clean beaches, and a quieter alternative to Goa.</p>
+        `
+      }
+    };
+
+    // Step 2: Get query param
+    const urlParams = new URLSearchParams(window.location.search);
+    const postKey = urlParams.get("post");
+
+    // Step 3: Load blog content
+    if (postKey && blogPosts[postKey]) {
+      const post = blogPosts[postKey];
+      document.getElementById("blogTitle").textContent = post.title;
+      document.getElementById("blogMeta").textContent = `Published on ${post.date} • By ${post.author}`;
+      document.getElementById("blogHeroImg").src = post.heroImg;
+      document.getElementById("blogFeaturedImg").src = post.featuredImg;
+      document.getElementById("blogContent").innerHTML = post.content;
+    } else {
+      document.getElementById("blogTitle").textContent = "Blog Not Found";
+      document.getElementById("blogContent").innerHTML = "<p>Sorry, this blog does not exist.</p>";
+    }
+  </script>
+</body>
+
+<!-- Mirrored from travel.leadsteck.site/blog-detail.html?post=hidden-gems-india by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 23 Feb 2026 10:31:42 GMT -->
+</html>

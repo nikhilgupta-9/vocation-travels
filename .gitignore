@@ -1,0 +1,31 @@
+# Environment files
+.env
+.env.*
+
+# Composer
+/vendor/
+/composer.lock
+
+# Logs
+*.log
+logs/
+
+# Cache
+cache/
+tmp/
+temp/
+
+# Uploads (keep folder but ignore files)
+uploads/*
+!uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Xdebug
+*.cachegrind
