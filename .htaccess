@@ -28,6 +28,10 @@ RewriteRule ^terms-and-conditions/?$ terms-and-conditions.php [L,QSA]
 RewriteRule ^category/([a-zA-Z0-9-]+)/?$ category.php?alias=$1 [L,QSA]
 RewriteRule ^services/([a-zA-Z0-9-]+)/?$ service.php?alias=$1 [L,QSA]
 
+# Visa services hub + per-country pages
+RewriteRule ^visa-services/?$ visa-services.php [L,QSA]
+RewriteRule ^visa-services/([a-zA-Z0-9-]+)/?$ visa-country.php?country=$1 [L,QSA]
+
 RewriteRule ^product-details/([a-zA-Z0-9-]+)/?$ product-details.php?alias=$1 [L,QSA]
 
 # RewriteRule ^blogs/([^/]+)/?$ blog-details.php?alias=$1 [L,QSA]

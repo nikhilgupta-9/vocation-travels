@@ -1,11 +1,20 @@
+<?php
+include_once __DIR__ . "/../config/connect.php";
+
+$meta_title = 'Vocation Travels And Tours – Tour Packages & Visa Services in Hyderabad & Bangalore';
+$meta_description = 'Vocation Travels And Tours plans domestic and international tour packages and provides visa services for travelers in Hyderabad, Bangalore and across India — covering USA, UK, Canada, Europe, Australia, Japan, Singapore and UAE/Dubai visas.';
+$meta_keywords = ['tour and travel packages India', 'travel agency Hyderabad', 'travel agency Bangalore', 'domestic tour packages', 'international tour packages', 'visa services Hyderabad', 'visa consultants Bangalore', 'visa agent India', 'USA visa', 'UK visa', 'Canada visa', 'Europe Schengen visa', 'Australia visa', 'Japan visa', 'Singapore visa', 'UAE Dubai visa', 'holiday packages India', 'best travel agency India'];
+$canonical_path = '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vocation Travels And Tours – Home</title>
+    <title><?= htmlspecialchars($meta_title) ?></title>
     <?php include('link.php') ?>
+    <?php include('seo-meta.php') ?>
 
 
     <style>
@@ -478,7 +487,34 @@
             </div>
         </section>
 
-
+        <!-- Tour & Travel + Visa Services SEO Content Block -->
+        <section class="py-16 bg-white">
+            <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="bg-gray-50 rounded-2xl shadow p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-3">Tour &amp; Travel Packages in Hyderabad &amp; Bangalore</h2>
+                    <p class="text-gray-600 leading-relaxed mb-4">
+                        As a trusted travel agency serving Hyderabad, Bangalore and travelers across India, we design
+                        domestic tour packages to Goa, Rajasthan, Kerala and the Golden Triangle, as well as
+                        international tour packages to Dubai, Bali, Vietnam, Europe and beyond — with custom holiday
+                        itineraries for families, couples and groups.
+                    </p>
+                    <a href="travel-package.php" class="inline-block px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
+                        Explore Tour Packages
+                    </a>
+                </div>
+                <div class="bg-gray-50 rounded-2xl shadow p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-3">Visa Services in Hyderabad &amp; Bangalore</h2>
+                    <p class="text-gray-600 leading-relaxed mb-4">
+                        Our visa consultants help applicants from Hyderabad, Bangalore and across India with tourist and
+                        business visa services for the USA, UK, Canada, Europe (Schengen), Australia, Japan, Singapore
+                        and UAE/Dubai — including documentation support, application filing and interview preparation.
+                    </p>
+                    <a href="visa-services.php" class="inline-block px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
+                        Explore Visa Services
+                    </a>
+                </div>
+            </div>
+        </section>
 
         <?php include('footer.php') ?>
 

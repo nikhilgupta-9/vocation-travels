@@ -53,6 +53,7 @@ $brand = get_best_brand();
         <li><a href="<?= $site ?>contact.php" class="nav-link">Contact Us</a></li>
         <li><a href="<?= $site ?>blog.php" class="nav-link">News</a></li>
         <li><a href="<?= $site ?>service.php" class="nav-link">Our Services</a></li>
+        <li><a href="<?= $site ?>visa-services.php" class="nav-link">Visa Services</a></li>
         <li><a href="<?= $site ?>travel-package.php" class="nav-link">Travel Packages</a></li>
         <li><a href="<?= $site ?>vipconcierge.php" class="nav-link">Vip Concierge</a></li>
       </ul>
