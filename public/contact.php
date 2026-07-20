@@ -1,5 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE)
+  session_start();
 $csrf_token = bin2hex(random_bytes(32));
 $_SESSION['csrf_token'] = $csrf_token;
 
@@ -40,38 +41,41 @@ $contact = contact_us();
     }
 
     @keyframes slideIn {
-    from {
+      from {
         transform: translateX(100%);
         opacity: 0;
-    }
-    to {
+      }
+
+      to {
         transform: translateX(0);
         opacity: 1;
+      }
     }
-}
 
-.animate-slideIn {
-    animation: slideIn 0.5s ease-out;
-}
+    .animate-slideIn {
+      animation: slideIn 0.5s ease-out;
+    }
 
-/* Auto-hide after 5 seconds */
-#successMessage, #errorMessage, #validationErrors {
-    transition: opacity 0.5s ease-out;
-}
+    /* Auto-hide after 5 seconds */
+    #successMessage,
+    #errorMessage,
+    #validationErrors {
+      transition: opacity 0.5s ease-out;
+    }
 
-/* Optional: Add close button */
-.message-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    color: inherit;
-    opacity: 0.5;
-}
+    /* Optional: Add close button */
+    .message-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.5;
+    }
 
-.message-close:hover {
-    opacity: 1;
-}
+    .message-close:hover {
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -83,11 +87,15 @@ $contact = contact_us();
 
     <!-- Display Session Messages -->
     <?php if (isset($_SESSION['contact_success'])): ?>
-      <div class="fixed top-20 right-4 z-50 max-w-md bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-lg animate-slideIn" role="alert" id="successMessage">
+      <div
+        class="fixed top-20 right-4 z-50 max-w-md bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-lg animate-slideIn"
+        role="alert" id="successMessage">
         <div class="flex items-center">
           <div class="py-1">
-            <svg class="h-6 w-6 text-green-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg class="h-6 w-6 text-green-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div>
@@ -100,11 +108,15 @@ $contact = contact_us();
     <?php endif; ?>
 
     <?php if (isset($_SESSION['contact_error'])): ?>
-      <div class="fixed top-20 right-4 z-50 max-w-md bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-lg animate-slideIn" role="alert" id="errorMessage">
+      <div
+        class="fixed top-20 right-4 z-50 max-w-md bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-lg animate-slideIn"
+        role="alert" id="errorMessage">
         <div class="flex items-center">
           <div class="py-1">
-            <svg class="h-6 w-6 text-red-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg class="h-6 w-6 text-red-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div>
@@ -117,11 +129,15 @@ $contact = contact_us();
     <?php endif; ?>
 
     <?php if (isset($_SESSION['contact_errors']) && is_array($_SESSION['contact_errors'])): ?>
-      <div class="fixed top-20 right-4 z-50 max-w-md bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-lg animate-slideIn" role="alert" id="validationErrors">
+      <div
+        class="fixed top-20 right-4 z-50 max-w-md bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-lg animate-slideIn"
+        role="alert" id="validationErrors">
         <div class="flex items-start">
           <div class="py-1">
-            <svg class="h-6 w-6 text-yellow-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <svg class="h-6 w-6 text-yellow-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <div>
@@ -156,7 +172,7 @@ $contact = contact_us();
       </div>
     </section>
     <section class="max-w-full py-12 bg-[#eaf6f9]">
-      <div class="max-w-6xl mx-auto px-4" style="margin-top: -149px; z-index: 100000; position: relative;">
+      <div class="max-w-6xl mx-auto px-4 relative z-[100] -mt-4 sm:-mt-8 md:-mt-[149px]">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <!-- Canada Office -->
           <div
@@ -228,8 +244,8 @@ bg-gradient-to-r from-[#1ec700] to-[#e11d48] bg-[length:200%_100%] bg-clip-text 
         </h2>
 
 
-        <form action="<?= $site ?>util/process_contact.php" method="POST"
-          class="grid grid-cols-1 md:grid-cols-2 gap-6" autocomplete="off">
+        <form action="<?= $site ?>util/process_contact.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6"
+          autocomplete="off">
 
 
           <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
@@ -300,7 +316,7 @@ bg-gradient-to-r from-[#1ec700] to-[#e11d48] bg-[length:200%_100%] bg-clip-text 
           </div>
 
           <!-- Additional Requirements / Comments -->
-          <div class="col-span-2">
+          <div class="col-span-1 md:col-span-2">
             <label for="comments" class="block text-gray-700 font-semibold mb-2">Preferences / Comments</label>
             <textarea id="comments" name="comments" rows="4"
               class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -308,7 +324,7 @@ bg-gradient-to-r from-[#1ec700] to-[#e11d48] bg-[length:200%_100%] bg-clip-text 
           </div>
 
           <!-- Submit -->
-          <div class="col-span-2 text-center">
+          <div class="col-span-1 md:col-span-2 text-center">
             <button type="submit"
               class="inline-block  bg-gradient-to-r from-green-600 to-red-600 text-white py-2 px-4 rounded-lg shadow-md hover:scale-105 transition-all duration-300">
               Submit Inquiry
@@ -326,37 +342,37 @@ bg-gradient-to-r from-[#1ec700] to-[#e11d48] bg-[length:200%_100%] bg-clip-text 
   <script src="assets/js/main.js"></script>
 
   <script>
-// Auto-hide messages after 5 seconds
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
+    // Auto-hide messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(function () {
         const successMsg = document.getElementById('successMessage');
         const errorMsg = document.getElementById('errorMessage');
         const validationMsg = document.getElementById('validationErrors');
-        
+
         if (successMsg) {
-            successMsg.style.opacity = '0';
-            setTimeout(() => successMsg.remove(), 500);
+          successMsg.style.opacity = '0';
+          setTimeout(() => successMsg.remove(), 500);
         }
         if (errorMsg) {
-            errorMsg.style.opacity = '0';
-            setTimeout(() => errorMsg.remove(), 500);
+          errorMsg.style.opacity = '0';
+          setTimeout(() => errorMsg.remove(), 500);
         }
         if (validationMsg) {
-            validationMsg.style.opacity = '0';
-            setTimeout(() => validationMsg.remove(), 500);
+          validationMsg.style.opacity = '0';
+          setTimeout(() => validationMsg.remove(), 500);
         }
-    }, 5000);
-});
+      }, 5000);
+    });
 
-// Optional: Add close button functionality
-function closeMessage(elementId) {
-    const element = document.getElementById(elementId);
-    if (element) {
+    // Optional: Add close button functionality
+    function closeMessage(elementId) {
+      const element = document.getElementById(elementId);
+      if (element) {
         element.style.opacity = '0';
         setTimeout(() => element.remove(), 500);
+      }
     }
-}
-</script>
+  </script>
 </body>
 
 </html>

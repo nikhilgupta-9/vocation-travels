@@ -125,6 +125,8 @@ $created_at = date('Y-m-d H:i:s');
 $ip_address = $_SERVER['REMOTE_ADDR'];
 $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 $status = 'unread';
+$subject_line = "Travel Inquiry: $destination - " . date('d M Y');
+$clean_subject = mysqli_real_escape_string($conn, $subject_line);
 
 // First, check if all columns exist in the table
 $columns_check = "SHOW COLUMNS FROM inquiries";
@@ -135,9 +137,9 @@ while ($column = mysqli_fetch_assoc($columns_result)) {
 }
 
 // Build query based on existing columns
-$insert_fields = ['name', 'email', 'phone', 'message', 'ip_address', 'user_agent', 'created_at', 'status'];
-$insert_values = [$clean_name, $clean_email, $clean_phone, $message_body, $ip_address, $user_agent, $created_at, $status];
-$types = "ssssssss";
+$insert_fields = ['name', 'email', 'phone', 'subject', 'message', 'ip_address', 'user_agent', 'created_at', 'status'];
+$insert_values = [$clean_name, $clean_email, $clean_phone, $clean_subject, $message_body, $ip_address, $user_agent, $created_at, $status];
+$types = "sssssssss";
 
 // Add optional fields if they exist
 $optional_fields = [
@@ -236,12 +238,12 @@ function sendTravelInquiryEmail($name, $email, $phone, $subject, $message_body, 
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
+        $mail->Host       = 'smtp.hostinger.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'nik007guptadu@gmail.com';
-        $mail->Password   = 'ltmnhrwacmwmcrni';
+        $mail->Username   = 'support@vocationtravels.in';
+        $mail->Password   = 'i^!v#9eM';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Port       = 465;
         $mail->SMTPDebug  = 0; // Set to 2 for debugging
         
         // Recipients
