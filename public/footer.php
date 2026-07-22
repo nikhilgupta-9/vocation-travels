@@ -1,6 +1,9 @@
 <?php
 include_once __DIR__ . "/../util/visa_countries.php";
+include_once __DIR__ . "/../util/visa_cities.php";
 $footer_visa_countries = get_visa_countries();
+$footer_visa_cities = get_visa_cities();
+uasort($footer_visa_cities, fn($a, $b) => $a['order'] <=> $b['order']);
 ?>
 <footer class="bg-[#222121] text-white pt-12 pb-6">
   <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-1 gap-2">
@@ -36,6 +39,16 @@ $footer_visa_countries = get_visa_countries();
       <ul class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-gray-300">
         <?php foreach ($footer_visa_countries as $fslug => $fcountry): ?>
           <li><a href="<?= $site ?>visa-country.php?country=<?= htmlspecialchars($fslug) ?>" class="hover:text-white"><?= htmlspecialchars($fcountry['name']) ?> Visa</a></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+
+    <!-- Visa Consultants by City -->
+    <div style="margin:10px 0px; text-align:center;">
+      <h4 class="font-bold mb-3">Visa Consultants by City</h4>
+      <ul class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-gray-300">
+        <?php foreach ($footer_visa_cities as $cslug => $fcity): ?>
+          <li><a href="<?= $site ?>visa-consultants.php?city=<?= htmlspecialchars($cslug) ?>" class="hover:text-white">Visa Consultants in <?= htmlspecialchars($fcity['name']) ?></a></li>
         <?php endforeach; ?>
       </ul>
     </div>

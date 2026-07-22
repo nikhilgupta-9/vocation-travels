@@ -512,6 +512,13 @@ $canonical_path = '';
                     <a href="visa-services.php" class="inline-block px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
                         Explore Visa Services
                     </a>
+                    <p class="text-gray-500 text-sm mt-4">
+                        Looking for local help? See our
+                        <a href="visa-consultants.php?city=bangalore" class="underline hover:text-gray-700">best visa consultants in Bangalore</a>
+                        or
+                        <a href="visa-consultants.php?city=hyderabad" class="underline hover:text-gray-700">best visa consultants in Hyderabad</a>
+                        pages.
+                    </p>
                 </div>
             </div>
         </section>

@@ -2,10 +2,13 @@
 include_once __DIR__ . "/../config/connect.php";
 include_once __DIR__ . "/../util/function.php";
 include_once __DIR__ . "/../util/visa_countries.php";
+include_once __DIR__ . "/../util/visa_cities.php";
 
 $contact = contact_us();
 $countries = get_visa_countries();
 uasort($countries, fn($a, $b) => $a['order'] <=> $b['order']);
+$cities = get_visa_cities();
+uasort($cities, fn($a, $b) => $a['order'] <=> $b['order']);
 
 $meta_title = 'Visa Services in Hyderabad & Bangalore | International Visa Consultants – ' . $contact['company_name'];
 $meta_description = 'Trusted visa consultants serving Hyderabad, Bangalore and all of India for USA, UK, Canada, Europe (Schengen), Australia, Japan, Singapore and UAE/Dubai visas. Documentation, application filing and interview preparation support.';
@@ -114,6 +117,25 @@ $canonical_path = 'visa-services.php';
               <span class="mt-auto inline-block px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
                 View Details
               </span>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </section>
+
+    <!-- City-Specific Visa Consultants -->
+    <section class="py-16 bg-white">
+      <div class="max-w-5xl mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold mb-4 text-gray-800">Looking for Local Visa Consultants?</h2>
+        <p class="text-gray-600 text-lg mb-8">
+          We have dedicated visa &amp; immigration consultant pages tailored to travelers and students in
+          Hyderabad and Bangalore.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <?php foreach ($cities as $cslug => $city): ?>
+            <a href="visa-consultants.php?city=<?= htmlspecialchars($cslug) ?>"
+              class="px-6 py-3 rounded-full text-white font-semibold bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition-all duration-200">
+              Best Visa Consultants in <?= htmlspecialchars($city['name']) ?>
             </a>
           <?php endforeach; ?>
         </div>

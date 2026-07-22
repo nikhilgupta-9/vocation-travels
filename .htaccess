@@ -32,6 +32,9 @@ RewriteRule ^services/([a-zA-Z0-9-]+)/?$ service.php?alias=$1 [L,QSA]
 RewriteRule ^visa-services/?$ visa-services.php [L,QSA]
 RewriteRule ^visa-services/([a-zA-Z0-9-]+)/?$ visa-country.php?country=$1 [L,QSA]
 
+# Visa consultants city landing pages (local SEO)
+RewriteRule ^visa-consultants-([a-zA-Z0-9-]+)/?$ visa-consultants.php?city=$1 [L,QSA]
+
 RewriteRule ^product-details/([a-zA-Z0-9-]+)/?$ product-details.php?alias=$1 [L,QSA]
 
 # RewriteRule ^blogs/([^/]+)/?$ blog-details.php?alias=$1 [L,QSA]

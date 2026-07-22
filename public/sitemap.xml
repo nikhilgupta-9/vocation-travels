@@ -87,4 +87,16 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- City visa consultant landing pages (local SEO) -->
+  <url>
+    <loc>http://localhost/vocation-travels/public/visa-consultants.php?city=bangalore</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>http://localhost/vocation-travels/public/visa-consultants.php?city=hyderabad</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>
