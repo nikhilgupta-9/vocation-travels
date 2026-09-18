@@ -12,6 +12,7 @@ $canonical_path = '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="_u8DS_RrIpZN0NS6YGupNfmZZvRtNRiZj3TPcVjuA2s" />
     <title><?= htmlspecialchars($meta_title) ?></title>
     <?php include('link.php') ?>
     <?php include('seo-meta.php') ?>
