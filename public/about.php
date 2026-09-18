@@ -7,6 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About Us – Vocation Travels And Tours</title>
+  <meta name="google-site-verification" content="_u8DS_RrIpZN0NS6YGupNfmZZvRtNRiZj3TPcVjuA2s" />
   <?php include('link.php') ?>
   <style>
     .logo-g.text-center {
