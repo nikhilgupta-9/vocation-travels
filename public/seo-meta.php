@@ -21,6 +21,7 @@ $__og_image = $site . (isset($og_image) && $og_image !== '' ? ltrim($og_image, '
 <meta name="description" content="<?= htmlspecialchars($__description) ?>">
 <meta name="keywords" content="<?= htmlspecialchars($__keywords) ?>">
 <link rel="canonical" href="<?= htmlspecialchars($__canonical) ?>">
+<meta name="google-site-verification" content="_u8DS_RrIpZN0NS6YGupNfmZZvRtNRiZj3TPcVjuA2s" />
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="<?= htmlspecialchars($__title) ?>">
