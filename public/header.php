@@ -69,6 +69,13 @@ $instagram_url = !empty($contact['instagram']) ? $contact['instagram'] : 'https:
 
       <!-- Desktop Header Action Buttons -->
       <div class="hidden lg:flex items-center space-x-3">
+        <!-- Theme Toggle Button (Desktop) -->
+        <button id="theme-toggle-btn" type="button" aria-label="Toggle Dark / Light Theme" title="Toggle Theme"
+          class="theme-toggle-btn relative w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1ec700] cursor-pointer shadow-sm">
+          <i class="theme-icon-sun fa-solid fa-sun text-amber-300 text-sm hidden"></i>
+          <i class="theme-icon-moon fa-solid fa-moon text-yellow-300 text-sm"></i>
+        </button>
+
         <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', $wp_number) ?>?text=Hi%20Vocation%20Travels,%20I%20want%20to%20plan%20a%20trip%20/%20visa" target="_blank" rel="noopener"
           class="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-600/90 hover:bg-emerald-500 text-white text-xs font-semibold shadow-sm transition">
           <i class="fa-brands fa-whatsapp text-sm"></i>
@@ -80,8 +87,15 @@ $instagram_url = !empty($contact['instagram']) ? $contact['instagram'] : 'https:
         </a>
       </div>
 
-      <!-- Mobile Hamburger Toggle Button -->
-      <div class="flex items-center space-x-3 lg:hidden">
+      <!-- Mobile Hamburger & Actions -->
+      <div class="flex items-center space-x-2.5 lg:hidden">
+        <!-- Theme Toggle Button (Mobile) -->
+        <button id="theme-toggle-mobile" type="button" aria-label="Toggle Dark / Light Theme" title="Toggle Theme"
+          class="theme-toggle-btn p-2 rounded-full bg-white/10 text-white border border-white/20 focus:outline-none cursor-pointer">
+          <i class="theme-icon-sun fa-solid fa-sun text-amber-300 text-sm hidden"></i>
+          <i class="theme-icon-moon fa-solid fa-moon text-yellow-300 text-sm"></i>
+        </button>
+
         <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', $wp_number) ?>?text=Hi%20Vocation%20Travels,%20I%20want%20to%20inquire" target="_blank" rel="noopener"
           class="p-2 rounded-full bg-emerald-600 text-white text-sm shadow-md">
           <i class="fa-brands fa-whatsapp"></i>
@@ -120,6 +134,18 @@ $instagram_url = !empty($contact['instagram']) ? $contact['instagram'] : 'https:
       <li><a href="<?= $site ?>about/" class="block hover:text-[#1ec700] transition py-1">About Us</a></li>
       <li><a href="<?= $site ?>blogs/" class="block hover:text-[#1ec700] transition py-1">Travel Blog</a></li>
       <li><a href="<?= $site ?>contact/" class="block hover:text-[#1ec700] transition py-1">Contact Us</a></li>
+
+      <!-- Theme Mode Switch in Drawer -->
+      <li class="pt-3 border-t border-white/10">
+        <button id="theme-toggle-drawer" type="button" class="w-full flex items-center justify-between py-2 text-base font-medium text-gray-200 hover:text-[#1ec700] transition">
+          <span class="flex items-center space-x-2.5">
+            <i class="theme-icon-sun fa-solid fa-sun text-amber-300 text-base hidden"></i>
+            <i class="theme-icon-moon fa-solid fa-moon text-yellow-300 text-base"></i>
+            <span class="theme-toggle-label">Theme Mode</span>
+          </span>
+          <span class="theme-mode-pill text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-gray-300 border border-white/10">Theme</span>
+        </button>
+      </li>
     </ul>
   </div>
 
@@ -197,13 +223,13 @@ $instagram_url = !empty($contact['instagram']) ? $contact['instagram'] : 'https:
       if (isScrolled) {
         if (topBar) topBar.classList.add("top-bar-hidden");
         if (mainNav) {
-          mainNav.classList.add("bg-black/90", "shadow-xl");
+          mainNav.classList.add("bg-black/90", "shadow-xl", "is-scrolled");
           mainNav.classList.remove("bg-black/40");
         }
       } else {
         if (topBar) topBar.classList.remove("top-bar-hidden");
         if (mainNav) {
-          mainNav.classList.remove("bg-black/90", "shadow-xl");
+          mainNav.classList.remove("bg-black/90", "shadow-xl", "is-scrolled");
           mainNav.classList.add("bg-black/40");
         }
       }
@@ -212,6 +238,80 @@ $instagram_url = !empty($contact['instagram']) ? $contact['instagram'] : 'https:
     window.addEventListener("scroll", handleScroll, { passive: true });
     // Check initial scroll position on load
     handleScroll();
+
+    // Theme Switch Management
+    function updateThemeUI(isDark) {
+      const sunIcons = document.querySelectorAll(".theme-icon-sun");
+      const moonIcons = document.querySelectorAll(".theme-icon-moon");
+      const labels = document.querySelectorAll(".theme-toggle-label");
+      const pills = document.querySelectorAll(".theme-mode-pill");
+
+      sunIcons.forEach(icon => {
+        if (isDark) icon.classList.remove("hidden");
+        else icon.classList.add("hidden");
+      });
+
+      moonIcons.forEach(icon => {
+        if (isDark) icon.classList.add("hidden");
+        else icon.classList.remove("hidden");
+      });
+
+      labels.forEach(lbl => {
+        lbl.textContent = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
+      });
+
+      pills.forEach(pill => {
+        pill.textContent = isDark ? "Dark ON" : "Light ON";
+        if (isDark) {
+          pill.className = "theme-mode-pill text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        } else {
+          pill.className = "theme-mode-pill text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30";
+        }
+      });
+    }
+
+    function toggleTheme() {
+      const isCurrentlyDark = document.documentElement.classList.contains("dark");
+      const newTheme = isCurrentlyDark ? "light" : "dark";
+
+      if (newTheme === "dark") {
+        document.documentElement.classList.add("dark");
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+
+      localStorage.setItem("vt_theme", newTheme);
+      updateThemeUI(newTheme === "dark");
+      window.dispatchEvent(new CustomEvent("themeChanged", { detail: { theme: newTheme } }));
+    }
+
+    window.toggleVocationTheme = toggleTheme;
+
+    ["theme-toggle-btn", "theme-toggle-mobile", "theme-toggle-drawer"].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener("click", toggleTheme);
+    });
+
+    // Initialize UI icons on page load
+    const initialIsDark = document.documentElement.classList.contains("dark");
+    updateThemeUI(initialIsDark);
+
+    if (window.matchMedia) {
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
+        if (!localStorage.getItem("vt_theme")) {
+          if (e.matches) {
+            document.documentElement.classList.add("dark");
+            document.documentElement.setAttribute("data-theme", "dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+            document.documentElement.setAttribute("data-theme", "light");
+          }
+          updateThemeUI(e.matches);
+        }
+      });
+    }
   })();
 </script>
 
