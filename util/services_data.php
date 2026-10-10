@@ -6,7 +6,7 @@
 
 function get_services()
 {
-  return [
+  $services = [
 
     // ================= CORE SERVICES =================
 
@@ -730,6 +730,30 @@ function get_services()
     ],
 
   ];
+
+  global $conn;
+  if (!empty($conn) && $conn instanceof mysqli && !$conn->connect_errno) {
+    $res = @$conn->query("SELECT slug, name, category, tagline, icon, image, meta_title, meta_description, focus_keyword, seo_score, status, views_count, inquiries_count FROM services_cms");
+    if ($res && $res->num_rows > 0) {
+      while ($row = $res->fetch_assoc()) {
+        $slug = $row['slug'];
+        if (isset($services[$slug])) {
+          if (!empty($row['name'])) $services[$slug]['name'] = $row['name'];
+          if (!empty($row['tagline'])) $services[$slug]['description'] = $row['tagline'];
+          if (!empty($row['icon'])) $services[$slug]['icon'] = $row['icon'];
+          if (!empty($row['meta_title'])) $services[$slug]['meta_title'] = $row['meta_title'];
+          if (!empty($row['meta_description'])) $services[$slug]['meta_description'] = $row['meta_description'];
+          if (!empty($row['focus_keyword'])) $services[$slug]['keywords'] = [$row['focus_keyword']];
+          $services[$slug]['status'] = $row['status'];
+          $services[$slug]['seo_score'] = (int)$row['seo_score'];
+          $services[$slug]['views_count'] = (int)$row['views_count'];
+          $services[$slug]['inquiries_count'] = (int)$row['inquiries_count'];
+        }
+      }
+    }
+  }
+
+  return $services;
 }
 
 include_once __DIR__ . '/services_detail.php';
@@ -740,14 +764,63 @@ function get_service($slug)
   if (!isset($services[$slug])) {
     return null;
   }
-  return enrich_service($slug, $services[$slug]);
+  $svc = enrich_service($slug, $services[$slug]);
+
+  global $conn;
+  if (!empty($conn) && $conn instanceof mysqli && !$conn->connect_errno) {
+    $stmt = @$conn->prepare("SELECT * FROM services_cms WHERE slug = ? LIMIT 1");
+    if ($stmt) {
+      $stmt->bind_param("s", $slug);
+      $stmt->execute();
+      $res = $stmt->get_result();
+      if ($res && $row = $res->fetch_assoc()) {
+        if ($row['status'] === 'inactive') {
+          $stmt->close();
+          return null;
+        }
+        if (!empty($row['name'])) $svc['name'] = $row['name'];
+        if (!empty($row['tagline'])) $svc['tagline'] = $row['tagline'];
+        if (!empty($row['icon'])) $svc['icon'] = $row['icon'];
+        if (!empty($row['image'])) $svc['image'] = $row['image'];
+        if (!empty($row['overview_text'])) {
+          $svc['overview'] = explode("\n\n", $row['overview_text']);
+        }
+        if (!empty($row['highlights_json'])) {
+          $hl = json_decode($row['highlights_json'], true);
+          if (is_array($hl)) $svc['highlights'] = $hl;
+        }
+        if (!empty($row['features_json'])) {
+          $ft = json_decode($row['features_json'], true);
+          if (is_array($ft)) $svc['features'] = $ft;
+        }
+        if (!empty($row['faqs_json'])) {
+          $fq = json_decode($row['faqs_json'], true);
+          if (is_array($fq)) $svc['faqs'] = $fq;
+        }
+        if (!empty($row['meta_title'])) $svc['meta_title'] = $row['meta_title'];
+        if (!empty($row['meta_description'])) $svc['meta_description'] = $row['meta_description'];
+        if (!empty($row['focus_keyword'])) $svc['keywords'] = [$row['focus_keyword']];
+        $svc['seo_score'] = (int)$row['seo_score'];
+        $svc['views_count'] = (int)$row['views_count'];
+        $svc['inquiries_count'] = (int)$row['inquiries_count'];
+      }
+      $stmt->close();
+
+      // Track page views
+      if (session_status() === PHP_SESSION_ACTIVE && empty($_SESSION['admin_logged_in'])) {
+        @$conn->query("UPDATE services_cms SET views_count = views_count + 1 WHERE slug = '" . $conn->real_escape_string($slug) . "'");
+      }
+    }
+  }
+
+  return $svc;
 }
 
 function get_services_by_category($category)
 {
   $services = get_services();
-  $filtered = array_filter($services, fn($s) => $s['category'] === $category);
-  uasort($filtered, fn($a, $b) => $a['order'] <=> $b['order']);
+  $filtered = array_filter($services, fn($s) => ($s['category'] ?? '') === $category && ($s['status'] ?? 'active') !== 'inactive');
+  uasort($filtered, fn($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
   return $filtered;
 }
 

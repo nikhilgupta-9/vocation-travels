@@ -1225,19 +1225,22 @@ function displayInquiries() {
                            data-date="' . $row['created_at'] . '">';
             $html .= '<td>' . $row['id'] . '</td>';
             $html .= '<td>';
-            $html .= '<div class="fw-bold">' . $row['name'] . '</div>';
-            $html .= '<small class="text-muted">' . $row['email'] . '</small>';
+            $html .= '<div class="fw-bold">' . htmlspecialchars($row['name']) . '</div>';
+            $html .= '<small class="text-muted d-block">' . htmlspecialchars($row['email']) . '</small>';
+            if (!empty($row['phone'])) {
+                $html .= '<small class="text-success fw-semibold"><i class="fas fa-phone-alt me-1"></i>' . htmlspecialchars($row['phone']) . '</small>';
+            }
             $html .= '</td>';
             $html .= '<td>';
-            $html .= '<div><i class="fas fa-calendar me-1 text-muted"></i>' . date('d M Y', strtotime($row['travel_date'] ?? '')) . '</div>';
-            $html .= '<div><i class="fas fa-users me-1 text-muted"></i>' . $row['adults'] . ' Adults, ' . $row['children'] . ' Children</div>';
+            $html .= '<div><i class="fas fa-calendar me-1 text-muted"></i>' . (!empty($row['travel_date']) ? date('d M Y', strtotime($row['travel_date'])) : 'Flexible') . '</div>';
+            $html .= '<div><i class="fas fa-users me-1 text-muted"></i>' . ($row['adults'] ?? 1) . ' Adults, ' . ($row['children'] ?? 0) . ' Children</div>';
             $html .= '</td>';
             $html .= '<td>';
-            $html .= '<div class="fw-bold">' . htmlspecialchars($row['destination'] ?? '') . '</div>';
-            $html .= '<small class="text-muted">' . htmlspecialchars($row['timeline']?? '') . '</small>';
+            $html .= '<div class="fw-bold text-primary">' . htmlspecialchars($row['destination'] ?? 'General') . '</div>';
+            $html .= '<small class="text-muted">' . htmlspecialchars($row['timeline'] ?? 'Standard') . '</small>';
             $html .= '</td>';
             $html .= '<td>';
-            $html .= '<div class="text-truncate" style="max-width: 200px;">' . htmlspecialchars($row['message']) . '</div>';
+            $html .= '<div class="text-truncate" style="max-width: 200px;" title="' . htmlspecialchars($row['message']) . '">' . htmlspecialchars($row['message']) . '</div>';
             $html .= '</td>';
             $html .= '<td>';
             $html .= '<span class="status-badge ' . $status_class . '">' . $status_text . '</span>';
@@ -1245,13 +1248,21 @@ function displayInquiries() {
             $html .= '<td>' . date('d M Y', strtotime($row['created_at'])) . '</td>';
             $html .= '<td>';
             $html .= '<div class="btn-group" role="group">';
-            $html .= '<button class="btn btn-sm btn-outline-info" onclick="viewInquiry(' . $row['id'] . ')">';
+            $html .= '<button class="btn btn-sm btn-outline-info" onclick="viewInquiry(' . $row['id'] . ')" title="View Details">';
             $html .= '<i class="fas fa-eye"></i>';
             $html .= '</button>';
-            $html .= '<a href="mailto:' . $row['email'] . '?subject=Re: Travel Inquiry for ' . urlencode($row['destination'] ?? '') . '" class="btn btn-sm btn-outline-primary">';
+            $clean_phone = preg_replace('/[^0-9]/', '', $row['phone'] ?? '');
+            if (strlen($clean_phone) == 10) $clean_phone = '91' . $clean_phone;
+            if (!empty($clean_phone)) {
+                $wa_msg = urlencode("Hello " . ($row['name'] ?? '') . ", greetings from Vocation Travels! We received your inquiry regarding " . ($row['destination'] ?? 'travel services') . ". How can we assist you today?");
+                $html .= '<a href="https://wa.me/' . $clean_phone . '?text=' . $wa_msg . '" target="_blank" class="btn btn-sm btn-outline-success" title="Chat on WhatsApp">';
+                $html .= '<i class="fab fa-whatsapp"></i>';
+                $html .= '</a>';
+            }
+            $html .= '<a href="mailto:' . htmlspecialchars($row['email']) . '?subject=Re: Travel Inquiry for ' . urlencode($row['destination'] ?? 'Vocation Travels') . '" class="btn btn-sm btn-outline-primary" title="Send Email">';
             $html .= '<i class="fas fa-reply"></i>';
             $html .= '</a>';
-            $html .= '<button class="btn btn-sm btn-outline-danger" onclick="deleteInquiry(' . $row['id'] . ')">';
+            $html .= '<button class="btn btn-sm btn-outline-danger" onclick="deleteInquiry(' . $row['id'] . ')" title="Delete Inquiry">';
             $html .= '<i class="fas fa-trash"></i>';
             $html .= '</button>';
             $html .= '</div>';

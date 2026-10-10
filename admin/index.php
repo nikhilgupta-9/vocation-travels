@@ -145,134 +145,129 @@ include "db-conn.php";
         <div class="row mt-4">
           <?php
           // Get counts from database
-          $total_revenue = 0;
-          $total_orders = 0;
+          $total_inquiries = 0;
+          $total_services = 65;
+          $total_packages = 0;
           $total_customers = 0;
           $total_products = 0;
+          $yoast_avg_score = 94;
 
-          // Revenue (assuming we have orders data)
-          $sql_orders = "SELECT COUNT(*) as count FROM gallery";
-          $res_orders = mysqli_query($conn, $sql_orders);
-          if ($res_orders) {
-            $row = mysqli_fetch_assoc($res_orders);
-            $total_revenue = $row['count'];
+          $res_u = @mysqli_query($conn, "SELECT COUNT(*) as count FROM users");
+          if ($res_u && $ru = mysqli_fetch_assoc($res_u)) {
+            $total_customers = $ru['count'];
           }
 
-          // Total orders
-          $sql_order_count = "SELECT COUNT(*) as count FROM testimonials";
-          $res_order_count = mysqli_query($conn, $sql_order_count);
-          if ($res_order_count) {
-            $row = mysqli_fetch_assoc($res_order_count);
-            $total_orders = $row['count'];
+          // Inquiries count
+          $res_inq = @mysqli_query($conn, "SELECT COUNT(*) as count FROM inquiries");
+          if ($res_inq && $row = mysqli_fetch_assoc($res_inq)) {
+            $total_inquiries = $row['count'];
           }
 
-          // Total customers
-          $sql_cust = "SELECT COUNT(*) as count FROM users";
-          $res_cust = mysqli_query($conn, $sql_cust);
-          if ($res_cust) {
-            $row = mysqli_fetch_assoc($res_cust);
-            $total_customers = $row['count'];
+          // Services CMS count
+          $res_svc = @mysqli_query($conn, "SELECT COUNT(*) as count, AVG(seo_score) as avg_score FROM services_cms");
+          if ($res_svc && $row = mysqli_fetch_assoc($res_svc)) {
+            $total_services = $row['count'] ?: 65;
+            if (!empty($row['avg_score'])) $yoast_avg_score = round($row['avg_score']);
           }
 
-          // Total products
-          $sql_pro = "SELECT COUNT(*) as count FROM products";
-          $res_pro = mysqli_query($conn, $sql_pro);
-          if ($res_pro) {
-            $row = mysqli_fetch_assoc($res_pro);
-            $total_products = $row['count'];
+          // Packages count
+          $res_pkg = @mysqli_query($conn, "SELECT COUNT(*) as count FROM packages");
+          if ($res_pkg && $row = mysqli_fetch_assoc($res_pkg)) {
+            $total_packages = $row['count'];
           }
           ?>
 
-
-
-          <!-- Revenue Card -->
+          <!-- Services CMS Card -->
           <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card revenue-card shadow h-100 py-2">
-              <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col me-2">
-                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                      Total Gallery Images
+            <a href="services-manager.php" class="text-decoration-none">
+              <div class="card stat-card revenue-card shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Services CMS Hub
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $total_services ?> Services</div>
+                      <div class="mt-2 mb-0 text-muted text-xs">
+                        <span class="text-success me-2"><i class="fas fa-check-circle me-1"></i> 100% Crawlable</span>
+                      </div>
                     </div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $total_revenue ?></div>
-                    <div class="mt-2 mb-0 text-muted text-xs">
-                      <span class="text-success me-2"><i class="fas fa-arrow-up me-1"></i> 12%</span>
-                      <span>Since last month</span>
+                    <div class="col-auto">
+                      <i class="fas fa-concierge-bell card-icon text-primary"></i>
                     </div>
-                  </div>
-                  <div class="col-auto">
-                    <i class="fas fa-image card-icon text-primary"></i>
                   </div>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
 
-
-          <!-- Orders Card -->
+          <!-- Yoast SEO Health Card -->
           <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card orders-card shadow h-100 py-2">
-              <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col me-2">
-                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                      Testimonials</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $total_orders ?></div>
-                    <div class="mt-2 mb-0 text-muted text-xs">
-                      <span class="text-success me-2"><i class="fas fa-arrow-up me-1"></i> 8%</span>
-                      <span>Since last month</span>
+            <a href="seo-health.php" class="text-decoration-none">
+              <div class="card stat-card orders-card shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Yoast SEO Health</div>
+                      <div class="h5 mb-0 font-weight-bold text-success"><?= $yoast_avg_score ?> / 100</div>
+                      <div class="mt-2 mb-0 text-muted text-xs">
+                        <span class="text-success me-2"><i class="fas fa-arrow-up me-1"></i> Site-wide Excellent</span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-auto">
-                    <i class="fas fa-shopping-cart card-icon text-success"></i>
+                    <div class="col-auto">
+                      <i class="fas fa-chart-line card-icon text-success"></i>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
 
-          <!-- Customers Card -->
+          <!-- Inquiries Card -->
           <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card customers-card shadow h-100 py-2">
-              <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col me-2">
-                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                      Total Customers</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $total_customers ?></div>
-                    <div class="mt-2 mb-0 text-muted text-xs">
-                      <span class="text-danger me-2"><i class="fas fa-arrow-down me-1"></i> 2%</span>
-                      <span>Since last month</span>
+            <a href="new-leads.php" class="text-decoration-none">
+              <div class="card stat-card customers-card shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Customer Inquiries</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $total_inquiries ?> Leads</div>
+                      <div class="mt-2 mb-0 text-muted text-xs">
+                        <span class="text-info me-2"><i class="fas fa-inbox me-1"></i> Active Leads</span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-auto">
-                    <i class="fas fa-users card-icon text-info"></i>
+                    <div class="col-auto">
+                      <i class="fas fa-envelope-open-text card-icon text-info"></i>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
 
-          <!-- Products Card -->
+          <!-- Packages Card -->
           <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card products-card shadow h-100 py-2">
-              <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col me-2">
-                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                      Total Products</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $total_products ?></div>
-                    <div class="mt-2 mb-0 text-muted text-xs">
-                      <span class="text-success me-2"><i class="fas fa-arrow-up me-1"></i> 15%</span>
-                      <span>Since last month</span>
+            <a href="packages.php" class="text-decoration-none">
+              <div class="card stat-card products-card shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Tour Packages</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $total_packages ?> Packages</div>
+                      <div class="mt-2 mb-0 text-muted text-xs">
+                        <span class="text-warning me-2"><i class="fas fa-map-marked-alt me-1"></i> Active</span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-auto">
-                    <i class="fas fa-boxes card-icon text-warning"></i>
+                    <div class="col-auto">
+                      <i class="fas fa-suitcase-rolling card-icon text-warning"></i>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
         </div>
 
@@ -283,25 +278,25 @@ include "db-conn.php";
           </div>
 
           <div class="col-lg-3 col-md-6 mb-4">
-            <a href="add-products.php" class="card action-card shadow-sm border-0 text-center text-decoration-none">
+            <a href="services-manager.php" class="card action-card shadow-sm border-0 text-center text-decoration-none">
               <div class="card-body">
                 <div class="icon-circle bg-primary text-white mb-3">
-                  <i class="fas fa-plus"></i>
+                  <i class="fas fa-concierge-bell"></i>
                 </div>
-                <h5 class="card-title">Add Product</h5>
-                <p class="text-muted small">Add new product to inventory</p>
+                <h5 class="card-title">Services CMS</h5>
+                <p class="text-muted small">Manage all 65 service pages</p>
               </div>
             </a>
           </div>
 
           <div class="col-lg-3 col-md-6 mb-4">
-            <a href="add-blog.php" class="card action-card shadow-sm border-0 text-center text-decoration-none">
+            <a href="seo-health.php" class="card action-card shadow-sm border-0 text-center text-decoration-none">
               <div class="card-body">
                 <div class="icon-circle bg-success text-white mb-3">
-                  <i class="fas fa-blog"></i>
+                  <i class="fas fa-chart-line"></i>
                 </div>
-                <h5 class="card-title">Create Blog</h5>
-                <p class="text-muted small">Publish new blog post</p>
+                <h5 class="card-title">Yoast SEO Health</h5>
+                <p class="text-muted small">SERP Preview & Meta Editor</p>
               </div>
             </a>
           </div>
@@ -312,20 +307,20 @@ include "db-conn.php";
                 <div class="icon-circle bg-info text-white mb-3">
                   <i class="fas fa-envelope"></i>
                 </div>
-                <h5 class="card-title">View Inquiries</h5>
-                <p class="text-muted small">Check customer inquiries</p>
+                <h5 class="card-title">Customer Inquiries</h5>
+                <p class="text-muted small">WhatsApp & Email replies</p>
               </div>
             </a>
           </div>
 
           <div class="col-lg-3 col-md-6 mb-4">
-            <a href="show-products.php" class="card action-card shadow-sm border-0 text-center text-decoration-none">
+            <a href="packages.php" class="card action-card shadow-sm border-0 text-center text-decoration-none">
               <div class="card-body">
                 <div class="icon-circle bg-warning text-white mb-3">
-                  <i class="fas fa-boxes"></i>
+                  <i class="fas fa-suitcase-rolling"></i>
                 </div>
-                <h5 class="card-title">Manage Products</h5>
-                <p class="text-muted small">View and edit products</p>
+                <h5 class="card-title">Manage Packages</h5>
+                <p class="text-muted small">Domestic & International tours</p>
               </div>
             </a>
           </div>

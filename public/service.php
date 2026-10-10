@@ -410,6 +410,7 @@ if ($service) {
 
             <form action="<?= $site ?>util/process_contact.php" method="POST" class="space-y-5" autocomplete="off">
               <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+              <input type="hidden" name="service_slug" value="<?= htmlspecialchars($alias) ?>">
               <input type="hidden" name="destination" value="<?= htmlspecialchars($service['name']) ?>">
               <input type="hidden" name="timeline" value="Standard / Flexible">
 

@@ -177,6 +177,16 @@ mysqli_stmt_bind_param($stmt, $types, ...$insert_values);
 if (mysqli_stmt_execute($stmt)) {
     $inquiry_id = mysqli_insert_id($conn);
     
+    // Update inquiries count in services_cms
+    if (!empty($_POST['service_slug'])) {
+        $svc_slug = trim($_POST['service_slug']);
+        $esc_slug = mysqli_real_escape_string($conn, $svc_slug);
+        @mysqli_query($conn, "UPDATE services_cms SET inquiries_count = inquiries_count + 1 WHERE slug = '$esc_slug'");
+    } elseif (!empty($destination)) {
+        $esc_dest = mysqli_real_escape_string($conn, $destination);
+        @mysqli_query($conn, "UPDATE services_cms SET inquiries_count = inquiries_count + 1 WHERE name = '$esc_dest'");
+    }
+
     // Get contact settings
     $contact = contact_us();
     $email_logo = get_email_logo();

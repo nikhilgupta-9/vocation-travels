@@ -109,6 +109,20 @@ if (!isset($_SESSION['admin_logged_in'])) {
         </li>
 
         <li>
+            <a href="services-manager.php">
+                <i class="fas fa-concierge-bell" style="color: #0d6efd;"></i>
+                <span>Services CMS (65)</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="seo-health.php">
+                <i class="fas fa-chart-line" style="color: #198754;"></i>
+                <span>Yoast SEO Health</span>
+            </a>
+        </li>
+
+        <li>
             <a href="about_us.php">
                 <i class="fas fa-info-circle" style="color: #d35400;"></i>
                 <span>About Us</span>
