@@ -8,6 +8,47 @@ include_once __DIR__ . "/../config/connect.php";
 include_once __DIR__ . "/../util/function.php";
 
 $contact = contact_us();
+
+$meta_title = 'Contact Us | Tour, Travel & Visa Consultants Across India – ' . ($contact['company_name'] ?? 'Vocation Travels');
+$meta_description = 'Get in touch with Vocation Travels for holiday tour packages and visa services across Delhi, Mumbai, Bangalore, Hyderabad, Pune, Chennai, Kolkata, and 40+ Indian cities. Free consultation on request.';
+$meta_keywords = ['contact travel agency India', 'visa consultants contact India', 'tour package enquiry Delhi Mumbai', 'travel agent Bangalore Hyderabad', 'visa application assistance 2026'];
+$canonical_path = 'contact/';
+
+// Structured data (technical SEO): ContactPage + BreadcrumbList.
+$contact_schema = [
+  '@context' => 'https://schema.org',
+  '@graph' => [
+    [
+      '@type' => 'ContactPage',
+      'name' => $meta_title,
+      'description' => $meta_description,
+      'about' => [
+        '@type' => 'TravelAgency',
+        'name' => $contact['company_name'] ?? 'Vocation Travels And Tours',
+        'telephone' => $contact['phone'] ?? '+91-9999447373',
+        'email' => $contact['email'] ?? 'visa@vocationtravels.com',
+        'areaServed' => [
+          ['@type' => 'Country', 'name' => 'India'],
+          ['@type' => 'City', 'name' => 'Delhi'],
+          ['@type' => 'City', 'name' => 'Mumbai'],
+          ['@type' => 'City', 'name' => 'Bangalore'],
+          ['@type' => 'City', 'name' => 'Hyderabad'],
+          ['@type' => 'City', 'name' => 'Pune'],
+          ['@type' => 'City', 'name' => 'Chennai'],
+          ['@type' => 'City', 'name' => 'Kolkata'],
+          ['@type' => 'City', 'name' => 'Ahmedabad'],
+        ],
+      ],
+    ],
+    [
+      '@type' => 'BreadcrumbList',
+      'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $site],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Contact Us', 'item' => $site . 'contact/'],
+      ],
+    ],
+  ],
+];
 ?>
 
 <!DOCTYPE html>
@@ -16,8 +57,10 @@ $contact = contact_us();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact Us – <?= $contact['company_name'] ?></title>
+  <title><?= htmlspecialchars($meta_title) ?></title>
   <?php include('link.php') ?>
+  <?php include('seo-meta.php') ?>
+  <script type="application/ld+json"><?= json_encode($contact_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
   <style>
     .body {
       padding: 0px !important;
@@ -157,7 +200,7 @@ $contact = contact_us();
     <!-- Banner Section with Video Background -->
     <section class="relative h-screen w-full overflow-hidden">
       <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/ContactUs.mp4" type="video/mp4">
+        <source src="<?=$site?>assets/videos/ContactUs.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
       <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -167,10 +210,12 @@ $contact = contact_us();
           Contact Vocation Travels And Tours
         </h1>
         <p class="text-white text-base sm:text-lg md:text-xl max-w-2xl mb-4">
-          Reach out to us for travel packages, visa assistance, and more.<br> We’re here to help!
+          Tour &amp; travel package planning and visa services for Bangalore, Hyderabad, Pune and across India.<br>
+          Reach out for a free consultation — we're here to help!
         </p>
       </div>
     </section>
+
     <section class="max-w-full py-12 bg-[#eaf6f9]">
       <div class="max-w-6xl mx-auto px-4 relative z-[100] -mt-4 sm:-mt-8 md:-mt-[149px]">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -192,12 +237,19 @@ $contact = contact_us();
           </div>
           <!-- India Office -->
           <div
-            class="bg-white  rounded-2xl shadow-xl p-6 flex flex-col items-center hover:scale-105 transition-all duration-300"
+            class="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center hover:scale-105 transition-all duration-300"
             style="border-bottom: 5px solid green;">
-            <h3 class="text-xl text-center font-semibold text-[#000] mb-2">INDIA - NEW DELHI</h3>
-            <p class="text-gray-700 mb-2 text-center">
+            <h3 class="text-xl text-center font-semibold text-[#000] mb-2">INDIA - NEW DELHI (Head Office)</h3>
+            <p class="text-gray-700 mb-2 text-center text-xs leading-relaxed">
+              <?= htmlspecialchars($contact['address']) ?>
+            </p>
+            <p class="text-gray-700 mb-2 text-center text-sm font-medium">
               info@vocationtravels.com
             </p>
+            <a href="<?= htmlspecialchars($contact['map'] ?? 'https://share.google/EzOt9py4AbwOfVnO1') ?>" target="_blank" rel="noopener" class="text-xs text-emerald-600 font-bold hover:underline mt-1 inline-flex items-center space-x-1">
+              <i class="fa-solid fa-location-dot mr-1"></i>
+              <span>Google Maps &amp; Profile</span>
+            </a>
           </div>
 
 
@@ -231,6 +283,30 @@ $contact = contact_us();
           <!--</div>-->
 
         </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <div class="max-w-6xl mx-auto px-6 pt-8 text-sm text-gray-500">
+      <a href="<?= $site ?>" class="hover:underline">Home</a> /
+      <span class="text-gray-700">Contact Us</span>
+    </div>
+
+    <!-- City / Local SEO intro -->
+    <section class="py-10 bg-white">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+          Serving Travelers in Bangalore, Hyderabad &amp; Pune
+        </h2>
+        <p class="text-gray-600 text-lg leading-relaxed">
+          Whether you're planning a domestic or international tour, or need help with visa documentation and
+          applications, our team supports clients across Bangalore, Hyderabad, Pune and all of India. Fill in the
+          enquiry form below, or reach out directly using the office details above.
+          Looking for city-specific help? Visit our
+          <a href="<?= $site ?>visa-consultants-bangalore/" class="font-semibold" style="color:#159c00;">Bangalore visa consultants</a>,
+          <a href="<?= $site ?>visa-consultants-hyderabad/" class="font-semibold" style="color:#159c00;">Hyderabad visa consultants</a>
+          or <a href="<?= $site ?>travel-package/" class="font-semibold" style="color:#159c00;">tour &amp; travel packages</a> pages.
+        </p>
       </div>
     </section>
 
@@ -339,7 +415,7 @@ bg-gradient-to-r from-[#1ec700] to-[#e11d48] bg-[length:200%_100%] bg-clip-text 
   <!-- Footer -->
   <?php include('footer.php') ?>
 
-  <script src="assets/js/main.js"></script>
+  <script src="<?=$site?>assets/js/main.js"></script>
 
   <script>
     // Auto-hide messages after 5 seconds

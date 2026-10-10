@@ -1,10 +1,54 @@
 <?php
 include_once __DIR__ . "/../config/connect.php";
+include_once __DIR__ . "/../util/function.php";
 
-$meta_title = 'Vocation Travels And Tours – Tour Packages & Visa Services in Hyderabad & Bangalore';
-$meta_description = 'Vocation Travels And Tours plans domestic and international tour packages and provides visa services for travelers in Hyderabad, Bangalore and across India — covering USA, UK, Canada, Europe, Australia, Japan, Singapore and UAE/Dubai visas.';
-$meta_keywords = ['tour and travel packages India', 'travel agency Hyderabad', 'travel agency Bangalore', 'domestic tour packages', 'international tour packages', 'visa services Hyderabad', 'visa consultants Bangalore', 'visa agent India', 'USA visa', 'UK visa', 'Canada visa', 'Europe Schengen visa', 'Australia visa', 'Japan visa', 'Singapore visa', 'UAE Dubai visa', 'holiday packages India', 'best travel agency India'];
+$contact = contact_us();
+$meta_title = 'Vocation Travels – Tour Packages & Visa Services Across India (Delhi, Mumbai, Bangalore, Hyderabad & 40+ Cities)';
+$meta_description = 'Vocation Travels provides bespoke holiday packages and trusted visa consultancy across 40+ cities in India and globally. Expert processing for USA, UK, Canada, Schengen Europe, Australia, Japan, Dubai & more.';
+$meta_keywords = ['tour and travel packages India', 'travel agency Delhi', 'travel agency Mumbai', 'travel agency Bangalore', 'travel agency Hyderabad', 'visa consultants India', 'domestic tour packages', 'international tour packages', 'Schengen visa agent India', 'USA visa consultant', 'Canada visa Bangalore', 'holiday packages 2026', 'luxury travel concierge India'];
 $canonical_path = '';
+
+// Structured Data (JSON-LD) for LocalBusiness & TravelAgency
+$structured_data = [
+    "@context" => "https://schema.org",
+    "@type" => "TravelAgency",
+    "name" => $contact['company_name'] ?? "VOCATION TRAVELS AND TOURS PRIVATE LIMITED",
+    "url" => $site,
+    "logo" => $site . "assets/images/logo.png",
+    "image" => $site . "assets/images/luxury_travel_hero.jpg",
+    "description" => $meta_description,
+    "telephone" => "+91-" . ($contact['phone'] ?? "9999447373"),
+    "email" => $contact['email'] ?? "visa@vocationtravels.com",
+    "address" => [
+        "@type" => "PostalAddress",
+        "streetAddress" => $contact['address'] ?? "Room No. 309, 3rd Floor, Transport Authority Building, District Centre, Near Janakpuri Police Station, Janakpuri",
+        "addressLocality" => "New Delhi",
+        "postalCode" => "110058",
+        "addressCountry" => "IN"
+    ],
+    "areaServed" => [
+        ["@type" => "Country", "name" => "India"],
+        ["@type" => "City", "name" => "Delhi"],
+        ["@type" => "City", "name" => "Mumbai"],
+        ["@type" => "City", "name" => "Bangalore"],
+        ["@type" => "City", "name" => "Hyderabad"],
+        ["@type" => "City", "name" => "Chennai"],
+        ["@type" => "City", "name" => "Kolkata"],
+        ["@type" => "City", "name" => "Pune"],
+        ["@type" => "City", "name" => "Ahmedabad"],
+        ["@type" => "City", "name" => "Jaipur"],
+        ["@type" => "City", "name" => "Chandigarh"],
+        ["@type" => "City", "name" => "Lucknow"],
+        ["@type" => "City", "name" => "Kochi"]
+    ],
+    "sameAs" => [
+        "https://share.google/EzOt9py4AbwOfVnO1",
+        "https://www.instagram.com/vocationtravels/",
+        "https://www.facebook.com/share/1ZXsmimYf7/?mibextid=wwXIfr",
+        "https://www.linkedin.com/company/vocationtravels/"
+    ],
+    "priceRange" => "$$"
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +60,7 @@ $canonical_path = '';
     <title><?= htmlspecialchars($meta_title) ?></title>
     <?php include('link.php') ?>
     <?php include('seo-meta.php') ?>
-
+    <script type="application/ld+json"><?= json_encode($structured_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
     <style>
         .body {
@@ -33,46 +77,11 @@ $canonical_path = '';
         }
 
         .service-card {
-            position: relative;
-            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
         }
 
-        .service-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 0%;
-            /* Logo colors: green (#1ec700), blue (#1e40af), red (#e11d48) */
-            background: linear-gradient(to top, #1ec700 0%, #1ec700 60%, #e11d48 100%);
-            opacity: 0.85;
-            z-index: 1;
-            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 1rem;
-        }
-
-        .service-card:hover::before {
-            height: 100%;
-        }
-
-        .service-card .service-content {
-            position: relative;
-            z-index: 2;
-            transition: color 0.3s;
-        }
-
-        .service-card:hover .service-content h3,
-        .service-card:hover .service-content p {
-            color: #fff !important;
-        }
-
-        .service-card img {
-            transition: transform 0.3s;
-        }
-
-        .service-card:hover img {
-            transform: scale(1.1);
+        .service-card:hover {
+            transform: translateY(-8px);
         }
 
         .footer-social-links ul {
@@ -93,10 +102,9 @@ $canonical_path = '';
             }
         }
     </style>
-
 </head>
 
-<body class="relative flex flex-col min-h-screen">
+<body class="relative flex flex-col min-h-screen bg-neutral-950 text-gray-100 font-sans">
 
     <?php include('header.php') ?>
 
@@ -104,108 +112,129 @@ $canonical_path = '';
     <main class="flex-grow">
 
         <!-- Hero Section -->
-        <section class="relative h-screen w-full overflow-hidden">
-            <video id="hero-video" class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-                <source src="assets/videos/hero-banner.mp4" type="video/mp4">
+        <section class="relative h-screen min-h-[600px] w-full overflow-hidden flex items-center justify-center">
+            <video id="hero-video" class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="auto">
+                <source src="<?= $site ?>assets/videos/hero-banner.mp4" type="video/mp4">
             </video>
-            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-            <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-                <h1 class="text-white text-shadow-2xs font-bold leading-tight
-                   text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl
-                   max-w-3xl mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)]">
-                    For Those <span
-                        class="bg-gradient-to-r from-[#1ec700] via-[#1ec700] to-[#e11d48] text-transparent bg-clip-text drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
-                        Who Demand </span>the <span
-                        class="bg-gradient-to-r from-[#1ec700] via-[#1ec700] to-[#e11d48] text-transparent bg-clip-text drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">Extraordinary.</span>
+            <div class="absolute inset-0 bg-black/40"></div>
+
+            <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 max-w-5xl mx-auto pt-16">
+                <!-- Trust Badge -->
+                <div class="inline-flex items-center space-x-2 py-1.5 px-4 mb-6 rounded-full bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-medium border border-white/20 shadow-lg">
+                    <span class="w-2 h-2 rounded-full bg-[#1ec700] animate-pulse"></span>
+                    <span>Premier Travel &amp; Visa Consultancy Across India &amp; Worldwide</span>
+                </div>
+
+                <h1 class="text-white font-extrabold leading-tight text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 drop-shadow-2xl max-w-4xl">
+                    For Those <span class="bg-gradient-to-r from-[#1ec700] via-emerald-400 to-[#e11d48] text-transparent bg-clip-text">Who Demand</span> the <span class="bg-gradient-to-r from-[#1ec700] via-emerald-400 to-[#e11d48] text-transparent bg-clip-text">Extraordinary.</span>
                 </h1>
-                <p style="color:#fff; margin-bottom:15px;">Travel Without Limits — The World Is Your Home</p>
-                <a href="travel-package.html" class="inline-block px-6 py-3 border border-white rounded-full
-                  text-white font-medium
-                  hover:bg-white hover:text-black
-                  transition-colors duration-200">
-                    Explore
-                </a>
+
+                <p class="text-gray-200 text-base sm:text-xl max-w-2xl mb-8 font-light leading-relaxed">
+                    Customized Tour Packages, Guaranteed Visa Filing Support Across 40+ Indian Cities &amp; 24/7 VIP Concierge.
+                </p>
+
+                <div class="flex flex-wrap gap-4 justify-center items-center">
+                    <a href="<?= $site ?>travel-package/" class="px-8 py-3.5 rounded-full font-bold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 hover:shadow-2xl transition duration-200 shadow-xl text-sm sm:text-base">
+                        Explore Holiday Packages
+                    </a>
+                    <a href="<?= $site ?>visa-services/" class="px-8 py-3.5 rounded-full font-bold text-white bg-white/15 backdrop-blur-md border border-white/30 hover:bg-white hover:text-black transition duration-200 text-sm sm:text-base">
+                        Visa Services (40+ Cities)
+                    </a>
+                </div>
             </div>
         </section>
 
-        <!-- Domestic Packages -->
-        <section id="work-slider" class="relative bg-white parallax-section">
+        <!-- Trust & Value Metrics Strip -->
+        <section class="bg-neutral-900 border-y border-white/10 text-white py-6">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="border-r border-white/10 last:border-none px-2">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-[#1ec700]">40+ Cities</div>
+                    <div class="text-xs sm:text-sm text-gray-400 mt-1">Pan-India Visa Assistance</div>
+                </div>
+                <div class="border-r border-white/10 last:border-none px-2">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-[#e11d48]">98.7%</div>
+                    <div class="text-xs sm:text-sm text-gray-400 mt-1">Application Accuracy</div>
+                </div>
+                <div class="border-r border-white/10 last:border-none px-2">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-[#1ec700]">500+</div>
+                    <div class="text-xs sm:text-sm text-gray-400 mt-1">Bespoke Holiday Itineraries</div>
+                </div>
+                <div class="px-2">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-amber-400">24/7</div>
+                    <div class="text-xs sm:text-sm text-gray-400 mt-1">VIP Concierge Care</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Domestic Packages Slider -->
+        <section id="work-slider" class="relative bg-neutral-950">
             <div class="relative overflow-hidden">
-                <!-- Rotated Domestic Packages Image -->
-                <img src="assets/images/domestic-packages.png" alt="Domestic Packages"
-                    class="hidden md:block absolute left-[-132px] top-1/2 -translate-y-1/2 rotate-[-90deg] h-[115px] z-20">
+                <!-- Rotated Domestic Packages Label -->
+                <img src="<?= $site ?>assets/images/domestic-packages.png" alt="Domestic Packages"
+                    class="hidden md:block absolute left-[-132px] top-1/2 -translate-y-1/2 rotate-[-90deg] h-[115px] z-20 opacity-80">
+                
                 <!-- Slides Container -->
                 <div id="slides" class="flex transition-transform duration-500">
-
                     <!-- Slide 1 -->
-                    <div class="min-w-full relative h-screen sm:h-screen md:h-screen">
-                        <img src="assets/images/goa-fun-fiesta.jpg" alt="Brand USA"
+                    <div class="min-w-full relative h-screen">
+                        <img src="<?= $site ?>assets/images/goa-fun-fiesta.jpg" alt="Goa Tour Package"
                             class="absolute inset-0 w-full h-full object-cover" />
-                        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-                            <h2 class="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4">
-                                GOA <br>FUN FIESTA PACKAGE
+                        <div class="absolute inset-0 bg-black/50"></div>
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 max-w-4xl mx-auto">
+                            <span class="px-3.5 py-1 rounded-full bg-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider mb-3">Popular Domestic</span>
+                            <h2 class="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-4">
+                                GOA FUN FIESTA PACKAGE
                             </h2>
-                            <p class="text-base sm:text-lg text-white mb-6">
-                                5 Nights / 6 Days Goa Package Includes water sports & adventure activities
+                            <p class="text-base sm:text-lg text-gray-200 mb-6 max-w-xl">
+                                5 Nights / 6 Days Goa Beach Package includes luxury resort stay, water sports &amp; sunset cruises.
                             </p>
-                            <a href="travel-package.html" class="px-6 py-3 border border-white rounded-full text-white font-medium
-                    hover:bg-white hover:text-black transition">
-                                Learn More
+                            <a href="<?= $site ?>travel-package/" class="px-7 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition">
+                                View Itinerary &amp; Details
                             </a>
                         </div>
                     </div>
-
 
                     <!-- Slide 2 -->
-                    <div class="min-w-full relative h-screen sm:h-screen md:h-screen">
-                        <img src="assets/images/Delhi-Agra-Mathura-Tour-Itinerary.jpg" alt="Turkish Airlines"
+                    <div class="min-w-full relative h-screen">
+                        <img src="<?= $site ?>assets/images/Delhi-Agra-Mathura-Tour-Itinerary.jpg" alt="Golden Triangle Tour"
                             class="absolute inset-0 w-full h-full object-cover" />
-                        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-                            <h2 class="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4">
-                                GOLDEN TRIANGLE PACKAGE <br>(DELHI - AGRA - MATHURA - DELHI)
+                        <div class="absolute inset-0 bg-black/50"></div>
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 max-w-4xl mx-auto">
+                            <span class="px-3.5 py-1 rounded-full bg-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider mb-3">Heritage Special</span>
+                            <h2 class="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-4">
+                                GOLDEN TRIANGLE PACKAGE
                             </h2>
-                            <p class="text-base sm:text-lg text-white mb-6">
-                                4 Nights Stay in Delhi, Agra & Mathura Tour itinerary with 4-star hotel accommodations
+                            <p class="text-base sm:text-lg text-gray-200 mb-6 max-w-xl">
+                                4 Nights Stay in Delhi, Agra &amp; Mathura with private chauffeur, monuments guide &amp; 4-star hotels.
                             </p>
-                            <a href="travel-package.html" class="px-6 py-3 border border-white rounded-full text-white font-medium
-                    hover:bg-white hover:text-black transition">
-                                Learn More
+                            <a href="<?= $site ?>travel-package/" class="px-7 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition">
+                                View Itinerary &amp; Details
                             </a>
                         </div>
                     </div>
-
-
 
                     <!-- Slide 3 -->
-                    <div class="min-w-full relative h-screen sm:h-screen md:h-screen">
-                        <img src="assets/images/rangelo-rajasthang.jpg" alt="Accor Hotels"
+                    <div class="min-w-full relative h-screen">
+                        <img src="<?= $site ?>assets/images/rangelo-rajasthang.jpg" alt="Rajasthan Tour"
                             class="absolute inset-0 w-full h-full object-cover" />
-                        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-                            <h2 class="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4">
-                                RANGEELO RAJASTHAN<br> TOUR PACKAGE
+                        <div class="absolute inset-0 bg-black/50"></div>
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 max-w-4xl mx-auto">
+                            <span class="px-3.5 py-1 rounded-full bg-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider mb-3">Royal Heritage</span>
+                            <h2 class="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-4">
+                                RANGEELO RAJASTHAN TOUR
                             </h2>
-                            <p class="text-base sm:text-lg text-white mb-6">
-                                6 Nights / 7 Days Rajasthan Package Detailed itinerary with 4-star hotel accommodations
+                            <p class="text-base sm:text-lg text-gray-200 mb-6 max-w-xl">
+                                6 Nights / 7 Days exploring Jaipur, Jodhpur &amp; Udaipur with royal heritage palace stays.
                             </p>
-                            <a href="travel-package.html" class="px-6 py-3 border border-white rounded-full text-white font-medium
-                    hover:bg-white hover:text-black transition">
-                                Learn More
+                            <a href="<?= $site ?>travel-package/" class="px-7 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition">
+                                View Itinerary &amp; Details
                             </a>
                         </div>
                     </div>
-
-                   
-
                 </div>
 
                 <!-- Navigation Dots -->
-                <div id="slider-dots"
-                    class="flex justify-center gap-2 absolute bottom-6 left-1/2 transform -translate-x-1/2">
-                    <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
-                    <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
+                <div id="slider-dots" class="flex justify-center gap-2 absolute bottom-6 left-1/2 transform -translate-x-1/2">
                     <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
                     <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
                     <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
@@ -213,328 +242,275 @@ $canonical_path = '';
             </div>
         </section>
 
-        <!-- International Packages -->
-        <section id="work-slider2" class="relative bg-white">
+        <!-- International Packages Slider -->
+        <section id="work-slider2" class="relative bg-neutral-950">
             <div class="relative overflow-hidden">
-                <img src="assets/images/international-packages.png" alt="Domestic Packages"
-                    class="hidden md:block absolute left-[-132px] top-1/2 -translate-y-1/2 rotate-[-90deg] h-[115px] z-20">
+                <img src="<?= $site ?>assets/images/international-packages.png" alt="International Packages"
+                    class="hidden md:block absolute left-[-132px] top-1/2 -translate-y-1/2 rotate-[-90deg] h-[115px] z-20 opacity-80">
+                
                 <!-- Slides Container -->
                 <div id="slides2" class="flex transition-transform duration-500">
-
                     <!-- Slide 1 -->
-                    <div class="min-w-full relative h-screen sm:h-screen md:h-screen">
-                        <img src="assets/images/bali.png" alt="Accor Hotels"
-                            class="absolute inset-0 w-full h-full object-cover" />
-                        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-                            <h2 class="text-3xl sm:text-4xl md:text-7xl font-bold text-white mb-4">
-                                Bali Bliss
-                            </h2>
-                            <p class="text-base sm:text-lg text-white mb-6">
-                                4-Star Hotel Stay
-                                <br>
-                                Island Tours, Water Sports, Turtle Island Visit
+                    <div class="min-w-full relative h-screen">
+                        <img src="<?= $site ?>assets/images/bali.png" alt="Bali Bliss" class="absolute inset-0 w-full h-full object-cover" />
+                        <div class="absolute inset-0 bg-black/50"></div>
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 max-w-4xl mx-auto">
+                            <span class="px-3.5 py-1 rounded-full bg-[#e11d48]/90 text-white text-xs font-bold uppercase tracking-wider mb-3">Top International</span>
+                            <h2 class="text-3xl sm:text-5xl md:text-7xl font-extrabold text-white mb-4">Bali Bliss</h2>
+                            <p class="text-base sm:text-lg text-gray-200 mb-6 max-w-xl">
+                                4-Star Resort Stay, Island Tours, Water Sports &amp; Private Turtle Island Excursions.
                             </p>
-                            <a href="travel-package.html" class="px-6 py-3 border border-white rounded-full text-white font-medium
-                    hover:bg-white hover:text-black transition">
-                                Learn More
+                            <a href="<?= $site ?>travel-package/" class="px-7 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition">
+                                Discover Package
                             </a>
                         </div>
                     </div>
-
 
                     <!-- Slide 2 -->
-                    <div class="min-w-full relative h-screen sm:h-screen md:h-screen">
-                        <img src="assets/images/dubai.png" alt="Accor Hotels"
-                            class="absolute inset-0 w-full h-full object-cover" />
-                        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-                            <h2 class="text-3xl sm:text-4xl md:text-7xl font-bold text-white mb-4">
-                                Dubai Delight
-                            </h2>
-                            <p class="text-base sm:text-lg text-white mb-6">
-                                4-Star Hotel Stay with Breakfast <br>Dubai & Abu Dhabi City Tours, Desert Safari, Burj
-                                Khalifa
+                    <div class="min-w-full relative h-screen">
+                        <img src="<?= $site ?>assets/images/dubai.png" alt="Dubai Delight" class="absolute inset-0 w-full h-full object-cover" />
+                        <div class="absolute inset-0 bg-black/50"></div>
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 max-w-4xl mx-auto">
+                            <span class="px-3.5 py-1 rounded-full bg-[#e11d48]/90 text-white text-xs font-bold uppercase tracking-wider mb-3">Luxury City</span>
+                            <h2 class="text-3xl sm:text-5xl md:text-7xl font-extrabold text-white mb-4">Dubai Delight</h2>
+                            <p class="text-base sm:text-lg text-gray-200 mb-6 max-w-xl">
+                                4-Star Hotel Stay with Breakfast, Desert Safari, Burj Khalifa At The Top &amp; Abu Dhabi Tour.
                             </p>
-                            <a href="travel-package.html" class="px-6 py-3 border border-white rounded-full text-white font-medium
-                    hover:bg-white hover:text-black transition">
-                                Learn More
+                            <a href="<?= $site ?>travel-package/" class="px-7 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition">
+                                Discover Package
                             </a>
                         </div>
                     </div>
-
-
 
                     <!-- Slide 3 -->
-                    <div class="min-w-full relative h-screen sm:h-screen md:h-screen">
-                        <img src="assets/images/vietnam.png" alt="Saudi Tourism Authority"
-                            class="absolute inset-0 w-full h-full object-cover" />
-                        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-                            <h2 class="text-3xl sm:text-4xl md:text-7xl font-bold text-white mb-4">
-                                Vietnam Escape
-                            </h2>
-                            <p class="text-base sm:text-lg text-white mb-6">
-                                4-Star Hotel Stay
-                                <br>
-                                Itinerary covering Hanoi, Halong Bay & Turtle Island
+                    <div class="min-w-full relative h-screen">
+                        <img src="<?= $site ?>assets/images/vietnam.png" alt="Vietnam Escape" class="absolute inset-0 w-full h-full object-cover" />
+                        <div class="absolute inset-0 bg-black/50"></div>
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 max-w-4xl mx-auto">
+                            <span class="px-3.5 py-1 rounded-full bg-[#e11d48]/90 text-white text-xs font-bold uppercase tracking-wider mb-3">Scenic Adventure</span>
+                            <h2 class="text-3xl sm:text-5xl md:text-7xl font-extrabold text-white mb-4">Vietnam Escape</h2>
+                            <p class="text-base sm:text-lg text-gray-200 mb-6 max-w-xl">
+                                Itinerary covering Hanoi, Halong Bay Overnight Cruise &amp; Ninh Binh with premium stays.
                             </p>
-                            <a href="travel-package.html" class="px-6 py-3 border border-white rounded-full text-white font-medium
-                    hover:bg-white hover:text-black transition">
-                                Learn More
+                            <a href="<?= $site ?>travel-package/" class="px-7 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition">
+                                Discover Package
                             </a>
                         </div>
                     </div>
-
-
-
                 </div>
 
                 <!-- Navigation Dots -->
-                <div id="slider-dots2"
-                    class="flex justify-center gap-2 absolute bottom-6 left-1/2 transform -translate-x-1/2">
-                    <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
-                    <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
+                <div id="slider-dots2" class="flex justify-center gap-2 absolute bottom-6 left-1/2 transform -translate-x-1/2">
                     <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
                     <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
                     <button class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none"></button>
                 </div>
             </div>
         </section>
-        <!-- CTA Box Section Start -->
-        <section class="bg-gray-100 py-12">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="grid grid-cols-1 md:grid-cols-1 items-center gap-6">
 
-                    <!-- CTA Text -->
-                    <div class="md:col-span-3">
-                        <h2 class="text-2xl md:text-3xl text-center font-bold text-gray-800 leading-snug">
-                            Discover New Destinations,Create Lasting Memories!
-                        </h2>
-                        <p class="mt-3 text-black-600 text-lg text-center">
-                            Join our travel community and explore breathtaking locations,
-                            tailored packages, and unforgettable experiences across the globe.
-                        </p>
-                    </div>
-
-                    <!-- CTA Button -->
-                    <div class="flex justify-start md:justify-center">
-                        <a href="contact.html" class="inline-block px-6 py-3 rounded-xl font-semibold text-white 
-                  bg-gradient-to-r from-[#1ec700] via-[#1ec700] to-[#e11d48] 
-                  shadow-lg hover:scale-105 hover:shadow-xl 
-                  transition-all duration-300" style="border-radius: 35px;">
-                            Start Your Journey
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-        <!-- CTA Box Section End -->
-        <!-- New Services Section with Video Background and Cards -->
-        <section class="relative w-full overflow-hidden flex items-center justify-center" style="padding:70px 0px;">
-            <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-                <source src="assets/videos/clients.mp4" type="video/mp4">
-                Your browser doesn’t support video.
+        <!-- Exclusive Solutions Crafted For You (Modern Photo Cards) -->
+        <section class="relative w-full overflow-hidden flex items-center justify-center py-20 bg-neutral-900 border-y border-white/10">
+            <video class="absolute inset-0 w-full h-full object-cover opacity-20" autoplay muted loop playsinline>
+                <source src="<?= $site ?>assets/videos/clients.mp4" type="video/mp4">
             </video>
-            <div class="absolute inset-0 bg-black bg-opacity-80"></div>
-            <div class="relative z-10 flex flex-col items-center justify-center h-full px-4 py-3">
-                <h2 class="text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-10 drop-shadow-lg text-center">
-                    Exclusive Solutions Crafted for You</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-                    <div class="service-card bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 flex flex-col items-center hover:scale-105 transition-all duration-300"
-                        style="border-bottom: 5px solid green;">
-                        <div class="service-content flex flex-col items-center">
-                            <img src="assets/images/currency.png" alt="Service 5" class="h-10 w-10 mb-4">
-                            <h3 class="text-xl text-center font-semibold text-[#000] mb-2">Currency Change Assistance
-                            </h3>
-                            <p class="text-gray-700 text-center text-base">Simplify your journey with our currency
-                                change assistance. Upon request, contact for details</p>
+            <div class="relative z-10 flex flex-col items-center justify-center h-full px-4 max-w-7xl mx-auto">
+                <span class="text-xs uppercase tracking-widest text-[#1ec700] font-bold mb-2">Tailored Travel Excellence</span>
+                <h2 class="text-white text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg text-center">
+                    Exclusive Travel &amp; Visa Solutions
+                </h2>
+                <p class="text-gray-300 text-center max-w-2xl text-sm sm:text-base mb-12">
+                    From hassle-free visa approvals in 40+ Indian cities to bespoke luxury tour itineraries and 24/7 VIP concierge handling.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+                    <!-- Card 1: Visa Assistance -->
+                    <div class="service-card group bg-neutral-950/90 rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#1ec700] flex flex-col">
+                        <div class="h-44 overflow-hidden relative">
+                            <img src="<?= $site ?>assets/images/visa_consultant_pro.jpg" alt="Visa Assistance Across India" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#1ec700]/90 text-white text-[11px] font-bold">40+ Cities</span>
                         </div>
-                    </div>
-                    <div class="service-card bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 flex flex-col items-center hover:scale-105 transition-all duration-300"
-                        style="border-bottom: 5px solid green;">
-                        <div class="service-content flex flex-col items-center">
-                            <img src="assets/images/travel.png" alt="Service 1" class="h-10 w-10 mb-4">
-                            <h3 class="text-xl text-center font-semibold text-[#000] mb-2">Planning around your
-                                preference</h3>
-                            <p class="text-gray-700 text-center text-base">Streamlined visa processing for teams and
-                                families, ensuring smooth, timely travel for every member.</p>
-                        </div>
-                    </div>
-                    <div class="service-card bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 flex flex-col items-center hover:scale-105 transition-all duration-300"
-                        style="border-bottom: 5px solid green;">
-                        <div class="service-content flex flex-col items-center">
-                            <img src="assets/images/vip.png" alt="Service 4" class="h-10 w-10 mb-4">
-                            <h3 class="text-xl text-center font-semibold text-[#000] mb-2">VIP<br> Concierge </h3>
-                            <p class="text-gray-700 text-center text-base">Personalized 24/7 one-message support crafted
-                                exclusively for elite travelers on constant journeys.</p>
-                        </div>
-                    </div>
-                    <div class="service-card bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 flex flex-col items-center hover:scale-105 transition-all duration-300"
-                        style="border-bottom: 5px solid green;">
-                        <div class="service-content flex flex-col items-center">
-                            <img src="assets/images/visa.png" alt="Service 2" class="h-10 w-10 mb-4">
-                            <h3 class="text-xl text-center font-semibold text-[#000] mb-2">VISA<br> made EASY</h3>
-                            <p class="text-gray-700 text-center text-base">Personal travel concierge for flights,
-                                hotels, visas, and beyond—crafting seamless journeys across the globe</p>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-[#1ec700] transition">Visa Services &amp; Filing</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed mb-4 flex-grow">
+                                End-to-end documentation, slot booking, and interview preparation for USA, UK, Canada, Schengen, and Australia visas.
+                            </p>
+                            <a href="<?= $site ?>visa-services/" class="text-xs font-semibold text-white inline-flex items-center space-x-1 hover:text-[#1ec700]">
+                                <span>Explore Visa Services</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
                         </div>
                     </div>
 
+                    <!-- Card 2: VIP Concierge -->
+                    <div class="service-card group bg-neutral-950/90 rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#e11d48] flex flex-col">
+                        <div class="h-44 overflow-hidden relative">
+                            <img src="<?= $site ?>assets/images/vip_concierge_luxury.jpg" alt="VIP Concierge" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#e11d48]/90 text-white text-[11px] font-bold">24/7 Dedicated</span>
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-[#e11d48] transition">VIP Concierge &amp; Jets</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed mb-4 flex-grow">
+                                Personalized 24/7 one-message support, tarmac assistance, luxury transfers, and bespoke services for elite travelers.
+                            </p>
+                            <a href="<?= $site ?>vip-concierge/" class="text-xs font-semibold text-white inline-flex items-center space-x-1 hover:text-[#e11d48]">
+                                <span>Discover VIP Concierge</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Curated World Packages -->
+                    <div class="service-card group bg-neutral-950/90 rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-amber-400 flex flex-col">
+                        <div class="h-44 overflow-hidden relative">
+                            <img src="<?= $site ?>assets/images/world_tour_destinations.jpg" alt="Curated Packages" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-amber-500/90 text-white text-[11px] font-bold">Domestic &amp; Intl</span>
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-amber-400 transition">Curated Tour Packages</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed mb-4 flex-grow">
+                                Handcrafted holiday itineraries to Dubai, Bali, Vietnam, Rajasthan, Goa, and Europe with top 4-star &amp; 5-star stays.
+                            </p>
+                            <a href="<?= $site ?>travel-package/" class="text-xs font-semibold text-white inline-flex items-center space-x-1 hover:text-amber-400">
+                                <span>Browse Tour Packages</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Luxury Experience & Forex -->
+                    <div class="service-card group bg-neutral-950/90 rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-blue-400 flex flex-col">
+                        <div class="h-44 overflow-hidden relative">
+                            <img src="<?= $site ?>assets/images/luxury_travel_hero.jpg" alt="Luxury Travel Planning" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-blue-500/90 text-white text-[11px] font-bold">End-to-End</span>
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition">Forex &amp; Custom Trips</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed mb-4 flex-grow">
+                                International currency assistance, multi-city airline booking, private charters, and tailored corporate group trips.
+                            </p>
+                            <a href="<?= $site ?>services/" class="text-xs font-semibold text-white inline-flex items-center space-x-1 hover:text-blue-400">
+                                <span>View All Services</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
-        <section class="reviews" style="padding:100px 0px; text-align: center;">
-            <div class="container">
-                <div>
-                    <h2 class="text-2xl md:text-3xl text-center font-bold text-gray-800 leading-snug">
-                        Trusted by Travelers Across the Globe!
-                    </h2>
-                </div>
-
-                <div class="testimonial-slider ">
-                    <div class="testimonial-track">
-                        <!-- Testimonials inserted by JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
 
         <!-- Partner Logos Marquee Section -->
-        <section class="relative h-[60vh] sm:h-[70vh] md:h-[80vh] w-full overflow-hidden">
-            <!-- Video Background -->
-            <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-                <source src="assets/videos/testimonial.mp4" type="video/mp4">
-                Your browser doesn’t support video.
-            </video>
-
-            <!-- Dark Overlay -->
-            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-
-            <!-- Marquee + Text Container -->
-            <div class="relative z-10 flex flex-col items-center justify-center h-full px-4">
-                <h2 class="text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-10 drop-shadow-lg text-center">
-                    Glimpse of Our Client’s</h2>
+        <section class="relative py-16 w-full overflow-hidden bg-neutral-950 border-b border-white/10">
+            <div class="relative z-10 flex flex-col items-center justify-center px-4 max-w-7xl mx-auto">
+                <span class="text-xs uppercase tracking-widest text-[#e11d48] font-bold mb-2">Corporate &amp; Global Trust</span>
+                <h2 class="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-center">
+                    Trusted by Reputed Organizations &amp; Travelers
+                </h2>
                 <!-- Logos Marquee Wrapper -->
                 <div class="w-full overflow-hidden">
                     <div class="flex items-center space-x-8 animate-marquee">
-                        <!-- First set of logos -->
-                        <img src="assets/images/fastkeys.png" alt="Award 1"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/il-fs.jpg" alt="Award 2"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/c1-india.png" alt="Award 3"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/elisra.jpg" alt="Award 4"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/cinevesture.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/koreanembassy.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/pathways.jpeg.jpg" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/slashproduction.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/nfdc.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/sa-infrastructure.jpg" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/tulsiani.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/sm-air.jpeg.jpg" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/polyplastic.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <!-- Repeat the same logos for seamless loop -->
-                        <img src="assets/images/fastkeys.png" alt="Award 1"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/il-fs.jpg" alt="Award 2"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/c1-india.png" alt="Award 3"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/elisra.jpg" alt="Award 4"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/cinevesture.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/koreanembassy.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/pathways.jpeg.jpg" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/slashproduction.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/nfdc.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/sa-infrastructure.jpg" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/tulsiani.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/sm-air.jpeg.jpg" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-                        <img src="assets/images/polyplastic.png" alt="Award 5"
-                            class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+                        <img src="<?= $site ?>assets/images/fastkeys.png" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/il-fs.jpg" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/c1-india.png" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/elisra.jpg" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/cinevesture.png" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/koreanembassy.png" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/nfdc.png" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/polyplastic.png" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/fastkeys.png" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/il-fs.jpg" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/c1-india.png" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
+                        <img src="<?= $site ?>assets/images/elisra.jpg" alt="Client Logo" class="h-10 sm:h-12 object-contain bg-white/90 p-2 rounded-lg">
                     </div>
                 </div>
-
-                <!-- Descriptive Text -->
-                <p class="mt-8 max-w-3xl text-center text-white text-base sm:text-lg md:text-xl">
-                    We are a multi-award-winning agency specializing in luxury travel experiences for families and
-                    groups. With one of the world’s largest and most influential travel communities, we offer bespoke
-                    trips to both domestic destinations like Rajasthan, Goa, Leh, and the Andamans, as well as
-                    international escapes to Bali, Vietnam, Europe, Canada, and beyond. Our community of passionate
-                    travelers shares a love for unique, unforgettable journeys, and we invite you to be part of it. Let
-                    us craft your perfect getaway, tailored to your dreams and desires.
-                </p>
             </div>
         </section>
 
-        <!-- Tour & Travel + Visa Services SEO Content Block -->
-        <section class="py-16 bg-white">
+        <!-- Pan-India SEO Section (All Big and Small Cities) -->
+        <section class="py-16 bg-neutral-900 border-b border-white/10">
             <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="bg-gray-50 rounded-2xl shadow p-8">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-3">Tour &amp; Travel Packages in Hyderabad &amp; Bangalore</h2>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        As a trusted travel agency serving Hyderabad, Bangalore and travelers across India, we design
-                        domestic tour packages to Goa, Rajasthan, Kerala and the Golden Triangle, as well as
-                        international tour packages to Dubai, Bali, Vietnam, Europe and beyond — with custom holiday
-                        itineraries for families, couples and groups.
+                <div class="bg-neutral-950 rounded-2xl p-8 border border-white/10 shadow-xl">
+                    <div class="inline-flex items-center space-x-2 text-[#1ec700] text-xs font-bold uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>Nationwide Reach</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-3">Holiday Tour Packages Across India &amp; Worldwide</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                        As a premier travel agency serving travelers across India — from Delhi NCR, Mumbai, Bengaluru and Hyderabad to Jaipur, Ahmedabad, Pune, Chandigarh, Kochi and beyond — we curate tailor-made domestic holiday packages (Goa, Rajasthan, Kerala, Golden Triangle, Kashmir) and exotic international tours (Dubai, Bali, Vietnam, Europe, Thailand, Maldives) with 4-star and 5-star accommodations.
                     </p>
-                    <a href="travel-package.php" class="inline-block px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
-                        Explore Tour Packages
+                    <a href="<?= $site ?>travel-package/" class="inline-block px-5 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition">
+                        Explore Holiday Packages
                     </a>
                 </div>
-                <div class="bg-gray-50 rounded-2xl shadow p-8">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-3">Visa Services in Hyderabad &amp; Bangalore</h2>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        Our visa consultants help applicants from Hyderabad, Bangalore and across India with tourist and
-                        business visa services for the USA, UK, Canada, Europe (Schengen), Australia, Japan, Singapore
-                        and UAE/Dubai — including documentation support, application filing and interview preparation.
+
+                <div class="bg-neutral-950 rounded-2xl p-8 border border-white/10 shadow-xl">
+                    <div class="inline-flex items-center space-x-2 text-[#e11d48] text-xs font-bold uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-passport"></i>
+                        <span>Pan-India Visa Expertise</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-3">Visa Consultants Across 40+ Indian Cities</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        Our seasoned visa consultants provide end-to-end documentation, appointment scheduling, mock interviews, and application filing for tourist, student, business, and PR tracks across 40+ Indian cities. Covering top destinations: USA, UK, Canada, Europe (Schengen), Australia, Japan, Singapore, UAE and more.
                     </p>
-                    <a href="visa-services.php" class="inline-block px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
+                    <a href="<?= $site ?>visa-services/" class="inline-block px-5 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition">
                         Explore Visa Services
                     </a>
-                    <p class="text-gray-500 text-sm mt-4">
-                        Looking for local help? See our
-                        <a href="visa-consultants.php?city=bangalore" class="underline hover:text-gray-700">best visa consultants in Bangalore</a>
-                        or
-                        <a href="visa-consultants.php?city=hyderabad" class="underline hover:text-gray-700">best visa consultants in Hyderabad</a>
-                        pages.
-                    </p>
+                    <div class="mt-4 pt-4 border-t border-white/10 text-xs text-gray-400">
+                        <span class="font-semibold text-gray-300">Popular hubs: </span>
+                        <a href="<?= $site ?>visa-consultants-delhi/" class="hover:text-emerald-400 underline">Delhi NCR</a>,
+                        <a href="<?= $site ?>visa-consultants-mumbai/" class="hover:text-emerald-400 underline">Mumbai</a>,
+                        <a href="<?= $site ?>visa-consultants-bangalore/" class="hover:text-emerald-400 underline">Bangalore</a>,
+                        <a href="<?= $site ?>visa-consultants-hyderabad/" class="hover:text-emerald-400 underline">Hyderabad</a>,
+                        <a href="<?= $site ?>visa-consultants-pune/" class="hover:text-emerald-400 underline">Pune</a>,
+                        <a href="<?= $site ?>visa-consultants-chennai/" class="hover:text-emerald-400 underline">Chennai</a>,
+                        <a href="<?= $site ?>visa-consultants-ahmedabad/" class="hover:text-emerald-400 underline">Ahmedabad</a>,
+                        <a href="<?= $site ?>visa-consultants-kolkata/" class="hover:text-emerald-400 underline">Kolkata</a>,
+                        <a href="<?= $site ?>visa-consultants-jaipur/" class="hover:text-emerald-400 underline">Jaipur</a>,
+                        <a href="<?= $site ?>visa-consultants-chandigarh/" class="hover:text-emerald-400 underline">Chandigarh</a> &amp; 30+ more.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Box with Boat Video Background -->
+        <section class="relative min-h-[550px] sm:min-h-[650px] py-28 sm:py-36 md:py-40 overflow-hidden flex items-center justify-center border-b border-white/10">
+            <!-- Boat Video Background -->
+            <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="auto">
+                <source src="<?= $site ?>assets/videos/testimonial.mp4" type="video/mp4">
+            </video>
+            <div class="absolute inset-0 bg-black/60"></div>
+
+            <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-4 drop-shadow-2xl">
+                    Discover New Destinations, Create Lasting Memories!
+                </h2>
+                <p class="text-gray-200 text-sm sm:text-base max-w-2xl mx-auto mb-8 font-light drop-shadow">
+                    Join our premier travel community. Get personalized vacation quotes or instant visa guidance from our experts today.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="<?= $site ?>contact/#contactform" class="px-8 py-3 rounded-full text-sm font-bold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition shadow-2xl">
+                        Plan My Trip Now
+                    </a>
+                    <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', $contact['wp_number'] ?? '7982938239') ?>?text=Hi%20Vocation%20Travels,%20I%20want%20to%20plan%20a%20vacation" target="_blank" rel="noopener"
+                        class="px-8 py-3 rounded-full text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-2xl flex items-center space-x-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span>WhatsApp Specialist</span>
+                    </a>
                 </div>
             </div>
         </section>
 
         <?php include('footer.php') ?>
 
-
-
     </main>
 
-    <!-- Load JS (which will inject the header) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-<script src="<?=$site?>public/assets/js/main.js"></script>
+    <!-- Load Scripts -->
+    <script src="<?= $site ?>assets/js/gsap.min.js"></script>
+    <script src="<?= $site ?>assets/js/ScrollTrigger.min.js"></script>
+    <script src="<?= $site ?>assets/js/main.js"></script>
 </body>
 
 </html>

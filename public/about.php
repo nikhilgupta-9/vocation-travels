@@ -1,14 +1,23 @@
+<?php
+include_once __DIR__ . "/../config/connect.php";
+include_once __DIR__ . "/../util/function.php";
+
+$contact = contact_us();
+
+$meta_title = 'About Us | ' . $contact['company_name'] . ' – Visa & Travel Experts Since 2011';
+$meta_description = 'Vocation Travels And Tours has curated bespoke luxury travel and visa experiences since 2011. Learn about our story, values and the team behind trusted visa and tour services across India (Delhi, Mumbai, Bangalore, Hyderabad & 40+ cities).';
+$meta_keywords = ['about Vocation Travels', 'travel agency India', 'visa consultants India', 'luxury travel company India', 'visa and tour consultants Delhi Mumbai Bangalore'];
+$canonical_path = 'about/';
+?>
 <!DOCTYPE html>
 <html lang="en">
-
-<!-- Mirrored from travel.leadsteck.site/about.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 23 Feb 2026 10:31:33 GMT -->
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>About Us – Vocation Travels And Tours</title>
+  <title><?= htmlspecialchars($meta_title) ?></title>
   <meta name="google-site-verification" content="_u8DS_RrIpZN0NS6YGupNfmZZvRtNRiZj3TPcVjuA2s" />
   <?php include('link.php') ?>
+  <?php include('seo-meta.php') ?>
   <style>
     .logo-g.text-center {
       display: flex;
@@ -36,8 +45,8 @@
   <main class="flex-grow">
     <!-- Luxury Banner Section with Video Background -->
     <section class="relative h-screen w-full overflow-hidden">
-      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/about_1.mp4" type="video/mp4">
+      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="auto">
+        <source src="<?=$site?>assets/videos/about_1.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
       <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -49,7 +58,7 @@
         <p class="text-indigo-100 text-lg sm:text-xl md:text-2xl max-w-2xl mb-4 font-light drop-shadow">
           It’s all about Travel.
         </p>
-        <a href="contact.html"
+        <a href="<?=$site?>contact/"
           class="inline-block px-6 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition-colors duration-200 mt-4">
           Since 2011
         </a>
@@ -104,7 +113,7 @@
     <section
       class="relative h-[100vh] w-full overflow-hidden flex items-center justify-center py-16 px-4 sm:px-8 md:px-16 lg:px-32 bg-gradient-to-br from-indigo-50 via-white to-indigo-100">
       <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/AboutUs1.mp4" type="video/mp4">
+        <source src="<?=$site?>assets/videos/AboutUs1.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
       <div class="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -135,7 +144,7 @@
     <section class="relative h-[60vh] sm:h-[70vh] md:h-[80vh] w-full overflow-hidden">
       <!-- Video Background -->
       <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/testimonial.mp4" type="video/mp4">
+        <source src="<?=$site?>assets/videos/testimonial.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
 
@@ -150,41 +159,41 @@
         <div class="w-full overflow-hidden">
           <div class="flex items-center space-x-8 animate-marquee">
             <!-- First set of logos -->
-            <img src="assets/images/fastkeys.png" alt="Award 1" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/il-fs.jpg" alt="Award 2" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/c1-india.png" alt="Award 3" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/elisra.jpg" alt="Award 4" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/cinevesture.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/koreanembassy.png" alt="Award 5"
+            <img src="<?=$site?>assets/images/fastkeys.png" alt="Award 1" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/il-fs.jpg" alt="Award 2" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/c1-india.png" alt="Award 3" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/elisra.jpg" alt="Award 4" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/cinevesture.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/koreanembassy.png" alt="Award 5"
               class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/pathways.jpeg.jpg" alt="Award 5"
+            <img src="<?=$site?>assets/images/pathways.jpeg.jpg" alt="Award 5"
               class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/slashproduction.png" alt="Award 5"
+            <img src="<?=$site?>assets/images/slashproduction.png" alt="Award 5"
               class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/nfdc.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/sa-infrastructure.jpg" alt="Award 5"
+            <img src="<?=$site?>assets/images/nfdc.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/sa-infrastructure.jpg" alt="Award 5"
               class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/tulsiani.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/sm-air.jpeg.jpg" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/polyplastic.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/tulsiani.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/sm-air.jpeg.jpg" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/polyplastic.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
             <!-- Repeat the same logos for seamless loop -->
-            <img src="assets/images/fastkeys.png" alt="Award 1" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/il-fs.jpg" alt="Award 2" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/c1-india.png" alt="Award 3" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/elisra.jpg" alt="Award 4" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/cinevesture.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/koreanembassy.png" alt="Award 5"
+            <img src="<?=$site?>assets/images/fastkeys.png" alt="Award 1" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/il-fs.jpg" alt="Award 2" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/c1-india.png" alt="Award 3" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/elisra.jpg" alt="Award 4" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/cinevesture.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/koreanembassy.png" alt="Award 5"
               class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/pathways.jpeg.jpg" alt="Award 5"
+            <img src="<?=$site?>assets/images/pathways.jpeg.jpg" alt="Award 5"
               class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/slashproduction.png" alt="Award 5"
+            <img src="<?=$site?>assets/images/slashproduction.png" alt="Award 5"
               class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/nfdc.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/sa-infrastructure.jpg" alt="Award 5"
+            <img src="<?=$site?>assets/images/nfdc.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/sa-infrastructure.jpg" alt="Award 5"
               class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/tulsiani.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/sm-air.jpeg.jpg" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
-            <img src="assets/images/polyplastic.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/tulsiani.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/sm-air.jpeg.jpg" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
+            <img src="<?=$site?>assets/images/polyplastic.png" alt="Award 5" class="h-12 sm:h-16 md:h-20 object-contain bg-white">
           </div>
         </div>
 
@@ -222,7 +231,7 @@
     <section
       class="relative h-[100vh] w-full overflow-hidden flex items-center justify-center py-16 px-4 sm:px-8 md:px-16 lg:px-32 bg-white">
       <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/about_3.mp4" type="video/mp4">
+        <source src="<?=$site?>assets/videos/about_3.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
       <div class="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -267,9 +276,6 @@
   <!-- Footer -->
   <?php include('footer.php') ?>
 
-  <script src="assets/js/main.js"></script>
+  <script src="<?=$site?>assets/js/main.js"></script>
 </body>
-
-<!-- Mirrored from travel.leadsteck.site/about.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 23 Feb 2026 10:31:34 GMT -->
-
 </html>

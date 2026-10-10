@@ -24,7 +24,7 @@ date_default_timezone_set('UTC');
 
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: " . SITE_URL . "contact.php");
+    header("Location: " . SITE_URL . "contact/");
     exit();
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
     logError("CSRF token validation failed");
     $_SESSION['contact_error'] = "Security validation failed. Please try again.";
-    header("Location: " . SITE_URL . "contact.php");
+    header("Location: " . SITE_URL . "contact/");
     exit();
 }
 
@@ -101,7 +101,7 @@ if ($adults <= 0) {
 if (!empty($errors)) {
     $_SESSION['contact_errors'] = $errors;
     $_SESSION['contact_form_data'] = $_POST;
-    header("Location: " . SITE_URL . "contact.php");
+    header("Location: " . SITE_URL . "contact/");
     exit();
 }
 
@@ -109,7 +109,7 @@ if (!empty($errors)) {
 if (!checkRateLimit($email, $conn)) {
     logError("Rate limit exceeded", ['email' => $email, 'ip' => $_SERVER['REMOTE_ADDR']]);
     $_SESSION['contact_error'] = "You have submitted too many inquiries. Please try again later.";
-    header("Location: " . SITE_URL . "contact.php");
+    header("Location: " . SITE_URL . "contact/");
     exit();
 }
 
@@ -167,7 +167,7 @@ $stmt = mysqli_prepare($conn, $sql);
 if (!$stmt) {
     logError("Database prepare failed", ['error' => mysqli_error($conn)]);
     $_SESSION['contact_error'] = "System error. Please try again later.";
-    header("Location: " . SITE_URL . "contact.php");
+    header("Location: " . SITE_URL . "contact/");
     exit();
 }
 
@@ -211,7 +211,7 @@ if (mysqli_stmt_execute($stmt)) {
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
 
-    header("Location: " . SITE_URL . "contact.php?success=1");
+    header("Location: " . SITE_URL . "contact/?success=1");
     exit();
 
 } else {
@@ -226,7 +226,7 @@ if (mysqli_stmt_execute($stmt)) {
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
 
-    header("Location: " . SITE_URL . "contact.php");
+    header("Location: " . SITE_URL . "contact/");
     exit();
 }
 

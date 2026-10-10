@@ -1,13 +1,57 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$csrf_token = bin2hex(random_bytes(32));
+$_SESSION['csrf_token'] = $csrf_token;
+
+include_once __DIR__ . "/../config/connect.php";
+include_once __DIR__ . "/../util/function.php";
+
+$contact = contact_us();
+
+$meta_title = 'VIP Concierge Travel Services | Luxury Travel Management – ' . $contact['company_name'];
+$meta_description = 'Invitation-based VIP concierge travel management for discerning travelers — a private travel department handling flights, five-star stays, priority visa processing and bespoke itineraries end-to-end.';
+$meta_keywords = ['vip concierge travel services', 'luxury travel management india', 'personal travel concierge', 'private travel department', 'luxury travel consultants india', 'priority visa handling'];
+$canonical_path = 'vip-concierge/';
+
+// Structured data (technical SEO): Service + BreadcrumbList.
+$vip_schema = [
+    '@context' => 'https://schema.org',
+    '@graph' => [
+        [
+            '@type' => 'Service',
+            'serviceType' => 'VIP Concierge Travel Management',
+            'name' => 'VIP Concierge Travel Services',
+            'description' => $meta_description,
+            'areaServed' => ['@type' => 'Country', 'name' => 'India'],
+            'provider' => [
+                '@type' => 'TravelAgency',
+                'name' => $contact['company_name'] ?? 'Vocation Travels And Tours',
+                'telephone' => $contact['phone'] ?? '',
+                'email' => $contact['email'] ?? '',
+            ],
+        ],
+        [
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $site],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => 'VIP Concierge', 'item' => $site . 'vip-concierge/'],
+            ],
+        ],
+    ],
+];
+?>
 <!DOCTYPE html>
 <html lang="en">
-
-<!-- Mirrored from travel.leadsteck.site/vipconcierge.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 23 Feb 2026 10:31:42 GMT -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIP Concierge – Vocation Travels And Tours</title>
+    <title><?= htmlspecialchars($meta_title) ?></title>
      <?php include('link.php') ?>
-  
+     <?php include('seo-meta.php') ?>
+     <script type="application/ld+json"><?= json_encode($vip_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+
     <style>
     .material-icons {
     font-size: 45px !important;
@@ -56,8 +100,8 @@
     <main class="flex-grow">
         <!-- Luxury Banner Section with Video Background -->
         <section class="relative h-screen w-full overflow-hidden">
-            <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-                <source src="assets/videos/Royal.mp4" type="video/mp4">
+            <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="auto">
+                <source src="<?= $site ?>assets/videos/Royal.mp4" type="video/mp4">
                 Your browser doesn’t support video.
             </video>
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -67,7 +111,7 @@
                 <p class="text-indigo-100 text-lg sm:text-xl md:text-2xl max-w-2xl mb-4 font-light drop-shadow">
                     Experience personalized luxury and seamless service with our VIP concierge travel solutions.
                 </p>
-                <a href="contact.html" class="inline-block px-6 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition-colors duration-200 mt-4">
+                <a href="<?= $site ?>contact/#contactform" class="inline-block px-6 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition-colors duration-200 mt-4">
                     Book Now
                 </a>
             </div>
@@ -120,7 +164,7 @@
 
       <!-- CTA Button -->
       <div class="flex justify-center md:justify-center">
-        <a href="contact.html" 
+        <a href="<?= $site ?>contact/#contactform" 
            class="inline-block px-6 py-3 rounded-xl font-semibold text-white 
                   bg-gradient-to-r from-[#1ec700] via-[#1ec700] to-[#e11d48] 
                   shadow-lg hover:scale-105 hover:shadow-xl 
@@ -136,7 +180,7 @@
 
         <section class="py-20 relative bg-cover bg-center">
             <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-                <source src="assets/videos/clients.mp4" type="video/mp4">
+                <source src="<?= $site ?>assets/videos/clients.mp4" type="video/mp4">
                 Your browser doesn’t support video.
             </video>
             <div class="absolute inset-0 bg-[#000] bg-opacity-80"></div>
@@ -227,7 +271,7 @@
 
       <section class="relative h-[500px] flex items-center justify-center overflow-hidden">
   <video class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline>
-    <source src="assets/videos/our-services.mp4" type="video/mp4">
+    <source src="<?= $site ?>assets/videos/our-services.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
   <div class="absolute inset-0 bg-black opacity-70"></div>
@@ -253,7 +297,8 @@
     </h2>
 
     <!-- Form -->
-    <form action="https://formsubmit.co/sejalneedleads@gmail.com" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6" autocomplete="off">
+    <form action="<?= $site ?>util/process_contact.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6" autocomplete="off">
+      <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
       <!-- Name -->
       <div>
         <label for="name" class="block text-gray-700 font-semibold mb-2">Full Name</label>
@@ -373,12 +418,16 @@
     </h2>
     
     <!-- Form -->
-    <form action="https://formsubmit.co/sejalneedleads@gmail.com" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6" autocomplete="off">
-      
+    <form action="<?= $site ?>util/process_contact.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6" autocomplete="off">
+      <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+      <input type="hidden" name="destination" value="VIP Concierge Inquiry">
+      <input type="hidden" name="timeline" value="To be discussed">
+      <input type="hidden" name="adults" value="1">
+
       <!-- Name -->
       <div>
         <label for="name" class="block text-gray-700 font-semibold mb-2">Full Name</label>
-        <input type="text" id="name" name="name" 
+        <input type="text" id="name" name="name"
           class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm" 
           placeholder="Your Name" required>
       </div>
@@ -410,7 +459,7 @@
       <!-- Message -->
       <div class="md:col-span-2">
         <label for="message" class="block text-gray-700 font-semibold mb-2">Your Request</label>
-        <textarea id="message" name="message" rows="4"
+        <textarea id="message" name="comments" rows="4"
           class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
           placeholder="Tell us how we can craft your perfect experience..."></textarea>
       </div>
@@ -438,10 +487,8 @@
     </main>
     <?php include('footer.php') ?>
 
-    <script src="assets/js/main.js"></script>
+    <script src="<?= $site ?>assets/js/main.js"></script>
 
     
 </body>
-
-<!-- Mirrored from travel.leadsteck.site/vipconcierge.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 23 Feb 2026 10:31:42 GMT -->
 </html>

@@ -1,13 +1,25 @@
+<?php
+include_once __DIR__ . "/../config/connect.php";
+include_once __DIR__ . "/../util/function.php";
+include_once __DIR__ . "/../util/blog_posts.php";
+
+$contact = contact_us();
+$posts = get_blog_posts();
+uasort($posts, fn($a, $b) => strtotime($b['published']) <=> strtotime($a['published']));
+
+$meta_title = 'Travel & Visa Blog | Tips for Bangalore, Hyderabad, Pune, Chennai & India – ' . $contact['company_name'];
+$meta_description = 'Travel guides and visa tips for travelers in Bangalore, Hyderabad, Pune, Chennai and across India — tour packages, destination guides and visa application advice.';
+$meta_keywords = ['travel blog india', 'visa tips bangalore', 'visa tips hyderabad', 'tour packages blog', 'travel guide pune', 'travel guide chennai'];
+$canonical_path = 'blogs/';
+?>
 <!DOCTYPE html>
 <html lang="en">
-
-<!-- Mirrored from travel.leadsteck.site/blog.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 23 Feb 2026 10:31:34 GMT -->
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Blog – Vocation Travels And Tours</title>
+  <title><?= htmlspecialchars($meta_title) ?></title>
   <?php include('link.php') ?>
+  <?php include('seo-meta.php') ?>
 
   <style>
     .logo-g.text-center {
@@ -38,7 +50,7 @@
     <!-- Hero Section -->
     <section class="relative h-[70vh] w-full overflow-hidden">
       <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/Services.mp4" type="video/mp4">
+        <source src="<?=$site?>assets/videos/Services.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
       <div class="absolute inset-0 bg-black/60"></div>
@@ -58,40 +70,19 @@
         <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Latest Blogs</h2>
 
         <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <!-- Blog Card -->
-          <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-            <img src="assets/images/blog1.jpg" alt="Blog 1" class="w-full h-56 object-cover">
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">Top 10 Destinations for 2025</h3>
-              <p class="text-gray-600 text-sm mb-4">Discover the hottest travel destinations for the upcoming year and
-                why they should be on your bucket list.</p>
-              <a href="blog-detail2340.html?post=top-10-destinations">Read More →</a>
+          <?php foreach ($posts as $pslug => $p): ?>
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+              <img src="<?= $site . $p['hero_image'] ?>" alt="<?= htmlspecialchars($p['title']) ?>" class="w-full h-56 object-cover">
+              <div class="p-6">
+                <span class="inline-block px-3 py-1 mb-3 rounded-full text-xs font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
+                  <?= htmlspecialchars($p['category']) ?>
+                </span>
+                <h3 class="text-xl font-semibold mb-2"><?= htmlspecialchars($p['title']) ?></h3>
+                <p class="text-gray-600 text-sm mb-4"><?= htmlspecialchars($p['excerpt']) ?></p>
+                <a href="<?= $site ?>blog-details/<?= htmlspecialchars($pslug) ?>/" class="font-semibold" style="color:#159c00;">Read More &rarr;</a>
+              </div>
             </div>
-          </div>
-
-          <!-- Blog Card -->
-          <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-            <img src="assets/images/blog2.jpg" alt="Blog 2" class="w-full h-56 object-cover">
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">Luxury Travel Hacks</h3>
-              <p class="text-gray-600 text-sm mb-4">Learn how to travel in luxury without breaking the bank, from
-                flights to exclusive stays.</p>
-              <a href="blog-detaile252.html?post=luxury-travel-hacks">Read More →</a>
-            </div>
-          </div>
-
-          <!-- Blog Card -->
-          <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-            <img src="assets/images/blog3.jpg" alt="Blog 3" class="w-full h-56 object-cover">
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">Hidden Gems of India</h3>
-              <p class="text-gray-600 text-sm mb-4">Step away from the usual tourist spots and uncover India’s best-kept
-                travel secrets.</p>
-              <a href="blog-detailfd55.html?post=hidden-gems-india">Read More →</a>
-            </div>
-          </div>
-
-          <!-- More Blog Cards can be added here -->
+          <?php endforeach; ?>
         </div>
       </div>
     </section>
@@ -102,10 +93,7 @@
   <?php include('footer.php') ?>
 
   <!-- Scripts -->
-  <script src="../unpkg.com/alpinejs%403.15.8/dist/cdn.min.js" defer></script>
-  <script src="assets/js/main.js"></script>
+  <script src="<?=$site?>unpkg.com/alpinejs%403.15.8/dist/cdn.min.js" defer></script>
+  <script src="<?=$site?>assets/js/main.js"></script>
 </body>
-
-<!-- Mirrored from travel.leadsteck.site/blog.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 23 Feb 2026 10:31:40 GMT -->
-
 </html>

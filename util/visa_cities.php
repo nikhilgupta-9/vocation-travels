@@ -1,152 +1,194 @@
 <?php
 /**
- * Static content source for city-specific Visa & Immigration Consultant landing pages
- * (Bangalore, Hyderabad). Each entry is built around a target keyword set for local SEO.
+ * DB-backed & Programmatic content source for city-specific Visa & Immigration Consultant landing pages
+ * (public/visa-consultants.php). Covers Tier 1, Tier 2, and Tier 3 cities across all of India.
+ * Cities can be managed from admin/view-visa-cities.php or automatically resolved for Pan-India SEO.
  */
+
+function __visa_city_row_to_array($row)
+{
+    return [
+        'name' => $row['name'],
+        'order' => (int) $row['city_order'],
+        'meta_title' => $row['meta_title'],
+        'meta_description' => $row['meta_description'],
+        'keywords' => array_filter(array_map('trim', explode(',', (string) $row['meta_keywords']))),
+        'hero_h1' => $row['hero_h1'],
+        'hero_tagline' => $row['hero_tagline'],
+        'intro_heading' => $row['intro_heading'],
+        'intro' => $row['intro'],
+        'services' => json_decode($row['services'], true) ?: [],
+        'faqs' => json_decode($row['faqs'], true) ?: [],
+    ];
+}
+
+/**
+ * Programmatic fallback for any Indian city requested by users or search crawlers.
+ */
+function __generate_dynamic_city_profile($slug)
+{
+    $formattedName = ucwords(str_replace('-', ' ', $slug));
+    
+    // Custom mapping for well-known acronyms or compound city names
+    $nameMap = [
+        'delhi' => 'Delhi NCR',
+        'noida' => 'Noida',
+        'gurgaon' => 'Gurugram (Gurgaon)',
+        'bengaluru' => 'Bangalore',
+        'mysuru' => 'Mysuru',
+        'goa' => 'Goa',
+        'vizag' => 'Visakhapatnam',
+        'cochin' => 'Kochi',
+        'trivandrum' => 'Thiruvananthapuram',
+        'trichy' => 'Tiruchirappalli',
+    ];
+    if (isset($nameMap[$slug])) {
+        $formattedName = $nameMap[$slug];
+    }
+
+    return [
+        'name' => $formattedName,
+        'order' => 999,
+        'meta_title' => "Best Visa Consultants in {$formattedName} | Tourist, Student & Work Visa Agency – Vocation Travels",
+        'meta_description' => "Looking for top visa consultants in {$formattedName}? Vocation Travels offers trusted assistance for USA, UK, Canada, Schengen Europe, Australia & Dubai visas for applicants in {$formattedName}.",
+        'keywords' => [
+            "best visa consultants in {$formattedName}",
+            "visa agency {$formattedName}",
+            "tourist visa agents in {$formattedName}",
+            "student visa consultants {$formattedName}",
+            "schengen visa {$formattedName}",
+            "us visa application {$formattedName}",
+            "canada visitor visa {$formattedName}",
+            "australia visa agent {$formattedName}"
+        ],
+        'hero_h1' => "Best Visa Consultants in {$formattedName}",
+        'hero_tagline' => "Dedicated visa processing, checklist vetting, and VAC/VFS appointment booking for {$formattedName} travelers and students.",
+        'intro_heading' => "Trusted Visa & Immigration Assistance in {$formattedName}",
+        'intro' => "Planning an international trip, overseas business travel, or pursuing higher studies from {$formattedName}? Vocation Travels provides end-to-end visa filing and documentation support for applicants based in {$formattedName}. From accurate DS-160 and Schengen portal filing to mock interview training and biometric slot assistance, our specialists ensure a seamless, transparent experience.",
+        'services' => [
+            [
+                'title' => 'US Tourist & Student Visa Filing',
+                'desc' => "DS-160 application assistance, fee payment, slot booking, and personalized mock interview sessions for {$formattedName} applicants.",
+                'icon' => 'fa-flag-usa',
+                'country_link' => 'usa'
+            ],
+            [
+                'title' => 'UK Visitor & Study Visa Consultants',
+                'desc' => "Complete documentation support, financial proof verification, and online submission for travelers and students from {$formattedName}.",
+                'icon' => 'fa-landmark',
+                'country_link' => 'uk'
+            ],
+            [
+                'title' => 'Canada Visitor & Super Visa Support',
+                'desc' => "IRCC portal filing, invitation letter guidance, and comprehensive document review for family visits and tourism from {$formattedName}.",
+                'icon' => 'fa-maple-leaf',
+                'country_link' => 'canada'
+            ],
+            [
+                'title' => 'Europe Schengen Visa Specialists',
+                'desc' => "Itinerary planning, flight & hotel voucher verification, and VFS appointment coordination covering France, Germany, Switzerland, Italy, and 25+ countries.",
+                'icon' => 'fa-earth-europe',
+                'country_link' => 'europe'
+            ],
+            [
+                'title' => 'Australia & New Zealand Visas',
+                'desc' => "Subclass 600 tourist and business visa assistance with genuine temporary entrant (GTE) documentation guidance for {$formattedName} residents.",
+                'icon' => 'fa-plane-departure',
+                'country_link' => 'australia'
+            ],
+            [
+                'title' => 'UAE & Dubai Express Visa Services',
+                'desc' => "Fast-track 30-day and 60-day Dubai tourist and business e-visa processing with minimal documentation.",
+                'icon' => 'fa-passport',
+                'country_link' => 'uae'
+            ]
+        ],
+        'faqs' => [
+            [
+                'q' => "Who are the most reliable visa consultants in {$formattedName}?",
+                'a' => "Vocation Travels provides trusted, documentation-first visa guidance for travelers and students in {$formattedName}, with high success rates across US, UK, Canada, Schengen, and Australia visas."
+            ],
+            [
+                'q' => "Can {$formattedName} applicants complete the visa process remotely?",
+                'a' => "Yes! We coordinate your complete document checklist, form filing, and appointment slot booking online, so {$formattedName} residents only need to visit the nearest VAC/VFS centre for biometrics."
+            ],
+            [
+                'q' => "Do you assist students from {$formattedName} with university visa filing?",
+                'a' => "Yes, we guide {$formattedName} students with SOP reviews, proof of funds documentation, and visa interview preparation for universities in the US, UK, Canada, and Australia."
+            ],
+            [
+                'q' => "Does your agency guarantee 100% visa approval?",
+                'a' => "No legitimate consultant can guarantee approval as embassies make the final decision. We guarantee error-free applications and strong presentation, minimizing refusal risk."
+            ]
+        ]
+    ];
+}
 
 function get_visa_cities()
 {
-  return [
-    'bangalore' => [
-      'name' => 'Bangalore',
-      'order' => 10,
-      'meta_title' => 'Best Visa Consultants in Bangalore | Top Immigration & Student Visa Experts – Vocation Travels And Tours',
-      'meta_description' => 'Looking for the best visa consultants in Bangalore? Get expert help from top immigration consultants for student visas, Canada PR, US tourist visa, Australia visa and overseas education guidance.',
-      'keywords' => [
-        'best visa consultants in bangalore',
-        'top immigration consultants in bangalore',
-        'student visa consultancy bangalore',
-        'canada pr visa consultants in bangalore',
-        'us tourist visa agents bangalore',
-        'australia visa consultants bangalore',
-        'overseas education consultants in bangalore',
-      ],
-      'hero_h1' => 'Best Visa Consultants in Bangalore',
-      'hero_tagline' => 'Trusted by students, professionals and families across Bangalore for visa, immigration and overseas education guidance.',
-      'intro_heading' => 'Bangalore\'s Go-To Visa & Immigration Consultants',
-      'intro' => 'If you\'ve been searching for the best visa consultants in Bangalore, our team supports applicants across the city with honest, document-first guidance — whether you\'re a student planning to study abroad, a professional applying for a Canada PR visa, or a family booking a US tourist visa. We combine pan-India visa expertise with a Bangalore-focused service model, so you get direct, responsive support without needing to travel to a consulate city yourself.',
-      'services' => [
-        [
-          'title' => 'Student Visa Consultancy in Bangalore',
-          'keyword_note' => 'student visa consultancy bangalore',
-          'desc' => 'End-to-end student visa consultancy for Bangalore-based students — university shortlisting inputs, SOP review, financial documentation and visa interview preparation for the USA, UK, Canada and Australia.',
-          'icon' => 'fa-graduation-cap',
-        ],
-        [
-          'title' => 'Canada PR Visa Consultants',
-          'keyword_note' => 'canada pr visa consultants in bangalore',
-          'desc' => 'Guidance on Express Entry / PR-track documentation, visitor and Super Visa applications for Bangalore applicants and their families.',
-          'icon' => 'fa-maple-leaf',
-          'country_link' => 'canada',
-        ],
-        [
-          'title' => 'US Tourist Visa Agents',
-          'keyword_note' => 'us tourist visa agents bangalore',
-          'desc' => 'DS-160 filing, appointment scheduling and mock interview preparation for B1/B2 tourist and visiting-family visas.',
-          'icon' => 'fa-flag-usa',
-          'country_link' => 'usa',
-        ],
-        [
-          'title' => 'Australia Visa Consultants',
-          'keyword_note' => 'australia visa consultants bangalore',
-          'desc' => 'Support with visitor, student-dependent and business visa documentation for travel to Australia.',
-          'icon' => 'fa-earth-oceania',
-          'country_link' => 'australia',
-        ],
-        [
-          'title' => 'Overseas Education Consultants',
-          'keyword_note' => 'overseas education consultants in bangalore',
-          'desc' => 'Complementing our student visa services with guidance on application timelines, financial proof planning and pre-departure preparation for Bangalore students.',
-          'icon' => 'fa-book-open',
-        ],
-        [
-          'title' => 'Immigration Documentation Support',
-          'keyword_note' => 'top immigration consultants in bangalore',
-          'desc' => 'Careful, checklist-driven documentation support across visa categories — the detail-focused approach Bangalore applicants look for in an immigration consultant.',
-          'icon' => 'fa-passport',
-        ],
-      ],
-      'faqs' => [
-        ['q' => 'Who are the best visa consultants in Bangalore for students and families?', 'a' => 'We support both individual travelers and students across Bangalore with documentation, application filing and interview preparation for major visa destinations — with a focus on transparent, honest guidance rather than approval guarantees.'],
-        ['q' => 'Do you offer student visa consultancy in Bangalore for the USA, UK, Canada and Australia?', 'a' => 'Yes. Our student visa consultancy covers SOP review, financial documentation, and visa interview preparation across these destinations.'],
-        ['q' => 'Can Bangalore applicants apply for a Canada PR visa through your consultants?', 'a' => 'We guide Bangalore-based applicants through PR-track documentation and Super Visa / visitor visa applications; the final PR decision rests with IRCC.'],
-        ['q' => 'How do US tourist visa agents in Bangalore help with the application?', 'a' => 'We help with DS-160 form filing, appointment booking, document checklists and mock interview sessions to help you prepare confidently.'],
-        ['q' => 'What should I look for in top immigration consultants in Bangalore?', 'a' => 'Look for clear documentation checklists, no guaranteed-approval claims (no consultant can guarantee a visa outcome), transparent fees, and consultants who explain each step of the process.'],
-      ],
-    ],
+    global $conn;
 
-    'hyderabad' => [
-      'name' => 'Hyderabad',
-      'order' => 20,
-      'meta_title' => 'Best Visa Consultants in Hyderabad | Student, Work & Schengen Visa Processing Agency – Vocation Travels And Tours',
-      'meta_description' => 'Best visa consultants in Hyderabad for US & UK student visas, Schengen tourist visas and work visa applications. A Hyderabad visa processing agency you can rely on.',
-      'keywords' => [
-        'best visa consultants in hyderabad',
-        'top 10 immigration consultants in hyderabad',
-        'us student visa consultants in hyderabad',
-        'uk student visa consultancy hyderabad',
-        'schengen tourist visa agents hyderabad',
-        'work visa consultants in hyderabad',
-        'hyderabad visa processing agency',
-      ],
-      'hero_h1' => 'Best Visa Consultants in Hyderabad',
-      'hero_tagline' => 'A Hyderabad visa processing agency for student, work and Schengen tourist visa applicants.',
-      'intro_heading' => 'Hyderabad\'s Visa Processing & Student Visa Specialists',
-      'intro' => 'Searching for the best visa consultants in Hyderabad? We work with students heading to the US and UK, professionals applying for work visas, and travelers planning Schengen trips — handling documentation, application filing and interview preparation as a dedicated Hyderabad visa processing agency.',
-      'services' => [
-        [
-          'title' => 'US Student Visa Consultants',
-          'keyword_note' => 'us student visa consultants in hyderabad',
-          'desc' => 'F-1 visa documentation guidance, DS-160 support and interview preparation for Hyderabad students admitted to US universities.',
-          'icon' => 'fa-flag-usa',
-          'country_link' => 'usa',
-        ],
-        [
-          'title' => 'UK Student Visa Consultancy',
-          'keyword_note' => 'uk student visa consultancy hyderabad',
-          'desc' => 'Support with UK student visitor documentation, financial evidence planning and application filing for Hyderabad-based students.',
-          'icon' => 'fa-book-open',
-          'country_link' => 'uk',
-        ],
-        [
-          'title' => 'Schengen Tourist Visa Agents',
-          'keyword_note' => 'schengen tourist visa agents hyderabad',
-          'desc' => 'Documentation and appointment guidance for Schengen tourist visas covering popular European travel itineraries.',
-          'icon' => 'fa-earth-europe',
-          'country_link' => 'europe',
-        ],
-        [
-          'title' => 'Work Visa Consultants',
-          'keyword_note' => 'work visa consultants in hyderabad',
-          'desc' => 'Documentation support for work-related travel and employer-sponsored visa categories across our supported destinations.',
-          'icon' => 'fa-briefcase',
-        ],
-        [
-          'title' => 'Hyderabad Visa Processing Agency',
-          'keyword_note' => 'hyderabad visa processing agency',
-          'desc' => 'Application form filing, visa fee payment guidance and visa application centre appointment booking handled end-to-end.',
-          'icon' => 'fa-passport',
-        ],
-        [
-          'title' => 'Immigration Documentation Support',
-          'keyword_note' => 'top 10 immigration consultants in hyderabad',
-          'desc' => 'A checklist-driven, detail-focused documentation process — the kind of thorough support applicants look for when comparing immigration consultants in Hyderabad.',
-          'icon' => 'fa-magnifying-glass',
-        ],
-      ],
-      'faqs' => [
-        ['q' => 'Who are the best visa consultants in Hyderabad for students and working professionals?', 'a' => 'We assist Hyderabad-based students and professionals with documentation, application filing and interview preparation for US, UK, Schengen and work visa categories.'],
-        ['q' => 'Do you provide US student visa consultancy in Hyderabad?', 'a' => 'Yes, we support F-1 visa documentation, DS-160 filing and interview preparation for students heading to US universities.'],
-        ['q' => 'Is there a UK student visa consultancy in Hyderabad that helps with financial documentation?', 'a' => 'Yes, we guide Hyderabad students through UK student visitor visa financial evidence requirements and application filing.'],
-        ['q' => 'How do Schengen tourist visa agents in Hyderabad handle the application?', 'a' => 'We help you choose the correct Schengen entry-point country, prepare the document set and book your visa application centre appointment.'],
-        ['q' => 'What does a Hyderabad visa processing agency actually handle for me?', 'a' => 'From document checklists and form filing to appointment booking and status tracking — we manage the process end-to-end so you know what\'s happening at each stage.'],
-      ],
-    ],
-  ];
+    $cities = [];
+    if ($conn && !$conn->connect_error) {
+        $sql = "SELECT * FROM visa_cities WHERE status = 'active' ORDER BY city_order ASC";
+        $res = @mysqli_query($conn, $sql);
+
+        if ($res) {
+            while ($row = mysqli_fetch_assoc($res)) {
+                $cities[$row['slug']] = __visa_city_row_to_array($row);
+            }
+        }
+    }
+
+    // Additional prominent Indian cities for full Pan-India coverage if not already in DB
+    $additionalProminentCities = [
+        'noida' => 'Noida',
+        'gurgaon' => 'Gurgaon',
+        'goa' => 'Goa',
+        'shimla' => 'Shimla',
+        'jamshedpur' => 'Jamshedpur',
+        'udaipur' => 'Udaipur',
+        'jodhpur' => 'Jodhpur',
+        'kanpur' => 'Kanpur',
+        'allahabad' => 'Prayagraj (Allahabad)'
+    ];
+
+    foreach ($additionalProminentCities as $slug => $cName) {
+        if (!isset($cities[$slug])) {
+            $cities[$slug] = __generate_dynamic_city_profile($slug);
+        }
+    }
+
+    return $cities;
 }
 
 function get_visa_city($slug)
 {
-  $cities = get_visa_cities();
-  return $cities[$slug] ?? null;
+    global $conn;
+
+    if ($slug === '') {
+        return null;
+    }
+
+    if ($conn && !$conn->connect_error) {
+        $stmt = @mysqli_prepare($conn, "SELECT * FROM visa_cities WHERE slug = ? AND status = 'active' LIMIT 1");
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "s", $slug);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $row = $result ? mysqli_fetch_assoc($result) : null;
+            mysqli_stmt_close($stmt);
+
+            if ($row) {
+                return __visa_city_row_to_array($row);
+            }
+        }
+    }
+
+    // Fallback: Check if valid alphanumeric city slug, dynamically generate programmatic profile
+    if (preg_match('/^[a-z0-9-]+$/', $slug) && strlen($slug) >= 3 && strlen($slug) <= 40) {
+        return __generate_dynamic_city_profile($slug);
+    }
+
+    return null;
 }

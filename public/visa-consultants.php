@@ -22,7 +22,7 @@ $other_cities = array_filter($cities, fn($k) => $k !== $slug, ARRAY_FILTER_USE_K
 $meta_title = $city['meta_title'];
 $meta_description = $city['meta_description'];
 $meta_keywords = $city['keywords'];
-$canonical_path = 'visa-consultants.php?city=' . $slug;
+$canonical_path = 'visa-consultants-' . $slug . '/';
 
 // Schema.org structured data (technical SEO): Service + FAQPage + BreadcrumbList.
 // Note: this is a service-area business (no physical branch office claimed in this city),
@@ -43,7 +43,7 @@ $schema = [
         'name' => $contact['company_name'] ?? 'Vocation Travels And Tours',
         'telephone' => $contact['phone'] ?? '',
         'email' => $contact['email'] ?? '',
-        'url' => $site . 'visa-consultants.php?city=' . $slug,
+        'url' => $site . 'visa-consultants-' . $slug . '/',
       ],
       'description' => $city['meta_description'],
     ],
@@ -62,8 +62,8 @@ $schema = [
       '@type' => 'BreadcrumbList',
       'itemListElement' => [
         ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $site],
-        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Visa Services', 'item' => $site . 'visa-services.php'],
-        ['@type' => 'ListItem', 'position' => 3, 'name' => $city['hero_h1'], 'item' => $site . 'visa-consultants.php?city=' . $slug],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Visa Services', 'item' => $site . 'visa-services/'],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $city['hero_h1'], 'item' => $site . 'visa-consultants-' . $slug . '/'],
       ],
     ],
   ],
@@ -123,7 +123,7 @@ $schema = [
     <!-- Hero -->
     <section class="relative w-full overflow-hidden" style="padding-top: 10rem; padding-bottom: 5rem; background: linear-gradient(120deg, #0f2b12, #1a1a1a);">
       <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/about_1.mp4" type="video/mp4">
+        <source src="<?= $site ?>assets/videos/about_1.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
       <div class="absolute inset-0 opacity-30" style="background: radial-gradient(circle at 20% 20%, #1ec700 0%, transparent 40%), radial-gradient(circle at 80% 80%, #e11d48 0%, transparent 40%);"></div>
@@ -134,7 +134,7 @@ $schema = [
         <p class="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto mb-6 font-light">
           <?= htmlspecialchars($city['hero_tagline']) ?>
         </p>
-        <a href="contact.php#contactform"
+        <a href="<?= $site ?>contact/#contactform"
           class="inline-block px-8 py-3 rounded-full text-white font-medium bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition-all duration-200">
           Get Free Consultation
         </a>
@@ -143,8 +143,8 @@ $schema = [
 
     <!-- Breadcrumb -->
     <div class="max-w-5xl mx-auto px-6 pt-6 text-sm text-gray-500">
-      <a href="index.php" class="hover:underline">Home</a> /
-      <a href="visa-services.php" class="hover:underline">Visa Services</a> /
+      <a href="<?= $site ?>" class="hover:underline">Home</a> /
+      <a href="<?= $site ?>visa-services/" class="hover:underline">Visa Services</a> /
       <span class="text-gray-700"><?= htmlspecialchars($city['name']) ?></span>
     </div>
 
@@ -167,7 +167,7 @@ $schema = [
               <h3 class="text-lg font-bold text-gray-800 mb-2"><?= htmlspecialchars($service['title']) ?></h3>
               <p class="text-gray-600 text-sm leading-relaxed mb-3"><?= htmlspecialchars($service['desc']) ?></p>
               <?php if (!empty($service['country_link']) && isset($countries[$service['country_link']])): ?>
-                <a href="visa-country.php?country=<?= htmlspecialchars($service['country_link']) ?>"
+                <a href="<?= $site ?>visa-services/<?= htmlspecialchars($service['country_link']) ?>/"
                   class="text-sm font-semibold" style="color:#e11d48;">
                   View <?= htmlspecialchars($countries[$service['country_link']]['name']) ?> Visa Details &rarr;
                 </a>
@@ -229,12 +229,12 @@ $schema = [
         <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">Explore More</h2>
         <div class="flex flex-wrap justify-center gap-4">
           <?php foreach ($other_cities as $oslug => $ocity): ?>
-            <a href="visa-consultants.php?city=<?= htmlspecialchars($oslug) ?>"
+            <a href="<?= $site ?>visa-consultants-<?= htmlspecialchars($oslug) ?>/"
               class="px-5 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm transition">
               Visa Consultants in <?= htmlspecialchars($ocity['name']) ?>
             </a>
           <?php endforeach; ?>
-          <a href="visa-services.php"
+          <a href="<?= $site ?>visa-services/"
             class="px-5 py-2 rounded-full text-white font-medium text-sm bg-gradient-to-r from-[#1ec700] to-[#e11d48] transition">
             View All Visa Services
           </a>
@@ -249,7 +249,7 @@ $schema = [
         <p class="md:text-lg leading-relaxed">
           Get a free, no-obligation review of your visa documentation and next steps.
         </p>
-        <a href="contact.php#contactform"
+        <a href="<?= $site ?>contact/#contactform"
           class="mt-6 inline-block px-6 py-3 bg-white text-green-700 font-semibold rounded-lg shadow-md hover:scale-105 transition duration-300">
           Enquire Now
         </a>
@@ -262,8 +262,8 @@ $schema = [
   <?php include('footer.php') ?>
 
   <!-- Scripts -->
-  <script src="../unpkg.com/alpinejs%403.15.8/dist/cdn.min.js" defer></script>
-  <script src="assets/js/main.js"></script>
+  <script src="<?= $site ?>unpkg.com/alpinejs%403.15.8/dist/cdn.min.js" defer></script>
+  <script src="<?= $site ?>assets/js/main.js"></script>
 </body>
 
 </html>

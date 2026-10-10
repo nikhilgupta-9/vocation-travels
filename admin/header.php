@@ -137,6 +137,15 @@ if (!isset($_SESSION['admin_logged_in'])) {
         </li>
 
         <li>
+            <a class="has-arrow" href="#"><i class="fas fa-map-marker-alt" style="color: #2980b9;"></i> <span>Visa
+                    Cities</span></a>
+            <ul>
+                <li><a href="add-visa-city.php">Add City</a></li>
+                <li><a href="view-visa-cities.php">View Cities</a></li>
+            </ul>
+        </li>
+
+        <li>
             <a href="view-testimonials.php">
                 <i class="fas fa-quote-left" style="color: #16a085;"></i>
                 <span>Testimonials</span></a>

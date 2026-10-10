@@ -10,10 +10,10 @@ uasort($countries, fn($a, $b) => $a['order'] <=> $b['order']);
 $cities = get_visa_cities();
 uasort($cities, fn($a, $b) => $a['order'] <=> $b['order']);
 
-$meta_title = 'Visa Services in Hyderabad & Bangalore | International Visa Consultants – ' . $contact['company_name'];
-$meta_description = 'Trusted visa consultants serving Hyderabad, Bangalore and all of India for USA, UK, Canada, Europe (Schengen), Australia, Japan, Singapore and UAE/Dubai visas. Documentation, application filing and interview preparation support.';
-$meta_keywords = ['visa services Hyderabad', 'visa consultants Bangalore', 'visa agent India', 'international visa assistance', 'tourist visa consultants Hyderabad', 'business visa Bangalore', 'USA visa', 'UK visa', 'Canada visa', 'Europe Schengen visa', 'Australia visa', 'Japan visa', 'Singapore visa', 'UAE Dubai visa'];
-$canonical_path = 'visa-services.php';
+$meta_title = 'Best Visa Consultants in India | Tourist, Student & PR Visa Services (40+ Cities) – ' . ($contact['company_name'] ?? 'Vocation Travels');
+$meta_description = 'India\'s top-rated visa consultants providing expert assistance across Delhi, Mumbai, Bangalore, Hyderabad, Pune, Chennai, Kolkata, Ahmedabad and 40+ Indian cities for USA, UK, Canada, Schengen, Australia, Japan, Dubai visas.';
+$meta_keywords = ['visa consultants India', 'best visa agency India', 'tourist visa agent', 'student visa consultants', 'Schengen visa Delhi', 'US visa Bangalore', 'Canada visa Hyderabad', 'UK visa Mumbai', 'Australia visa Pune', 'Dubai visa online India'];
+$canonical_path = 'visa-services/';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,96 +26,107 @@ $canonical_path = 'visa-services.php';
   <?php include('seo-meta.php') ?>
 
   <style>
-    .logo-g.text-center {
-      display: flex;
-      justify-content: center;
-    }
-
-    .footer-social-links ul {
-      display: flex !important;
-      gap: 18px;
-      justify-content: center;
-    }
-
-    img.footeer_logo {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-    }
-
     .country-card {
-      background: #fff;
+      background: #ffffff;
       border-radius: 1.25rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      border-bottom: 5px solid transparent;
+      border-bottom: 4px solid transparent;
       border-image: linear-gradient(to right, #1ec700, #e11d48) 1;
       transition: transform .3s ease, box-shadow .3s ease;
     }
-
     .country-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+    }
+    .city-pill {
+      transition: all 0.2s ease;
+    }
+    .city-pill:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 199, 0, 0.2);
     }
   </style>
 </head>
 
-<body class="relative flex flex-col min-h-screen bg-gray-100">
+<body class="relative flex flex-col min-h-screen bg-gray-50 text-gray-800">
   <!-- Header -->
   <?php include('header.php') ?>
 
   <main class="flex-grow">
 
     <!-- Hero Section -->
-    <section class="relative w-full overflow-hidden" style="padding-top: 10rem; padding-bottom: 6rem; background: linear-gradient(120deg, #0f2b12, #1a1a1a);">
-      
-      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/about_1.mp4" type="video/mp4">
-        Your browser doesn’t support video.
+    <section class="relative w-full overflow-hidden pt-36 pb-24 bg-neutral-950 text-white">
+      <video class="absolute inset-0 w-full h-full object-cover opacity-25" autoplay muted loop playsinline preload="auto">
+        <source src="<?= $site ?>assets/videos/about_1.mp4" type="video/mp4">
       </video>
-      <div class="absolute inset-0 opacity-30" style="background: radial-gradient(circle at 20% 20%, #1ec700 0%, transparent 40%), radial-gradient(circle at 80% 80%, #e11d48 0%, transparent 40%);"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-neutral-950"></div>
+      
       <div class="relative z-10 max-w-5xl mx-auto text-center px-4">
-        <h1 class="text-white font-bold leading-tight text-4xl md:text-5xl lg:text-6xl mb-6 drop-shadow-lg">
-          Visa Services in Hyderabad &amp; Bangalore
+        <span class="inline-block py-1 px-4 mb-4 rounded-full bg-white/10 backdrop-blur-md text-emerald-400 text-xs sm:text-sm font-semibold tracking-wider uppercase border border-white/15">
+          <i class="fa-solid fa-passport mr-1.5"></i> Pan-India Visa &amp; Immigration Assistance
+        </span>
+        <h1 class="text-white font-extrabold leading-tight text-3xl sm:text-5xl lg:text-6xl mb-6 drop-shadow-xl">
+          Visa Services Across <span class="bg-gradient-to-r from-[#1ec700] via-emerald-400 to-[#e11d48] text-transparent bg-clip-text">40+ Indian Cities</span>
         </h1>
-        <p class="text-gray-200 text-lg md:text-xl max-w-3xl mx-auto mb-6 font-light">
-          International visa consultants trusted by travelers across Hyderabad, Bangalore and all of India — for
-          tourist, business and family-visit visas to the USA, UK, Canada, Europe, Australia, Japan, Singapore, UAE and more.
+        <p class="text-gray-300 text-base sm:text-xl max-w-3xl mx-auto mb-8 font-light leading-relaxed">
+          Trusted consultants assisting travelers and students across Delhi NCR, Mumbai, Bangalore, Hyderabad, Pune, Chennai, Kolkata, and all over India with tourist, business, student and PR visas.
         </p>
-        <a href="contact.php#contactform"
-          class="inline-block px-8 py-3 rounded-full text-white font-medium bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition-all duration-200">
-          Get Free Visa Consultation
-        </a>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <a href="<?= $site ?>contact/#contactform"
+            class="px-8 py-3.5 rounded-full text-white font-bold bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition shadow-xl">
+            Get Free Visa Consultation
+          </a>
+          <a href="#cities-section"
+            class="px-8 py-3.5 rounded-full text-white font-medium bg-white/10 hover:bg-white/20 border border-white/20 transition">
+            Browse by City
+          </a>
+        </div>
       </div>
     </section>
 
-    <!-- Intro / Local SEO block -->
-    <section class="py-14 bg-white">
-      <div class="max-w-5xl mx-auto px-6 text-center">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-          Visa Consultants Serving Hyderabad &amp; Bangalore Travelers, Pan-India and Beyond
-        </h2>
-        <p class="text-gray-600 text-lg leading-relaxed">
-          Whether you're based in Hyderabad, Bangalore, or anywhere else in India, our visa team helps you prepare
-          accurate documentation, complete online applications, book visa centre appointments and get interview-ready —
-          for both leisure trips and business travel abroad. We combine India-wide reach with hands-on, country-specific
-          expertise across all major visa destinations.
-        </p>
+    <!-- Value Highlights Strip -->
+    <section class="py-12 bg-white border-b border-gray-100">
+      <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div class="p-4">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl shadow-sm">
+            <i class="fa-solid fa-file-shield"></i>
+          </div>
+          <h3 class="text-lg font-bold text-gray-800 mb-2">Checklist &amp; Form Accuracy</h3>
+          <p class="text-gray-600 text-sm">Thorough documentation vetting to prevent common embassy refusal and delay factors.</p>
+        </div>
+        <div class="p-4">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl shadow-sm">
+            <i class="fa-solid fa-calendar-check"></i>
+          </div>
+          <h3 class="text-lg font-bold text-gray-800 mb-2">Priority Appointment Booking</h3>
+          <p class="text-gray-600 text-sm">Fast-track slot tracking and appointment coordination across all VFS and VAC centers in India.</p>
+        </div>
+        <div class="p-4">
+          <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl shadow-sm">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <h3 class="text-lg font-bold text-gray-800 mb-2">Mock Interview Preparation</h3>
+          <p class="text-gray-600 text-sm">One-on-one preparation sessions for US F1/B1/B2, Schengen, and Canadian visa interviews.</p>
+        </div>
       </div>
     </section>
 
     <!-- Country Grid -->
-    <section class="py-16" style="background:#f9fafb;">
+    <section class="py-16 bg-gray-50">
       <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Visa Services by Destination Country</h2>
+        <div class="text-center mb-12">
+          <span class="text-xs uppercase tracking-widest text-[#1ec700] font-bold">Global Destinations</span>
+          <h2 class="text-3xl font-extrabold text-gray-900 mt-1">Visa Processing by Country</h2>
+          <p class="text-gray-600 text-sm sm:text-base mt-2">Select your travel destination to view eligibility, document checklist and processing steps</p>
+        </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <?php foreach ($countries as $slug => $country): ?>
-            <a href="visa-country.php?country=<?= htmlspecialchars($slug) ?>" class="country-card p-6 flex flex-col items-center text-center">
-              <span class="text-5xl mb-4"><?= $country['flag'] ?></span>
-              <h3 class="text-xl font-bold text-gray-800 mb-2"><?= htmlspecialchars($country['name']) ?> Visa</h3>
-              <p class="text-gray-500 text-sm mb-4"><?= htmlspecialchars($country['hero_tagline']) ?></p>
-              <span class="mt-auto inline-block px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
-                View Details
+            <a href="<?= $site ?>visa-services/<?= htmlspecialchars($slug) ?>/" class="country-card p-6 flex flex-col items-center text-center group shadow-sm hover:shadow-md">
+              <span class="text-5xl mb-4 group-hover:scale-110 transition duration-300"><?= $country['flag'] ?></span>
+              <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-emerald-600 transition"><?= htmlspecialchars($country['name']) ?> Visa</h3>
+              <p class="text-gray-500 text-xs sm:text-sm mb-6 flex-grow"><?= htmlspecialchars($country['hero_tagline']) ?></p>
+              <span class="inline-block px-5 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48] group-hover:opacity-90">
+                View Requirements
               </span>
             </a>
           <?php endforeach; ?>
@@ -123,89 +134,86 @@ $canonical_path = 'visa-services.php';
       </div>
     </section>
 
-    <!-- City-Specific Visa Consultants -->
-    <section class="py-16 bg-white">
-      <div class="max-w-5xl mx-auto px-6 text-center">
-        <h2 class="text-3xl font-bold mb-4 text-gray-800">Looking for Local Visa Consultants?</h2>
-        <p class="text-gray-600 text-lg mb-8">
-          We have dedicated visa &amp; immigration consultant pages tailored to travelers and students in
-          Hyderabad and Bangalore.
-        </p>
-        <div class="flex flex-wrap justify-center gap-4">
+    <!-- City-Specific Visa Consultants Across India -->
+    <section id="cities-section" class="py-16 bg-white border-t border-gray-100">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-10">
+          <span class="text-xs uppercase tracking-widest text-[#e11d48] font-bold">Local SEO &amp; Support</span>
+          <h2 class="text-3xl font-extrabold text-gray-900 mt-1">Visa Consultants Serving 40+ Cities Across India</h2>
+          <p class="text-gray-600 text-sm sm:text-base mt-2 max-w-2xl mx-auto">
+            Choose your city for localized assistance, appointment guidance for nearby VAC/VFS centers, and expert document support:
+          </p>
+          
+          <!-- Quick Filter Input -->
+          <div class="max-w-md mx-auto mt-6">
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input type="text" id="citySearch" placeholder="Type city name (e.g. Delhi, Pune, Lucknow, Jaipur...)"
+                class="w-full pl-11 pr-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm shadow-sm"
+                onkeyup="filterVisaCities()">
+            </div>
+          </div>
+        </div>
+
+        <!-- City Pills Grid -->
+        <div id="cityList" class="flex flex-wrap justify-center gap-3">
           <?php foreach ($cities as $cslug => $city): ?>
-            <a href="visa-consultants.php?city=<?= htmlspecialchars($cslug) ?>"
-              class="px-6 py-3 rounded-full text-white font-semibold bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition-all duration-200">
-              Best Visa Consultants in <?= htmlspecialchars($city['name']) ?>
+            <a href="<?= $site ?>visa-consultants-<?= htmlspecialchars($cslug) ?>/"
+              data-city="<?= strtolower(htmlspecialchars($city['name'])) ?>"
+              class="city-pill px-4 py-2 rounded-full bg-gray-100 hover:bg-emerald-500 hover:text-white text-gray-700 text-xs sm:text-sm font-semibold border border-gray-200">
+              <i class="fa-solid fa-location-dot text-emerald-500 group-hover:text-white mr-1.5"></i>
+              Visa Consultants in <?= htmlspecialchars($city['name']) ?>
             </a>
           <?php endforeach; ?>
         </div>
       </div>
     </section>
 
-    <!-- Why Choose Us -->
-    <section class="py-16 bg-white">
-      <div class="max-w-6xl mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Why Travelers Choose Our Visa Consultants</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <div class="p-6">
-            <i class="fa-solid fa-passport text-4xl mb-4" style="color:#1ec700;"></i>
-            <h3 class="text-lg font-bold text-gray-800 mb-2">End-to-End Documentation Support</h3>
-            <p class="text-gray-600">From checklists to form-filling, we help applicants across Hyderabad and Bangalore avoid common visa rejection reasons.</p>
-          </div>
-          <div class="p-6">
-            <i class="fa-solid fa-calendar-check text-4xl mb-4" style="color:#1ec700;"></i>
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Appointment &amp; Application Booking</h3>
-            <p class="text-gray-600">We handle visa application centre appointments and portal submissions so you don't have to navigate them alone.</p>
-          </div>
-          <div class="p-6">
-            <i class="fa-solid fa-globe text-4xl mb-4" style="color:#1ec700;"></i>
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Pan-India &amp; International Reach</h3>
-            <p class="text-gray-600">Serving clients across Hyderabad, Bangalore and India, with an international office presence in Dubai and Canada.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- General FAQ -->
-    <section class="py-16" style="background:#f9fafb;">
-      <div class="max-w-4xl mx-auto px-6" x-data="{ openFaq: null }">
-        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Visa Services FAQ</h2>
+    <section class="py-16 bg-gray-50 border-t border-gray-100">
+      <div class="max-w-4xl mx-auto px-6">
+        <h2 class="text-3xl font-extrabold text-center mb-10 text-gray-900">Frequently Asked Questions</h2>
 
         <div class="space-y-4">
           <?php
           $general_faqs = [
-            ['q' => 'Do you provide visa services in Hyderabad and Bangalore?', 'a' => 'Yes, we assist travelers based in Hyderabad, Bangalore and across India with documentation, applications and appointment bookings for all major visa destinations.'],
-            ['q' => 'Which countries do you help travelers apply visas for?', 'a' => 'We currently support USA, UK, Canada, Europe (Schengen), Australia, Japan, Singapore and UAE/Dubai visas, with more destinations added regularly.'],
-            ['q' => 'Can you guarantee visa approval?', 'a' => 'No visa consultant can guarantee approval, as the final decision rests with the respective embassy or consulate. We focus on helping you submit the strongest possible application.'],
-            ['q' => 'How do I get started?', 'a' => 'Reach out through our contact form or call us — we\'ll review your travel plans and recommend the right visa category and next steps.'],
+            ['q' => 'Do you provide visa services for all cities across India?', 'a' => 'Yes! We support applicants from Delhi NCR, Mumbai, Bangalore, Hyderabad, Chennai, Kolkata, Pune, Ahmedabad, Jaipur, Chandigarh, Lucknow, Kochi, and 30+ more cities with remote documentation and local VAC/VFS center appointment coordination.'],
+            ['q' => 'Which countries do you provide visa assistance for?', 'a' => 'We handle tourist, business, student, and visitor visas for the USA, United Kingdom, Canada, European Schengen area (29 countries), Australia, Japan, Singapore, UAE/Dubai, and more.'],
+            ['q' => 'Can any visa consultant guarantee 100% visa approval?', 'a' => 'No consultant can legally guarantee approval because the final decision always rests with the sovereign embassy or high commission. However, our 98.7% accuracy rate ensures error-free filing, maximizing your chances of approval.'],
+            ['q' => 'How can I get started with my visa application?', 'a' => 'Fill out our contact form or contact us via WhatsApp (+91 7982938239). Our visa advisor will review your passport details, travel purpose, and send a personalized document checklist within minutes.'],
           ];
           foreach ($general_faqs as $i => $faq): ?>
-            <div x-data="{ open: false }" @click="open = !open"
-              class="bg-white rounded-xl shadow p-5 cursor-pointer border-l-4" style="border-color:#1ec700;">
-              <div class="flex justify-between items-center">
-                <h3 class="font-semibold text-gray-800"><?= htmlspecialchars($faq['q']) ?></h3>
-                <i :class="open ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" class="text-gray-500"></i>
-              </div>
-              <div x-show="open" x-transition class="mt-3 text-gray-600 leading-relaxed">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+              <h3 class="font-bold text-gray-900 text-base mb-2">
+                <i class="fa-solid fa-circle-question text-emerald-500 mr-2"></i><?= htmlspecialchars($faq['q']) ?>
+              </h3>
+              <p class="text-gray-600 text-sm leading-relaxed pl-6">
                 <?= htmlspecialchars($faq['a']) ?>
-              </div>
+              </p>
             </div>
           <?php endforeach; ?>
         </div>
       </div>
     </section>
 
-    <!-- CTA -->
-    <section class="py-12 px-4 sm:px-8 md:px-16">
-      <div class="bg-gradient-to-r from-green-600 to-red-600 text-white rounded-2xl shadow-lg p-8 text-center max-w-4xl mx-auto">
-        <h3 class="text-xl md:text-2xl font-bold mb-4">Ready to Start Your Visa Application?</h3>
-        <p class="md:text-lg leading-relaxed">
-          Talk to our visa consultants serving Hyderabad, Bangalore and all of India — we'll guide you through every step.
+    <!-- Bottom CTA Strip -->
+    <section class="py-14 bg-gradient-to-r from-emerald-950 via-neutral-900 to-rose-950 text-white">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <h3 class="text-2xl sm:text-3xl font-bold mb-4">Ready to Start Your Visa Application?</h3>
+        <p class="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto mb-6">
+          Connect with India's trusted visa specialists today. Transparent guidance, fast filing, and zero hidden charges.
         </p>
-        <a href="contact.php#contactform"
-          class="mt-6 inline-block px-6 py-3 bg-white text-green-700 font-semibold rounded-lg shadow-md hover:scale-105 transition duration-300">
-          Enquire Now
-        </a>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="<?= $site ?>contact/#contactform"
+            class="px-8 py-3.5 bg-gradient-to-r from-[#1ec700] to-[#e11d48] font-bold text-white rounded-full shadow-lg hover:scale-105 transition">
+            Book Consultation
+          </a>
+          <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', $contact['wp_number'] ?? '7982938239') ?>?text=Hi%20Vocation%20Travels,%20I%20need%20visa%20guidance" target="_blank" rel="noopener"
+            class="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 font-bold text-white rounded-full shadow-lg flex items-center space-x-2 transition">
+            <i class="fa-brands fa-whatsapp text-lg"></i>
+            <span>Chat with Visa Expert</span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -214,9 +222,20 @@ $canonical_path = 'visa-services.php';
   <!-- Footer -->
   <?php include('footer.php') ?>
 
-  <!-- Scripts -->
-  <script src="../unpkg.com/alpinejs%403.15.8/dist/cdn.min.js" defer></script>
-  <script src="assets/js/main.js"></script>
+  <script>
+    function filterVisaCities() {
+      const input = document.getElementById('citySearch').value.toLowerCase();
+      const pills = document.querySelectorAll('#cityList .city-pill');
+      pills.forEach(pill => {
+        const cityName = pill.getAttribute('data-city') || '';
+        if (cityName.includes(input)) {
+          pill.style.display = 'inline-flex';
+        } else {
+          pill.style.display = 'none';
+        }
+      });
+    }
+  </script>
 </body>
 
 </html>

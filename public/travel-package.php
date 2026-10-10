@@ -3,6 +3,11 @@ include_once __DIR__ . "/../config/connect.php";
 include_once __DIR__ . "/../util/function.php";
 
 $contact = contact_us();
+
+$meta_title = 'Tour Packages – Domestic & International Holiday Packages | ' . ($contact['company_name'] ?? 'Vocation Travels');
+$meta_description = 'Browse exclusive domestic and international holiday tour packages crafted for unforgettable experiences. Curated itineraries for travelers across India (Delhi, Mumbai, Bangalore, Hyderabad & 40+ cities).';
+$meta_keywords = ['travel packages India', 'international tour packages', 'domestic tour packages India', 'holiday packages Delhi', 'holiday packages Mumbai', 'holiday packages Bangalore', 'book travel package 2026'];
+$canonical_path = 'travel-package/';
 ?>
 
 <!DOCTYPE html>
@@ -11,8 +16,9 @@ $contact = contact_us();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Travel Package – <?= $contact['company_name'] ?></title>
+  <title><?= htmlspecialchars($meta_title) ?></title>
   <?php include('link.php') ?>
+  <?php include('seo-meta.php') ?>
 
   <style>
     .body {
@@ -93,8 +99,8 @@ $contact = contact_us();
   <main class="flex-grow">
     <!-- Luxury Banner Section with Video Background -->
     <section class="relative h-screen w-full overflow-hidden">
-      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/TravelPackages.mp4" type="video/mp4">
+      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="auto">
+        <source src="<?= $site ?>assets/videos/TravelPackages.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
       <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -105,7 +111,7 @@ $contact = contact_us();
         <p class="text-indigo-100 text-lg sm:text-xl md:text-2xl max-w-2xl mb-4 font-light drop-shadow">
           Explore our exclusive travel packages designed to create unforgettable experiences.
         </p>
-        <a href="contact.php#contactform"
+        <a href="<?= $site ?>contact/#contactform"
           class="inline-block px-6 py-3 border border-white rounded-full text-white font-medium hover:bg-white hover:text-black transition-colors duration-200 mt-4">
           Book Now
         </a>
@@ -146,7 +152,7 @@ $contact = contact_us();
 
           <!-- CTA Button -->
           <div class="flex justify-center md:justify-center">
-            <a href="contact.php#contactform" class="inline-block px-6 py-3 rounded-xl font-semibold text-white 
+            <a href="<?= $site ?>contact/#contactform" class="inline-block px-6 py-3 rounded-xl font-semibold text-white 
                   bg-gradient-to-r from-[#1ec700] via-[#1ec700] to-[#e11d48] 
                   shadow-lg hover:scale-105 hover:shadow-xl 
                   transition-all duration-300" style="border-radius: 35px;">
@@ -185,7 +191,7 @@ $contact = contact_us();
           bespoke private transfers to stays in world-renowned suites, every journey is tailored to your personal
           preferences, ensuring an unparalleled and unforgettable experience.
         </p>
-        <a href="contact.php#contactform"
+        <a href="<?= $site ?>contact/#contactform"
           class="mt-6 inline-block px-6 py-3 bg-white text-green-700 font-semibold rounded-lg shadow-md hover:scale-105 transition duration-300">
           Enquire for Luxury Upgrades
         </a>
@@ -195,7 +201,7 @@ $contact = contact_us();
   </main>
   <?php include('footer.php') ?>
 
-  <script src="assets/js/main.js"></script>
+  <script src="<?= $site ?>assets/js/main.js"></script>
 
 
 </body>

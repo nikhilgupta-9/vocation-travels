@@ -143,71 +143,83 @@ function initTextCarousel() {
 
 
 
-  gsap.registerPlugin(ScrollTrigger);
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
 
-  function createHorizontalScroll(container, slides, onUpdate) {
-  let sections = gsap.utils.toArray(slides + " > div");
-  let total = sections.length;
+    function createHorizontalScroll(container, slides, onUpdate) {
+      const contEl = document.querySelector(container);
+      if (!contEl) return { sections: [], tween: null, scrollTrigger: null, total: 0 };
+      let sections = gsap.utils.toArray(slides + " > div");
+      let total = sections.length;
+      if (total === 0) return { sections: [], tween: null, scrollTrigger: null, total: 0 };
 
-  let tween = gsap.to(sections, {
-    xPercent: -100 * (sections.length - 1),
-    ease: "none",
-    scrollTrigger: {
-      trigger: container,
-      pin: true,
-      scrub: 1,
-      snap: 1 / (sections.length - 1),
-      end: () => "+=" + ((sections.length * window.innerWidth) - window.innerWidth),
-      onUpdate: (self) => {
-        if (typeof onUpdate === 'function') {
-          const idx = Math.round(self.progress * (total - 1));
-          onUpdate(idx, total, self);
+      let tween = gsap.to(sections, {
+        xPercent: -100 * (sections.length - 1),
+        ease: "none",
+        scrollTrigger: {
+          trigger: container,
+          pin: true,
+          scrub: 1,
+          snap: (total > 1) ? 1 / (sections.length - 1) : 0,
+          end: () => "+=" + ((sections.length * window.innerWidth) - window.innerWidth),
+          onUpdate: (self) => {
+            if (typeof onUpdate === 'function') {
+              const idx = Math.round(self.progress * (total - 1));
+              onUpdate(idx, total, self);
+            }
+          }
         }
+      });
+
+      return { sections, tween, scrollTrigger: tween ? tween.scrollTrigger : null, total };
+    }
+
+    function createDotsController(dotsId) {
+      const dots = document.querySelectorAll(`#${dotsId} .dot`);
+      const setActive = (idx) => {
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('bg-opacity-100', i === idx);
+          dot.classList.toggle('bg-opacity-50', i !== idx);
+        });
+      };
+      return { dots, setActive };
+    }
+
+    function attachDotClicks(dots, scrollTrigger, total) {
+      if (!dots || !dots.length || !scrollTrigger) return;
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+          const targetProgress = (total === 1) ? 0 : (i / (total - 1));
+          const targetScroll = scrollTrigger.start + targetProgress * (scrollTrigger.end - scrollTrigger.start);
+          window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+        });
+      });
+    }
+
+    const workSlider1 = document.getElementById('work-slider');
+    const workSlider2 = document.getElementById('work-slider2');
+
+    if (workSlider1 || workSlider2) {
+      const dotsCtl1 = createDotsController('slider-dots');
+      const dotsCtl2 = createDotsController('slider-dots2');
+      dotsCtl1.setActive(0);
+      dotsCtl2.setActive(0);
+
+      const slider1 = createHorizontalScroll("#work-slider", "#slides", (idx, total, self) => {
+        dotsCtl1.setActive(idx);
+      });
+      const slider2 = createHorizontalScroll("#work-slider2", "#slides2", (idx, total, self) => {
+        dotsCtl2.setActive(idx);
+      });
+
+      if (slider1 && slider1.scrollTrigger) {
+        attachDotClicks(dotsCtl1.dots, slider1.scrollTrigger, slider1.total);
+      }
+      if (slider2 && slider2.scrollTrigger) {
+        attachDotClicks(dotsCtl2.dots, slider2.scrollTrigger, slider2.total);
       }
     }
-  });
-
-  return { sections, tween, scrollTrigger: tween.scrollTrigger, total };
-}
-
-function createDotsController(dotsId) {
-  const dots = document.querySelectorAll(`#${dotsId} .dot`);
-  const setActive = (idx) => {
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('bg-opacity-100', i === idx);
-      dot.classList.toggle('bg-opacity-50', i !== idx);
-    });
-  };
-  return { dots, setActive };
-}
-
-function attachDotClicks(dots, scrollTrigger, total) {
-  if (!dots || !dots.length || !scrollTrigger) return;
-  dots.forEach((dot, i) => {
-    dot.addEventListener('click', () => {
-      const targetProgress = (total === 1) ? 0 : (i / (total - 1));
-      const targetScroll = scrollTrigger.start + targetProgress * (scrollTrigger.end - scrollTrigger.start);
-      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    });
-  });
-}
-
-
-
-  const dotsCtl1 = createDotsController('slider-dots');
-  const dotsCtl2 = createDotsController('slider-dots2');
-  dotsCtl1.setActive(0);
-  dotsCtl2.setActive(0);
-
-  const slider1 = createHorizontalScroll("#work-slider", "#slides", (idx, total, self) => {
-    dotsCtl1.setActive(idx);
-  });
-  const slider2 = createHorizontalScroll("#work-slider2", "#slides2", (idx, total, self) => {
-    dotsCtl2.setActive(idx);
-  });
-
-  attachDotClicks(dotsCtl1.dots, slider1.scrollTrigger, slider1.total);
-  attachDotClicks(dotsCtl2.dots, slider2.scrollTrigger, slider2.total);
+  }
 
 document.addEventListener('DOMContentLoaded', () => {
   // === Data (fixed with Indian faces where relevant) ===

@@ -17,7 +17,7 @@ if (!$country) {
 $meta_title = $country['meta_title'];
 $meta_description = $country['meta_description'];
 $meta_keywords = $country['keywords'];
-$canonical_path = 'visa-country.php?country=' . $slug;
+$canonical_path = 'visa-services/' . $slug . '/';
 
 // Related countries for internal linking (excluding current one)
 $related = array_filter($countries, fn($k) => $k !== $slug, ARRAY_FILTER_USE_KEY);
@@ -62,7 +62,7 @@ $related = array_slice($related, 0, 3, true);
     <!-- Hero -->
     <section class="relative w-full overflow-hidden" style="padding-top: 10rem; padding-bottom: 5rem; background: linear-gradient(120deg, #0f2b12, #1a1a1a);">
       <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-        <source src="assets/videos/ContactUs.mp4" type="video/mp4">
+        <source src="<?= $site ?>assets/videos/ContactUs.mp4" type="video/mp4">
         Your browser doesn’t support video.
       </video>
       <div class="relative z-10 max-w-4xl mx-auto text-center px-4">
@@ -73,7 +73,7 @@ $related = array_slice($related, 0, 3, true);
         <p class="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto mb-6 font-light">
           <?= htmlspecialchars($country['hero_tagline']) ?>
         </p>
-        <a href="contact.php#contactform"
+        <a href="<?= $site ?>contact/#contactform"
           class="inline-block px-8 py-3 rounded-full text-white font-medium bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition-all duration-200">
           Get Free Consultation
         </a>
@@ -82,8 +82,8 @@ $related = array_slice($related, 0, 3, true);
 
     <!-- Breadcrumb -->
     <div class="max-w-5xl mx-auto px-6 pt-6 text-sm text-gray-500">
-      <a href="index.php" class="hover:underline">Home</a> /
-      <a href="visa-services.php" class="hover:underline">Visa Services</a> /
+      <a href="<?= $site ?>" class="hover:underline">Home</a> /
+      <a href="<?= $site ?>visa-services/" class="hover:underline">Visa Services</a> /
       <span class="text-gray-700"><?= htmlspecialchars($country['name']) ?></span>
     </div>
 
@@ -169,12 +169,12 @@ $related = array_slice($related, 0, 3, true);
         <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">Explore Other Visa Destinations</h2>
         <div class="flex flex-wrap justify-center gap-4">
           <?php foreach ($related as $rslug => $rcountry): ?>
-            <a href="visa-country.php?country=<?= htmlspecialchars($rslug) ?>"
+            <a href="<?= $site ?>visa-services/<?= htmlspecialchars($rslug) ?>/"
               class="px-5 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm transition">
               <?= $rcountry['flag'] ?> <?= htmlspecialchars($rcountry['name']) ?> Visa
             </a>
           <?php endforeach; ?>
-          <a href="visa-services.php"
+          <a href="<?= $site ?>visa-services/"
             class="px-5 py-2 rounded-full text-white font-medium text-sm bg-gradient-to-r from-[#1ec700] to-[#e11d48] transition">
             View All Visa Services
           </a>
@@ -189,7 +189,7 @@ $related = array_slice($related, 0, 3, true);
         <p class="md:text-lg leading-relaxed">
           Our consultants in Hyderabad and Bangalore are ready to guide your <?= htmlspecialchars($country['name']) ?> visa application from start to finish.
         </p>
-        <a href="contact.php#contactform"
+        <a href="<?= $site ?>contact/#contactform"
           class="mt-6 inline-block px-6 py-3 bg-white text-green-700 font-semibold rounded-lg shadow-md hover:scale-105 transition duration-300">
           Enquire Now
         </a>
@@ -202,8 +202,8 @@ $related = array_slice($related, 0, 3, true);
   <?php include('footer.php') ?>
 
   <!-- Scripts -->
-  <script src="../unpkg.com/alpinejs%403.15.8/dist/cdn.min.js" defer></script>
-  <script src="assets/js/main.js"></script>
+  <script src="<?= $site ?>unpkg.com/alpinejs%403.15.8/dist/cdn.min.js" defer></script>
+  <script src="<?= $site ?>assets/js/main.js"></script>
 </body>
 
 </html>
