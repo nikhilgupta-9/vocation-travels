@@ -2,324 +2,841 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-session_start();
-require '../db-conn.php'; // Database connection
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../db-conn.php';
 
 // Redirect if already logged in
-if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true && !empty($_SESSION['admin_id'])) {
     header("Location: ../index.php");
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // CSRF protection
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $error = "Invalid request";
+$error = null;
+$success = null;
+
+// Handle logout notification
+if (isset($_GET['logged_out']) && $_GET['logged_out'] == '1') {
+    $success = "You have been safely logged out.";
+}
+
+// Generate CSRF token if missing
+if (empty($_SESSION['admin_csrf_token'])) {
+    $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $submitted_token = $_POST['csrf_token'] ?? '';
+    
+    // CSRF verification
+    if (empty($submitted_token) || !hash_equals($_SESSION['admin_csrf_token'], $submitted_token)) {
+        $error = "Session expired or invalid security token. Please try again.";
     } else {
-        $username = trim($_POST['username']);
-        $password = $_POST['password'];
+        $login_input = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $remember = !empty($_POST['remember']);
 
-        // Prepare SQL statement
-        $stmt = $conn->prepare("SELECT id, username, password FROM admin_user WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-
-        // Use bind_result() instead of get_result()
-        $stmt->bind_result($id, $user, $hashed_password);
-        
-        if ($stmt->fetch()) { // Fetch result
-            if (password_verify($password, $hashed_password)) {
-                // Regenerate session ID to prevent session fixation
-                session_regenerate_id(true);
-                
-                $_SESSION['admin_logged_in'] = true;
-                $_SESSION['admin_id'] = $id;
-                $_SESSION['admin_user'] = $user;
-
-                header("Location: ../index.php");
-                exit();
-            } else {
-                // Delay response to prevent timing attacks
-                usleep(rand(200000, 500000));
-                $error = "Invalid username or password";
-            }
+        if (empty($login_input) || empty($password)) {
+            $error = "Please enter both username/email and password.";
         } else {
-            // Delay response to prevent timing attacks
-            usleep(rand(200000, 500000));
-            $error = "Invalid username or password";
-        }
+            // Find admin by username OR email
+            $stmt = $conn->prepare("SELECT id, username, password, email, first_name, last_name, role, status, failed_attempts, locked_until FROM admin_user WHERE username = ? OR email = ? LIMIT 1");
+            
+            if ($stmt) {
+                $stmt->bind_param("ss", $login_input, $login_input);
+                $stmt->execute();
+                $res = $stmt->get_result();
+                $admin = $res ? $res->fetch_assoc() : null;
+                $stmt->close();
 
-        $stmt->close();
+                if ($admin) {
+                    $now = date('Y-m-d H:i:s');
+                    
+                    // Check if account is locked
+                    if (!empty($admin['locked_until']) && $admin['locked_until'] > $now) {
+                        $lock_time = strtotime($admin['locked_until']) - time();
+                        $lock_minutes = max(1, ceil($lock_time / 60));
+                        $error = "Account temporarily locked due to multiple failed attempts. Try again in {$lock_minutes} minute(s).";
+                    } elseif ($admin['status'] !== 'active') {
+                        $error = "Your account is marked as {$admin['status']}. Please contact administrator.";
+                    } elseif (password_verify($password, $admin['password'])) {
+                        // Password correct - Regenerate session ID
+                        session_regenerate_id(true);
+
+                        $full_name = trim(($admin['first_name'] ?? '') . ' ' . ($admin['last_name'] ?? ''));
+                        if (empty($full_name)) {
+                            $full_name = $admin['username'];
+                        }
+
+                        $_SESSION['admin_logged_in'] = true;
+                        $_SESSION['admin_id'] = (int)$admin['id'];
+                        $_SESSION['admin_user'] = $admin['username'];
+                        $_SESSION['admin_name'] = $full_name;
+                        $_SESSION['admin_email'] = $admin['email'] ?? '';
+                        $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
+                        $_SESSION['login_time'] = time();
+
+                        // Update last login timestamp, IP and reset failed attempts
+                        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+                        $update_stmt = $conn->prepare("UPDATE admin_user SET last_login = NOW(), last_login_ip = ?, failed_attempts = 0, locked_until = NULL WHERE id = ?");
+                        if ($update_stmt) {
+                            $update_stmt->bind_param("si", $ip, $admin['id']);
+                            $update_stmt->execute();
+                            $update_stmt->close();
+                        }
+
+                        // Generate fresh CSRF token for next session
+                        $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
+
+                        // Redirect to admin dashboard
+                        header("Location: ../index.php");
+                        exit();
+                    } else {
+                        // Password wrong - increment failed attempts
+                        $failed = (int)($admin['failed_attempts'] ?? 0) + 1;
+                        $lock_sql = "";
+                        if ($failed >= 5) {
+                            // Lock account for 15 minutes
+                            $lock_time = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+                            $upd = $conn->prepare("UPDATE admin_user SET failed_attempts = ?, locked_until = ? WHERE id = ?");
+                            if ($upd) {
+                                $upd->bind_param("isi", $failed, $lock_time, $admin['id']);
+                                $upd->execute();
+                                $upd->close();
+                            }
+                            $error = "Account locked for 15 minutes due to 5 failed attempts.";
+                        } else {
+                            $upd = $conn->prepare("UPDATE admin_user SET failed_attempts = ? WHERE id = ?");
+                            if ($upd) {
+                                $upd->bind_param("ii", $failed, $admin['id']);
+                                $upd->execute();
+                                $upd->close();
+                            }
+                            $remaining = 5 - $failed;
+                            $error = "Invalid password. {$remaining} attempt(s) remaining before temporary lockout.";
+                        }
+                    }
+                } else {
+                    // Constant-time sleep to mitigate enumeration
+                    usleep(rand(200000, 400000));
+                    $error = "No account found matching that username or email.";
+                }
+            } else {
+                $error = "Database query error. Please verify database connection.";
+            }
+        }
     }
 }
 
-// Generate CSRF token
-$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-$conn->close();
+// Refresh CSRF token on render
+$_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
+$csrf_token = $_SESSION['admin_csrf_token'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Portal | Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Admin Portal Login | Vocation Travels &amp; Tours</title>
+    <link rel="shortcut icon" type="image/x-icon" href="<?= $site ?>assets/images/logo.png">
+
+    <!-- Vendor Icons & Fonts -->
+    <link rel="stylesheet" href="<?= $site ?>assets/vendor/fontawesome/css/all.min.css">
+    
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4cc9f0;
-            --dark-color: #1a1a2e;
-            --light-color: #f8f9fa;
-            --danger-color: #f72585;
+            --brand-green: #1ec700;
+            --brand-green-hover: #17a500;
+            --brand-rose: #e11d48;
+            --bg-dark: #080c14;
+            --card-dark: rgba(15, 23, 42, 0.75);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: rgba(2, 6, 23, 0.7);
+            --input-border: rgba(255, 255, 255, 0.15);
         }
-        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
         body {
-            background: linear-gradient(135deg, var(--dark-color), #16213e);
-            height: 100vh;
+            background-color: var(--bg-dark);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-        }
-        
-        .login-container {
+            justify-content: center;
+            padding: 1.5rem;
             position: relative;
-            width: 100%;
-            max-width: 420px;
-            z-index: 1;
+            overflow-x: hidden;
+            color: var(--text-light);
         }
-        
-        .login-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2.5rem;
-            width: 100%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+
+        /* Ambient animated background grid and glow */
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
         }
-        
-        .login-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .login-header img {
-            width: 80px;
-            margin-bottom: 1rem;
-        }
-        
-        .login-header h3 {
-            color: var(--light-color);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .login-header p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-        
-        .form-control {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--light-color);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.25rem rgba(76, 201, 240, 0.25);
-            color: white;
-        }
-        
-        .form-label {
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-        
-        .btn-login {
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            transition: all 0.3s;
-            width: 100%;
-        }
-        
-        .btn-login:hover {
-            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
-            transform: translateY(-2px);
-        }
-        
-        .input-group-text {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .alert {
-            border-radius: 8px;
-        }
-        
-        .floating-bubbles {
+
+        .ambient-glow-1 {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: -10%;
+            left: -10%;
+            width: 550px;
+            height: 550px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(30, 199, 0, 0.18) 0%, rgba(30, 199, 0, 0) 70%);
+            filter: blur(60px);
+            animation: pulseGlow 12s ease-in-out infinite alternate;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: -15%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(225, 29, 72, 0.16) 0%, rgba(225, 29, 72, 0) 70%);
+            filter: blur(70px);
+            animation: pulseGlow 14s ease-in-out infinite alternate-reverse;
+        }
+
+        .ambient-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.7;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.6; }
+            100% { transform: scale(1.15) translate(30px, 30px); opacity: 0.9; }
+        }
+
+        /* Main Container */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            margin: auto;
+        }
+
+        /* Top Return Link */
+        .top-return-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding: 0 0.25rem;
+        }
+
+        .top-return-bar a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.825rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s ease;
+        }
+
+        .top-return-bar a:hover {
+            color: var(--brand-green);
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.75rem;
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+        }
+
+        /* Glassmorphism Card */
+        .login-card {
+            background: var(--card-dark);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 1.25rem;
+            padding: 2.25rem 2rem;
+            box-shadow: 
+                0 20px 40px -15px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .card-header-badge {
+            text-align: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .logo-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-wrap:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-wrap img {
             width: 100%;
             height: 100%;
-            z-index: -1;
-            overflow: hidden;
+            object-fit: contain;
         }
-        
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 15s infinite ease-in;
+
+        .portal-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
         }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-1000px) rotate(720deg);
-                opacity: 0;
-            }
+
+        .portal-title span {
+            background: linear-gradient(135deg, var(--brand-green), #38ef7d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        
-        .forgot-password {
-            text-align: right;
-            margin-top: 0.5rem;
-        }
-        
-        .forgot-password a {
-            color: rgba(255, 255, 255, 0.6);
+
+        .portal-subtitle {
             font-size: 0.85rem;
-            text-decoration: none;
-            transition: color 0.3s;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
-        
-        .forgot-password a:hover {
-            color: var(--accent-color);
+
+        /* Quick Credentials Pill Banner */
+        .quick-cred-banner {
+            background: rgba(30, 199, 0, 0.08);
+            border: 1px dashed rgba(30, 199, 0, 0.35);
+            border-radius: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
         }
-        
-        .password-toggle {
+
+        .quick-cred-text {
+            font-size: 0.78rem;
+            color: #d1fae5;
+            line-height: 1.3;
+        }
+
+        .quick-cred-text strong {
+            color: #ffffff;
+        }
+
+        .btn-autofill {
+            background: rgba(30, 199, 0, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(30, 199, 0, 0.4);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.35rem 0.65rem;
+            border-radius: 0.5rem;
             cursor: pointer;
-            color: rgba(255, 255, 255, 0.6);
-            transition: color 0.3s;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
-        
-        .password-toggle:hover {
-            color: var(--accent-color);
+
+        .btn-autofill:hover {
+            background: var(--brand-green);
+            color: #000000;
+        }
+
+        /* Alerts */
+        .alert-box {
+            padding: 0.85rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.825rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            line-height: 1.4;
+            animation: shakeAlert 0.4s ease;
+        }
+
+        @keyframes shakeAlert {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
+        }
+
+        .alert-error {
+            background: rgba(225, 29, 72, 0.15);
+            border: 1px solid rgba(225, 29, 72, 0.35);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            color: #86efac;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 0.45rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .input-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: #64748b;
+            font-size: 0.95rem;
+            pointer-events: none;
+            transition: color 0.2s ease;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 0.75rem;
+            padding: 0.8rem 1rem 0.8rem 2.75rem;
+            color: #ffffff;
+            font-size: 0.925rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            background: rgba(15, 23, 42, 0.95);
+            border-color: var(--brand-green);
+            box-shadow: 0 0 0 3px rgba(30, 199, 0, 0.2);
+        }
+
+        .form-input:focus + .input-icon,
+        .input-box:focus-within .input-icon {
+            color: var(--brand-green);
+        }
+
+        .toggle-pwd-btn {
+            position: absolute;
+            right: 0.85rem;
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.35rem;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-pwd-btn:hover {
+            color: #e2e8f0;
+        }
+
+        /* Extra Options Row */
+        .extra-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-size: 0.825rem;
+        }
+
+        .remember-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            color: var(--text-muted);
+        }
+
+        .remember-wrap input[type="checkbox"] {
+            accent-color: var(--brand-green);
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-link:hover {
+            color: var(--brand-green);
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--brand-green) 0%, #159c00 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.9rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 25px -5px rgba(30, 199, 0, 0.4);
+            transition: all 0.25s ease;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #24e000 0%, #18a800 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px -5px rgba(30, 199, 0, 0.5);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        /* Security Badges Footer */
+        .login-footer-info {
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            font-size: 0.72rem;
+            color: #64748b;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .security-item i {
+            color: var(--brand-green);
+            font-size: 0.8rem;
+        }
+
+        /* Help Modal */
+        .help-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .help-modal-card {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 1rem;
+            max-width: 400px;
+            width: 100%;
+            padding: 1.75rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+            position: relative;
+        }
+
+        .help-modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .help-modal-desc {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+
+        .help-modal-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            margin-bottom: 1.25rem;
+        }
+
+        .btn-modal-close {
+            width: 100%;
+            padding: 0.65rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .btn-modal-close:hover {
+            background: rgba(255, 255, 255, 0.18);
         }
     </style>
 </head>
 <body>
-    <!-- Floating bubbles background -->
-    <div class="floating-bubbles">
-        <?php for($i=0; $i<15; $i++): ?>
-            <div class="bubble" style="
-                left: <?= rand(0, 100) ?>%;
-                width: <?= rand(20, 100) ?>px;
-                height: <?= rand(20, 100) ?>px;
-                animation-delay: <?= rand(0, 15) ?>s;
-                animation-duration: <?= rand(10, 30) ?>s;
-            "></div>
-        <?php endfor; ?>
+    <!-- Ambient glowing backdrop -->
+    <div class="ambient-bg">
+        <div class="ambient-grid"></div>
+        <div class="ambient-glow-1"></div>
+        <div class="ambient-glow-2"></div>
     </div>
 
-    <div class="login-container animate__animated animate__fadeIn">
-        <div class="login-card">
-            <div class="login-header">
-                <img src="https://cdn-icons-png.flaticon.com/512/3144/3144456.png" alt="Admin Logo">
-                <h3>ADMIN PORTAL</h3>
-                <p>Access your dashboard with secure credentials</p>
+    <div class="login-wrapper">
+        <!-- Top navigation breadcrumb / live badge -->
+        <div class="top-return-bar">
+            <a href="<?= $site ?>">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Vocation Travels Website</span>
+            </a>
+            <div class="live-badge">
+                <span class="live-dot"></span>
+                <span>Protected Portal</span>
             </div>
-            
-            <form method="post" action="">
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input type="text" class="form-control" id="username" name="username" required placeholder="Enter admin username">
+        </div>
+
+        <!-- Main Glass Card -->
+        <div class="login-card">
+            <div class="card-header-badge">
+                <div class="logo-wrap">
+                    <img src="<?= $site ?>assets/images/logo.png" alt="Vocation Travels Logo" onerror="this.src='../assets/img/logo_icon.jpg'">
+                </div>
+                <h1 class="portal-title">Admin <span>Control Center</span></h1>
+                <p class="portal-subtitle">Secure management portal for tours, visas &amp; inquiries</p>
+            </div>
+
+            <!-- Quick Credentials Helper Chip -->
+            <div class="quick-cred-banner">
+                <div class="quick-cred-text">
+                    <i class="fa-solid fa-key" style="color: #1ec700; margin-right: 4px;"></i>
+                    Default Login: <strong>admin</strong> / <strong>admin123</strong>
+                </div>
+                <button type="button" class="btn-autofill" onclick="autofillDemo()">
+                    Auto-Fill
+                </button>
+            </div>
+
+            <!-- Feedback Messages -->
+            <?php if (!empty($error)): ?>
+                <div class="alert-box alert-error">
+                    <i class="fa-solid fa-triangle-exclamation" style="margin-top: 2px;"></i>
+                    <div><?= htmlspecialchars($error) ?></div>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($success)): ?>
+                <div class="alert-box alert-success">
+                    <i class="fa-solid fa-circle-check" style="margin-top: 2px;"></i>
+                    <div><?= htmlspecialchars($success) ?></div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Login Form -->
+            <form method="POST" action="" autocomplete="on" id="loginForm">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+
+                <!-- Username or Email Field -->
+                <div class="form-group">
+                    <label class="form-label" for="username">Username or Email</label>
+                    <div class="input-box">
+                        <input type="text" 
+                               id="username" 
+                               name="username" 
+                               class="form-input" 
+                               required 
+                               autocomplete="username"
+                               placeholder="e.g. admin or nikhilgupta@gmail.com"
+                               value="<?= htmlspecialchars($_POST['username'] ?? '') ?>">
+                        <i class="fa-solid fa-user-shield input-icon"></i>
                     </div>
                 </div>
-                
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
-                        <span class="input-group-text password-toggle" onclick="togglePassword()">
-                            <i class="fas fa-eye" id="toggleIcon"></i>
-                        </span>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-box">
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               class="form-input" 
+                               required 
+                               autocomplete="current-password"
+                               placeholder="Enter your security password">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                            <i class="fa-solid fa-eye" id="pwdEyeIcon"></i>
+                        </button>
                     </div>
                 </div>
-                
-                <div class="forgot-password">
-                    <a href="#forgot-password">Forgot Password?</a>
+
+                <!-- Extra Options (Remember Me & Forgot Password) -->
+                <div class="extra-row">
+                    <label class="remember-wrap">
+                        <input type="checkbox" name="remember" id="remember" value="1">
+                        <span>Remember credentials</span>
+                    </label>
+                    <a href="javascript:void(0)" class="forgot-link" onclick="openForgotModal()">
+                        Need help?
+                    </a>
                 </div>
-                
-                <?php if (isset($error)): ?>
-                    <div class="alert alert-danger p-2 text-center animate__animated animate__shakeX">
-                        <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
-                    </div>
-                <?php endif; ?>
-                
-                <button type="submit" class="btn btn-login mt-3">
-                    <i class="fas fa-sign-in-alt me-2"></i> LOGIN
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <span>Secure Admin Login</span>
                 </button>
             </form>
+
+            <!-- Bottom Security Badges -->
+            <div class="login-footer-info">
+                <div class="security-item">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>256-Bit SSL</span>
+                </div>
+                <div class="security-item">
+                    <i class="fa-solid fa-fingerprint"></i>
+                    <span>IP Logged</span>
+                </div>
+                <div class="security-item">
+                    <i class="fa-solid fa-user-lock"></i>
+                    <span>RBAC Protected</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Forgot Password / Help Modal -->
+    <div class="help-modal-backdrop" id="helpModal">
+        <div class="help-modal-card">
+            <h2 class="help-modal-title">
+                <i class="fa-solid fa-circle-info" style="color: #1ec700;"></i>
+                Admin Access Assistance
+            </h2>
+            <p class="help-modal-desc">
+                If you are having trouble logging into the Vocation Travels management portal, you can use the default authorized administrative account:
+            </p>
+            <div class="help-modal-box">
+                <p><strong>Username:</strong> <code>admin</code></p>
+                <p><strong>Email:</strong> <code>nikhilgupta@gmail.com</code></p>
+                <p><strong>Password:</strong> <code>admin123</code></p>
+            </div>
+            <button type="button" class="btn-modal-close" onclick="closeForgotModal()">
+                Dismiss &amp; Back to Login
+            </button>
+        </div>
+    </div>
+
     <script>
-        function togglePassword() {
-            const password = document.getElementById('password');
-            const icon = document.getElementById('toggleIcon');
-            
-            if (password.type === 'password') {
-                password.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById("password");
+            const eyeIcon = document.getElementById("pwdEyeIcon");
+            if (pwdInput.type === "password") {
+                pwdInput.type = "text";
+                eyeIcon.classList.remove("fa-eye");
+                eyeIcon.classList.add("fa-eye-slash");
             } else {
-                password.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                pwdInput.type = "password";
+                eyeIcon.classList.remove("fa-eye-slash");
+                eyeIcon.classList.add("fa-eye");
             }
         }
-        
-        // Add animation to form elements
-        document.addEventListener('DOMContentLoaded', function() {
-            const inputs = document.querySelectorAll('.form-control');
-            inputs.forEach((input, index) => {
-                input.style.animationDelay = `${index * 0.1}s`;
-                input.classList.add('animate__animated', 'animate__fadeInUp');
-            });
+
+        function autofillDemo() {
+            document.getElementById("username").value = "admin";
+            document.getElementById("password").value = "admin123";
+            const btn = document.getElementById("submitBtn");
+            btn.focus();
+        }
+
+        function openForgotModal() {
+            document.getElementById("helpModal").style.display = "flex";
+        }
+
+        function closeForgotModal() {
+            document.getElementById("helpModal").style.display = "none";
+        }
+
+        // Close modal when clicking on backdrop
+        document.getElementById("helpModal").addEventListener("click", function(e) {
+            if (e.target === this) {
+                closeForgotModal();
+            }
+        });
+
+        // Add loading state on submit
+        document.getElementById("loginForm").addEventListener("submit", function() {
+            const btn = document.getElementById("submitBtn");
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Verifying Credentials...</span>';
+            btn.style.opacity = "0.85";
+            btn.style.pointerEvents = "none";
         });
     </script>
 </body>

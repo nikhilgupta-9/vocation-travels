@@ -13,7 +13,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
     <div class="admin-profile text-center py-3">
         <a href="index.php">
             <img src="assets/img/logo_icon.jpg" alt="Admin Avatar" class="rounded-circle" width="60">
-            <h6 class="mt-2 text-white">Admin Name</h6>
+            <h6 class="mt-2 text-white"><?= htmlspecialchars($_SESSION['admin_name'] ?? $_SESSION['admin_user'] ?? 'Admin') ?></h6>
         </a>
     </div>
 

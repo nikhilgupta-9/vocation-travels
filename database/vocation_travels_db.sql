@@ -111,7 +111,7 @@ CREATE TABLE `admin_user` (
 
 LOCK TABLES `admin_user` WRITE;
 /*!40000 ALTER TABLE `admin_user` DISABLE KEYS */;
-INSERT INTO `admin_user` VALUES (6,'admin','$2y$10$mSB0lBexUgWE.X/QEGYbau0DsiI9LrxLxxT/ix3mnZpkIsI/9Irai','nikhilgupta@gmail.com','Nikhil','Gupta','admin','active',NULL,NULL,0,NULL,'2025-05-08 11:37:23','2025-05-08 11:34:38','2025-05-08 11:37:23',NULL,NULL);
+INSERT INTO `admin_user` VALUES (6,'admin','$2y$10$LRr7OmNpB6sLPbSSt13w3ORG2dTor/SNLMJ4Fu0ewR9DJqz1foeAe','nikhilgupta@gmail.com','Nikhil','Gupta','admin','active',NULL,NULL,0,NULL,'2025-05-08 11:37:23','2025-05-08 11:34:38','2025-05-08 11:37:23',NULL,NULL);
 /*!40000 ALTER TABLE `admin_user` ENABLE KEYS */;
 UNLOCK TABLES;
 

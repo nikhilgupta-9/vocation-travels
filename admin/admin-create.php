@@ -20,7 +20,7 @@ if (isset($_POST['createLogin'])) {
     }
 
     // Check if the username already exists
-    $stmt = $conn->prepare("SELECT COUNT(*) FROM admin_user WHERE user = ?");
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM admin_user WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $stmt->bind_result($count);
@@ -37,12 +37,12 @@ if (isset($_POST['createLogin'])) {
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
     // Insert new admin user securely
-    $stmt = $conn->prepare("INSERT INTO admin_user (user, password) VALUES (?, ?)");
+    $stmt = $conn->prepare("INSERT INTO admin_user (username, password, status, role) VALUES (?, ?, 'active', 'admin')");
     $stmt->bind_param("ss", $username, $hashedPassword);
 
     if ($stmt->execute()) {
         $_SESSION['success'] = "Admin user created successfully!";
-        header("Location: ../../admin-login.php"); // Redirect to login page
+        header("Location: auth/login.php"); // Redirect to login page
         exit();
     } else {
         error_log("Database Error: " . $stmt->error);

@@ -50,7 +50,7 @@ include "db-conn.php";
                                     ?>
                                     <tr>
                                         <th scope="row"><?= $no++; ?></th>
-                                        <td><?= $row['user'] ?></td>
+                                        <td><?= htmlspecialchars($row['username'] ?? $row['user'] ?? '') ?></td>
                                         <td>***********</td>
 
                                         <td class=""><a href="edit_products.php?edit_product_details=
