@@ -857,12 +857,13 @@ function displayPackages($type = 'all') {
         $html .= '<div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl w-full max-w-sm" style="border-bottom: 5px solid ' . $row['border_color'] . ';">';
         
         // Image
-        $image = $site . $row['image'] ?  $site . $row['image'] : 'assets/images/placeholder.jpg';
-        $html .= '<img src="' . $image . '" alt="' . htmlspecialchars($row['title']) . '" class="w-full h-55 object-cover transition-transform duration-300 hover:scale-110">';
+        $image = !empty($row['image']) ? $site . $row['image'] : $site . 'assets/images/placeholder.jpg';
+        $pkg_url = $site . 'package/' . htmlspecialchars($row['slug']) . '/';
+        $html .= '<a href="' . $pkg_url . '" class="block overflow-hidden"><img src="' . $image . '" alt="' . htmlspecialchars($row['title']) . '" class="w-full h-55 object-cover transition-transform duration-300 hover:scale-110"></a>';
         
         $html .= '<div class="p-5 flex flex-col h-full justify-between">';
         $html .= '<div>';
-        $html .= '<h3 class="font-bold text-lg mb-2 text-gray-800">' . htmlspecialchars($row['title']) . '</h3>';
+        $html .= '<h3 class="font-bold text-lg mb-2 text-gray-800"><a href="' . $pkg_url . '" class="hover:text-green-700 transition">' . htmlspecialchars($row['title']) . '</a></h3>';
         $html .= '<div class="flex items-center text-sm text-gray-600 mb-2">';
         $html .= '<span class="mr-4"><i class="far fa-clock"></i> <strong>' . $row['duration'] . '</strong></span>';
         $html .= '<span class="mr-4"><i class="fas fa-users"></i> <strong>' . $row['suitable_for'] . '</strong></span>';
@@ -879,8 +880,11 @@ function displayPackages($type = 'all') {
         $html .= '</ul>';
         $html .= '</div>';
         
-        // View Details button
-        $html .= '<button onclick="document.getElementById(\'modal' . $row['id'] . '\').classList.remove(\'hidden\')" class="w-full bg-gradient-to-r from-green-600 to-red-600 text-white py-2 px-4 rounded-lg shadow-md hover:scale-105 transition-all duration-300">View Details</button>';
+        // Buttons: Direct SEO crawlable link + Quick modal preview
+        $html .= '<div class="flex items-center gap-2 mt-3">';
+        $html .= '<a href="' . $pkg_url . '" class="flex-1 text-center bg-gradient-to-r from-green-600 to-red-600 text-white py-2 px-3 rounded-lg font-semibold shadow-md hover:scale-[1.02] transition-all text-sm">View Package</a>';
+        $html .= '<button type="button" onclick="document.getElementById(\'modal' . $row['id'] . '\').classList.remove(\'hidden\')" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition" title="Quick Preview"><i class="far fa-eye"></i></button>';
+        $html .= '</div>';
         $html .= '</div></div>';
         
         // Add modal
@@ -945,9 +949,12 @@ function generatePackageModal($package) {
     $html .= '</div>';
     
     // Footer
-    $html .= '<div class="p-4 bg-gray-100 flex justify-between">';
-    $html .= '<a href="contact.php#contactform" class="px-5 py-2 bg-gradient-to-r from-green-600 to-red-600 text-white font-semibold rounded-lg shadow hover:scale-105 transition">Contact for Package</a>';
-    $html .= '<button onclick="document.getElementById(\'modal' . $id . '\').classList.add(\'hidden\')" class="px-5 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold rounded-lg shadow">Close</button>';
+    $html .= '<div class="p-4 bg-gray-100 flex flex-wrap justify-between items-center gap-2">';
+    $html .= '<div class="flex gap-2">';
+    $html .= '<a href="' . $site . 'package/' . htmlspecialchars($package['slug']) . '/" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow text-xs sm:text-sm transition"><i class="fas fa-file-alt me-1"></i> View Full Itinerary Page</a>';
+    $html .= '<a href="' . $site . 'contact/#contactform" class="px-4 py-2 bg-gradient-to-r from-green-600 to-red-600 text-white font-semibold rounded-lg shadow text-xs sm:text-sm transition">Book / Inquire</a>';
+    $html .= '</div>';
+    $html .= '<button onclick="document.getElementById(\'modal' . $id . '\').classList.add(\'hidden\')" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold rounded-lg shadow text-xs sm:text-sm">Close</button>';
     $html .= '</div>';
     
     $html .= '</div></div>';

@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
+Allow: /public/
+Allow: /assets/
+Allow: /uploads/
+Disallow: /admin/
+Disallow: /config/
+Disallow: /util/
 
+# Sitemaps
 Sitemap: https://vocationtravels.in/sitemap.xml
+Sitemap: https://www.vocationtravels.in/sitemap.xml

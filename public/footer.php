@@ -18,6 +18,16 @@ uasort($footer_visa_cities, fn($a, $b) => $a['order'] <=> $b['order']);
 $instagram_url = !empty($contact['instagram']) ? $contact['instagram'] : 'https://www.instagram.com/vocationtravels/';
 $phone = $contact['phone'] ?? '9999447373';
 $wp_number = $contact['wp_number'] ?? '7982938239';
+
+$footer_packages = [];
+if ($conn && !$conn->connect_error) {
+    $fp_res = @mysqli_query($conn, "SELECT id, title, slug, duration FROM packages WHERE status = 1 ORDER BY featured DESC, id DESC LIMIT 12");
+    if ($fp_res) {
+        while ($fp = mysqli_fetch_assoc($fp_res)) {
+            $footer_packages[] = $fp;
+        }
+    }
+}
 ?>
 <footer class="bg-neutral-950 text-gray-300 pt-16 pb-8 border-t border-white/10">
   <div class="container mx-auto px-6">
@@ -114,6 +124,28 @@ $wp_number = $contact['wp_number'] ?? '7982938239';
         </div>
       </div>
     </div>
+
+    <!-- SEO Section: Trending Domestic & International Holiday Tour Packages -->
+    <?php if (!empty($footer_packages)): ?>
+      <div class="border-t border-white/10 pt-8 pb-6">
+        <div class="text-center mb-6">
+          <h4 class="text-white font-bold text-lg mb-2">Popular Holiday &amp; Tour Packages</h4>
+          <p class="text-gray-400 text-xs sm:text-sm max-w-3xl mx-auto">
+            Bespoke itineraries, luxury accommodations, chauffeur transfers &amp; 24/7 dedicated concierge:
+          </p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-2 max-w-6xl mx-auto text-xs">
+          <?php foreach ($footer_packages as $fp): ?>
+            <a href="<?= $site ?>package/<?= htmlspecialchars($fp['slug']) ?>/"
+              class="px-3.5 py-1.5 rounded-full bg-emerald-950/70 hover:bg-emerald-900/90 text-emerald-300 hover:text-white border border-emerald-500/30 transition flex items-center">
+              <i class="fa-solid fa-suitcase-rolling text-emerald-400 text-xs mr-1.5"></i>
+              <span><?= htmlspecialchars($fp['title']) ?> (<?= htmlspecialchars($fp['duration']) ?>)</span>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    <?php endif; ?>
 
     <!-- SEO Section: Visa Consultants Across 40+ Indian Cities -->
     <div class="border-t border-white/10 pt-8 pb-6">

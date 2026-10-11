@@ -56,10 +56,84 @@ $instagram_url = !empty($contact['instagram']) ? $contact['instagram'] : 'https:
       </div>
 
       <!-- Desktop Navigation Menu -->
-      <div class="hidden lg:flex items-center space-x-7">
+      <div class="hidden lg:flex items-center space-x-6">
         <a href="<?= $site ?>" class="nav-link text-white text-sm font-medium tracking-wide">Home</a>
-        <a href="<?= $site ?>travel-package/" class="nav-link text-white text-sm font-medium tracking-wide">Travel Packages</a>
-        <a href="<?= $site ?>visa-services/" class="nav-link text-white text-sm font-medium tracking-wide">Visa Services</a>
+
+        <!-- Travel Packages Dropdown -->
+        <div class="relative group">
+          <a href="<?= $site ?>travel-package/" class="nav-link text-white text-sm font-medium tracking-wide flex items-center gap-1.5 py-2">
+            <span>Travel Packages</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-gray-300 group-hover:rotate-180 transition-transform duration-200"></i>
+          </a>
+          <div class="absolute left-0 top-full pt-1 w-80 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div class="bg-neutral-900/95 backdrop-blur-md rounded-2xl p-3 border border-white/10 shadow-2xl space-y-1 text-xs">
+              <div class="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400 border-b border-white/10">
+                Popular Holiday Packages
+              </div>
+              <a href="<?= $site ?>package/kashmir-paradise-tour/" class="block px-3 py-2 rounded-xl text-gray-200 hover:text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-mountain text-emerald-400 mr-2"></i>Kashmir Paradise (5N/6D)
+              </a>
+              <a href="<?= $site ?>package/himachal-hill-stations/" class="block px-3 py-2 rounded-xl text-gray-200 hover:text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-tree text-blue-400 mr-2"></i>Himachal &amp; Manali (5N/6D)
+              </a>
+              <a href="<?= $site ?>package/vaishno-devi-kashmir-tour/" class="block px-3 py-2 rounded-xl text-gray-200 hover:text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-om text-amber-400 mr-2"></i>Mata Vaishno Devi &amp; Kashmir (6N/7D)
+              </a>
+              <a href="<?= $site ?>package/kerala-luxury-retreat/" class="block px-3 py-2 rounded-xl text-gray-200 hover:text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-water text-green-400 mr-2"></i>Kerala Luxury Backwaters (5N/6D)
+              </a>
+              <a href="<?= $site ?>package/ladakh-high-altitude-expedition/" class="block px-3 py-2 rounded-xl text-gray-200 hover:text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-compass text-purple-400 mr-2"></i>Leh Ladakh Expedition (6N/7D)
+              </a>
+              <a href="<?= $site ?>package/golden-triangle-package/" class="block px-3 py-2 rounded-xl text-gray-200 hover:text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-landmark text-yellow-400 mr-2"></i>Golden Triangle Heritage (4N/5D)
+              </a>
+              <div class="pt-1.5 border-t border-white/10">
+                <a href="<?= $site ?>travel-package/" class="block text-center px-3 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white font-semibold transition">
+                  Explore All 12+ Tour Packages &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visa Services Dropdown -->
+        <div class="relative group">
+          <a href="<?= $site ?>visa-services/" class="nav-link text-white text-sm font-medium tracking-wide flex items-center gap-1.5 py-2">
+            <span>Visa Services</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-gray-300 group-hover:rotate-180 transition-transform duration-200"></i>
+          </a>
+          <div class="absolute left-0 top-full pt-1 w-80 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div class="bg-neutral-900/95 backdrop-blur-md rounded-2xl p-3 border border-white/10 shadow-2xl space-y-1 text-xs">
+              <div class="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-pink-400 border-b border-white/10">
+                Top Country Visas
+              </div>
+              <div class="grid grid-cols-2 gap-1 py-1">
+                <a href="<?= $site ?>visa-services/usa/" class="px-2.5 py-1.5 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">🇺🇸 USA Visa</a>
+                <a href="<?= $site ?>visa-services/uk/" class="px-2.5 py-1.5 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">🇬🇧 UK Visa</a>
+                <a href="<?= $site ?>visa-services/canada/" class="px-2.5 py-1.5 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">🇨🇦 Canada Visa</a>
+                <a href="<?= $site ?>visa-services/europe/" class="px-2.5 py-1.5 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">🇪🇺 Schengen</a>
+                <a href="<?= $site ?>visa-services/australia/" class="px-2.5 py-1.5 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">🇦🇺 Australia</a>
+                <a href="<?= $site ?>visa-services/uae/" class="px-2.5 py-1.5 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">🇦🇪 Dubai / UAE</a>
+              </div>
+              <div class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-amber-400 border-t border-white/10">
+                Pan-India City Consultants
+              </div>
+              <div class="grid grid-cols-2 gap-1 py-1 text-[11px]">
+                <a href="<?= $site ?>visa-consultants-delhi/" class="px-2 py-1 rounded text-gray-300 hover:text-white hover:bg-white/10">Delhi NCR</a>
+                <a href="<?= $site ?>visa-consultants-bangalore/" class="px-2 py-1 rounded text-gray-300 hover:text-white hover:bg-white/10">Bangalore</a>
+                <a href="<?= $site ?>visa-consultants-mumbai/" class="px-2 py-1 rounded text-gray-300 hover:text-white hover:bg-white/10">Mumbai</a>
+                <a href="<?= $site ?>visa-consultants-hyderabad/" class="px-2 py-1 rounded text-gray-300 hover:text-white hover:bg-white/10">Hyderabad</a>
+              </div>
+              <div class="pt-1.5 border-t border-white/10">
+                <a href="<?= $site ?>visa-services/" class="block text-center px-3 py-2 rounded-xl bg-pink-600/30 hover:bg-pink-600 text-pink-300 hover:text-white font-semibold transition">
+                  View All 40+ Indian Cities &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <a href="<?= $site ?>vip-concierge/" class="nav-link text-white text-sm font-medium tracking-wide">VIP Concierge</a>
         <a href="<?= $site ?>services/" class="nav-link text-white text-sm font-medium tracking-wide">Services</a>
         <a href="<?= $site ?>about/" class="nav-link text-white text-sm font-medium tracking-wide">About</a>
