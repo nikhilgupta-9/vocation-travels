@@ -123,6 +123,13 @@ if (!isset($_SESSION['admin_logged_in'])) {
         </li>
 
         <li>
+            <a href="../seo-report/" target="_blank">
+                <i class="fas fa-file-contract" style="color: #6f42c1;"></i>
+                <span>Client SEO Report (PDF)</span>
+            </a>
+        </li>
+
+        <li>
             <a href="about_us.php">
                 <i class="fas fa-info-circle" style="color: #d35400;"></i>
                 <span>About Us</span>

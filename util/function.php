@@ -838,8 +838,10 @@ function checkRateLimit($email, $conn) {
 
 
 function displayPackages($type = 'all') {
-    global $conn; 
-    global $site; 
+    global $conn, $site; 
+    if (empty($site)) {
+        $site = '/';
+    } 
     
     $sql = "SELECT * FROM packages WHERE status = 1";
     if ($type != 'all') {
@@ -895,7 +897,10 @@ function displayPackages($type = 'all') {
 }
 
 function generatePackageModal($package) {
-    global $conn;
+    global $conn, $site;
+    if (empty($site)) {
+        $site = '/';
+    }
     
     $id = $package['id'];
     
