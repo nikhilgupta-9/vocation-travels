@@ -234,17 +234,23 @@ if ($service) {
               Bespoke Planning &amp; Flawless Execution for <?= htmlspecialchars($service['name']) ?>
             </h2>
 
-            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
-              <?= htmlspecialchars($service['overview'][0]) ?>
-            </p>
-
-            <p class="text-gray-400 text-sm leading-relaxed">
-              <?= htmlspecialchars($service['overview'][1]) ?>
-            </p>
-
-            <p class="text-gray-400 text-sm leading-relaxed">
-              <?= htmlspecialchars($service['overview'][2]) ?>
-            </p>
+            <?php if (!empty($service['overview'])): ?>
+              <div class="service-overview-content text-gray-300 text-sm sm:text-base leading-relaxed space-y-4">
+                <?php if (is_array($service['overview'])): ?>
+                  <?php foreach ($service['overview'] as $p_item): ?>
+                    <?php if (!empty(trim($p_item))): ?>
+                      <?php if (strip_tags($p_item) !== $p_item): ?>
+                        <div class="rich-text-block space-y-3"><?= $p_item ?></div>
+                      <?php else: ?>
+                        <p><?= htmlspecialchars($p_item) ?></p>
+                      <?php endif; ?>
+                    <?php endif; ?>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <div class="rich-text-block space-y-3"><?= $service['overview'] ?></div>
+                <?php endif; ?>
+              </div>
+            <?php endif; ?>
 
             <!-- Highlights Checklist -->
             <div class="pt-4 border-t border-white/10 space-y-3">
