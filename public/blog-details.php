@@ -63,35 +63,35 @@ function render_blog_block($block, $site)
 {
   switch ($block['type']) {
     case 'h2':
-      echo '<h2 class="text-2xl font-bold text-gray-800 mt-10 mb-4">' . htmlspecialchars($block['text']) . '</h2>';
+      echo '<h2 class="text-2xl font-bold text-gray-900 dark:text-white mt-10 mb-4">' . htmlspecialchars($block['text']) . '</h2>';
       break;
     case 'p':
-      echo '<p class="text-gray-700 leading-relaxed mb-5">' . htmlspecialchars($block['text']) . '</p>';
+      echo '<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-5 text-base sm:text-lg">' . htmlspecialchars($block['text']) . '</p>';
       break;
     case 'html':
-      echo '<p class="text-gray-700 leading-relaxed mb-5">' . str_replace('{{site}}', htmlspecialchars($site), $block['text']) . '</p>';
+      echo '<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-5 text-base sm:text-lg">' . str_replace('{{site}}', htmlspecialchars($site), $block['text']) . '</p>';
       break;
     case 'ul':
-      echo '<ul class="list-disc list-inside space-y-2 text-gray-700 mb-6">';
+      echo '<ul class="list-disc list-inside space-y-2.5 text-gray-700 dark:text-gray-300 mb-6 text-base sm:text-lg">';
       foreach ($block['items'] as $item) {
         echo '<li>' . htmlspecialchars($item) . '</li>';
       }
       echo '</ul>';
       break;
     case 'quote':
-      echo '<blockquote class="border-l-4 pl-4 italic text-gray-600 my-6" style="border-color:#1ec700;">' . htmlspecialchars($block['text']) . '</blockquote>';
+      echo '<blockquote class="border-l-4 pl-4 italic text-gray-700 dark:text-gray-300 my-6 bg-gray-50 dark:bg-neutral-800/60 p-4 rounded-r-xl" style="border-color:#1ec700;">' . htmlspecialchars($block['text']) . '</blockquote>';
       break;
     case 'table':
-      echo '<div class="overflow-x-auto mb-6"><table class="w-full text-sm text-left border-collapse">';
-      echo '<thead><tr class="bg-gray-100">';
+      echo '<div class="overflow-x-auto mb-6"><table class="w-full text-sm text-left border-collapse border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden">';
+      echo '<thead><tr class="bg-gray-100 dark:bg-neutral-800">';
       foreach ($block['headers'] as $h) {
-        echo '<th class="p-3 border-b font-semibold text-gray-700">' . htmlspecialchars($h) . '</th>';
+        echo '<th class="p-3.5 border-b border-gray-200 dark:border-white/10 font-bold text-gray-900 dark:text-white">' . htmlspecialchars($h) . '</th>';
       }
-      echo '</tr></thead><tbody>';
+      echo '</tr></thead><tbody class="divide-y divide-gray-200 dark:divide-white/10">';
       foreach ($block['rows'] as $row) {
-        echo '<tr>';
+        echo '<tr class="hover:bg-gray-50 dark:hover:bg-neutral-800/50">';
         foreach ($row as $cell) {
-          echo '<td class="p-3 border-b text-gray-600">' . htmlspecialchars($cell) . '</td>';
+          echo '<td class="p-3.5 text-gray-700 dark:text-gray-300">' . htmlspecialchars($cell) . '</td>';
         }
         echo '</tr>';
       }
@@ -138,65 +138,67 @@ function render_blog_block($block, $site)
   </style>
 </head>
 
-<body class="relative flex flex-col min-h-screen bg-gray-100">
+<body class="relative flex flex-col min-h-screen bg-slate-50 dark:bg-neutral-950 text-slate-800 dark:text-gray-100 font-sans transition-colors duration-300">
   <!-- Header -->
   <?php include('header.php') ?>
 
   <main class="flex-grow">
 
     <!-- Hero -->
-    <section class="relative h-[55vh] w-full overflow-hidden">
-      <img src="<?= $site . $post['hero_image'] ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="absolute inset-0 w-full h-full object-cover">
-      <div class="absolute inset-0 bg-black/60"></div>
-      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-        <span class="inline-block px-4 py-1 mb-4 rounded-full text-xs font-semibold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48]">
+    <section class="relative min-h-[460px] sm:min-h-[500px] w-full overflow-hidden flex items-center justify-center pt-32 pb-16 bg-neutral-950">
+      <img src="<?= $site . $post['hero_image'] ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="absolute inset-0 w-full h-full object-cover filter brightness-50">
+      <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-black/70"></div>
+      <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+        <span class="inline-block px-4 py-1.5 mb-4 rounded-full text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 shadow-lg">
           <?= htmlspecialchars($post['category']) ?>
         </span>
-        <h1 class="text-white font-bold leading-tight text-3xl md:text-5xl mb-4 drop-shadow-lg max-w-4xl">
+        <h1 class="text-white font-extrabold leading-tight text-3xl sm:text-4xl md:text-5xl mb-4 drop-shadow-2xl max-w-4xl">
           <?= htmlspecialchars($post['title']) ?>
         </h1>
-        <p class="text-gray-200 text-sm md:text-base">
-          Published <?= htmlspecialchars($post['published_display']) ?> · By <?= htmlspecialchars($post['author']) ?> · <?= htmlspecialchars($post['read_time']) ?>
+        <p class="text-gray-300 text-xs sm:text-sm font-light">
+          Published <?= htmlspecialchars($post['published_display']) ?> &bull; By <?= htmlspecialchars($post['author']) ?> &bull; <i class="fa-regular fa-clock ml-1"></i> <?= htmlspecialchars($post['read_time']) ?>
         </p>
       </div>
     </section>
 
     <!-- Breadcrumb -->
-    <div class="max-w-4xl mx-auto px-6 pt-6 text-sm text-gray-500">
-      <a href="<?= $site ?>" class="hover:underline">Home</a> /
-      <a href="<?= $site ?>blogs/" class="hover:underline">Blog</a> /
-      <span class="text-gray-700"><?= htmlspecialchars($post['title']) ?></span>
+    <div class="max-w-4xl mx-auto px-6 pt-6 text-xs text-gray-500 dark:text-gray-400">
+      <a href="<?= $site ?>" class="hover:underline text-emerald-600 dark:text-emerald-400">Home</a> /
+      <a href="<?= $site ?>blogs/" class="hover:underline text-emerald-600 dark:text-emerald-400">Blog</a> /
+      <span class="text-gray-800 dark:text-gray-200"><?= htmlspecialchars($post['title']) ?></span>
     </div>
 
     <!-- Content -->
     <section class="py-10 px-6 md:px-12 lg:px-0">
-      <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 md:p-12">
+      <div class="max-w-4xl mx-auto bg-white dark:bg-neutral-900 rounded-3xl shadow-xl border border-gray-200 dark:border-white/10 p-6 sm:p-10 md:p-14 text-slate-800 dark:text-gray-100">
 
         <!-- Quick answer (AEO): a self-contained answer an AI overview or featured snippet can lift directly -->
-        <div class="quick-answer p-5 mb-8">
-          <p class="text-xs font-bold uppercase tracking-wide text-green-700 mb-2">Quick Answer</p>
-          <p class="text-gray-800 leading-relaxed"><?= htmlspecialchars($post['quick_answer']) ?></p>
+        <div class="p-6 mb-8 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30">
+          <p class="text-xs font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-400 mb-2 flex items-center">
+            <i class="fa-solid fa-bolt mr-2"></i> Quick Answer
+          </p>
+          <p class="text-gray-900 dark:text-emerald-100 text-base leading-relaxed"><?= htmlspecialchars($post['quick_answer']) ?></p>
         </div>
 
-        <img src="<?= $site . $post['featured_image'] ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-72 md:h-96 object-cover rounded-xl mb-8">
+        <img src="<?= $site . $post['featured_image'] ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-72 md:h-96 object-cover rounded-2xl mb-8 border border-gray-100 dark:border-white/10 shadow-md">
 
-        <div class="prose max-w-none">
+        <div class="prose max-w-none text-gray-800 dark:text-gray-200">
           <?php foreach ($post['body'] as $block) render_blog_block($block, $site); ?>
         </div>
 
         <!-- FAQ (AEO + FAQPage schema) -->
         <?php if (!empty($post['faqs'])): ?>
-          <div class="mt-12 border-t pt-8" x-data="{ openFaq: null }">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
+          <div class="mt-12 border-t border-gray-200 dark:border-white/10 pt-8" x-data="{ openFaq: null }">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div class="space-y-4">
               <?php foreach ($post['faqs'] as $faq): ?>
                 <div x-data="{ open: false }" @click="open = !open"
-                  class="bg-gray-50 rounded-xl shadow-sm p-5 cursor-pointer border-l-4" style="border-color:#1ec700;">
+                  class="bg-gray-50 dark:bg-neutral-800/70 rounded-2xl p-5 cursor-pointer border border-gray-200 dark:border-white/10 hover:border-emerald-500/50 transition">
                   <div class="flex justify-between items-center">
-                    <h3 class="font-semibold text-gray-800"><?= htmlspecialchars($faq['q']) ?></h3>
-                    <i :class="open ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" class="text-gray-500"></i>
+                    <h3 class="font-semibold text-gray-900 dark:text-white text-base"><?= htmlspecialchars($faq['q']) ?></h3>
+                    <i :class="open ? 'fa-solid fa-chevron-up text-emerald-500' : 'fa-solid fa-chevron-down text-gray-400'" class="text-sm"></i>
                   </div>
-                  <div x-show="open" x-transition class="mt-3 text-gray-600 leading-relaxed">
+                  <div x-show="open" x-transition class="mt-3 text-gray-600 dark:text-gray-300 leading-relaxed text-sm">
                     <?= htmlspecialchars($faq['a']) ?>
                   </div>
                 </div>
@@ -206,12 +208,12 @@ function render_blog_block($block, $site)
         <?php endif; ?>
 
         <!-- Share -->
-        <div class="mt-12 border-t pt-6">
-          <h3 class="text-lg font-semibold mb-4">Share this post:</h3>
+        <div class="mt-12 border-t border-gray-200 dark:border-white/10 pt-6 flex items-center justify-between flex-wrap gap-4">
+          <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300">Share this guide:</h3>
           <div class="flex gap-4">
-            <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800"><i class="fab fa-facebook fa-lg"></i></a>
-            <a href="https://twitter.com/intent/tweet?url=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>&text=<?= urlencode($post['title']) ?>" target="_blank" rel="noopener" class="text-sky-500 hover:text-sky-700"><i class="fab fa-twitter fa-lg"></i></a>
-            <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener" class="text-blue-800 hover:text-blue-900"><i class="fab fa-linkedin fa-lg"></i></a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 transition"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="https://twitter.com/intent/tweet?url=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>&text=<?= urlencode($post['title']) ?>" target="_blank" rel="noopener" class="text-sky-500 hover:text-sky-700 transition"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener" class="text-blue-800 hover:text-blue-900 transition"><i class="fab fa-linkedin fa-lg"></i></a>
           </div>
         </div>
       </div>
