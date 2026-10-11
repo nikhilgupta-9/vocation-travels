@@ -39,6 +39,47 @@ foreach ($post['body'] as $idx => $block) {
   }
 }
 
+// Sidebar Recent Posts (excluding current post)
+$recent_posts = [];
+foreach ($posts as $r_slug => $r_p) {
+  if ($r_slug !== $slug) {
+    $recent_posts[$r_slug] = $r_p;
+  }
+}
+$sidebar_recent = array_slice($recent_posts, 0, 4, true);
+
+// Curated Popular Tags
+$popular_tags = [
+  'Schengen Visa', 'Kashmir Holiday', 'Bali Package', 'Dubai Trip',
+  'US Visa Slots', 'Luxury Travel', 'Visa Consultants', 'Gulmarg Gondola',
+  'Flight Deals', 'Family Tours', 'Europe Itinerary', 'Vietnam eVisa'
+];
+
+// Curated Featured Packages for Sidebar
+$sidebar_packages = [
+  [
+    'title' => 'Kashmir Paradise Tour',
+    'slug' => 'kashmir-paradise-tour',
+    'duration' => '5N / 6D',
+    'image' => 'uploads/packages/kashmir_paradise_luxury.jpg',
+    'highlight' => 'Dal Lake Houseboat & Gondola'
+  ],
+  [
+    'title' => 'Bali Bliss Holiday',
+    'slug' => 'bali-bliss',
+    'duration' => '4N / 5D',
+    'image' => 'uploads/packages/bali.png',
+    'highlight' => 'Private Pool Villa Retreat'
+  ],
+  [
+    'title' => 'Dubai Delight Vacation',
+    'slug' => 'dubai-delight',
+    'duration' => '4N / 5D',
+    'image' => 'uploads/packages/dubai.png',
+    'highlight' => 'Desert Safari & Marina Cruise'
+  ],
+];
+
 // Structured data (technical SEO + AEO): BlogPosting + FAQPage + BreadcrumbList
 $blog_schema = [
   '@context' => 'https://schema.org',
@@ -184,7 +225,7 @@ if (!function_exists('render_blog_block')) {
   <script type="application/ld+json"><?= json_encode($blog_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
   <style>
-    /* Reading progress bar */
+    /* Sticky top reading progress bar */
     #reading-progress {
       transition: width 0.15s ease-out;
     }
@@ -198,13 +239,21 @@ if (!function_exists('render_blog_block')) {
       border-radius: 9999px;
     }
 
-    /* Floating action button animations */
-    @keyframes pulseSoft {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+    /* Sidebar cards hover effect */
+    .sidebar-widget {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .floating-pulse {
-      animation: pulseSoft 2.5s infinite ease-in-out;
+
+    /* Hero radial gradient overlay (nikhilworks style) */
+    .hero-radial-bg {
+      background: radial-gradient(circle at 80% 20%, rgba(30, 199, 0, 0.15) 0%, transparent 45%),
+                  radial-gradient(circle at 15% 85%, rgba(16, 64, 65, 0.85) 0%, transparent 55%),
+                  linear-gradient(135deg, #051617 0%, #08292a 55%, #041213 100%);
+    }
+
+    /* Post Author / Recent item */
+    .recent-post-item:hover .recent-post-title {
+      color: #1ec700;
     }
   </style>
 </head>
@@ -219,300 +268,458 @@ if (!function_exists('render_blog_block')) {
 
   <main class="flex-grow">
 
-    <!-- Hero Section -->
-    <section class="relative min-h-[460px] sm:min-h-[520px] w-full overflow-hidden flex items-center justify-center pt-32 sm:pt-36 pb-16 bg-neutral-950">
-      <img src="<?= $site . $post['hero_image'] ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="absolute inset-0 w-full h-full object-cover filter brightness-50 transform hover:scale-105 transition-transform duration-1000">
-      <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-black/75"></div>
-
-      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <!-- Category Pill & Verified Badge -->
-        <div class="inline-flex items-center space-x-2 py-1.5 px-4 mb-4 rounded-full bg-white/10 backdrop-blur-md text-emerald-400 text-xs sm:text-sm font-semibold border border-white/10 shadow-lg">
-          <?php if (strtolower($post['category']) === 'visa'): ?>
-            <i class="fa-solid fa-passport"></i>
-          <?php else: ?>
-            <i class="fa-solid fa-plane-departure"></i>
-          <?php endif; ?>
-          <span><?= htmlspecialchars($post['category']) ?> Guide</span>
-          <span class="text-white/40">&bull;</span>
-          <span class="text-emerald-300 flex items-center gap-1"><i class="fa-solid fa-circle-check text-xs"></i> 2026 Verified</span>
+    <!-- Hero / Breadcrumb Section (nikhilworks inspired) -->
+    <section class="relative min-h-[380px] sm:min-h-[440px] w-full overflow-hidden flex items-center justify-center pt-32 sm:pt-36 pb-14 hero-radial-bg text-white">
+      <!-- Ambient background pattern -->
+      <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      
+      <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
+        <!-- Article Guide Pill Badge -->
+        <div class="inline-flex items-center space-x-2 py-1.5 px-4 mb-4 rounded-full bg-emerald-500/15 backdrop-blur-md text-emerald-400 text-xs sm:text-sm font-bold border border-emerald-500/30 shadow-lg tracking-wide">
+          <i class="fa-solid fa-book-open"></i>
+          <span>ARTICLE GUIDE &bull; <?= strtoupper(htmlspecialchars($post['category'])) ?></span>
         </div>
 
-        <h1 class="text-white font-extrabold leading-tight text-2xl sm:text-4xl md:text-5xl mb-5 drop-shadow-2xl max-w-4xl tracking-tight">
+        <h1 class="text-white font-extrabold leading-tight text-2xl sm:text-4xl md:text-5xl mb-4 drop-shadow-2xl max-w-4xl mx-auto tracking-tight">
           <?= htmlspecialchars($post['title']) ?>
         </h1>
 
-        <!-- Hero Metadata Bar -->
-        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-gray-300 text-xs sm:text-sm font-light">
-          <span class="flex items-center gap-1.5">
-            <i class="fa-solid fa-feather-pointed text-emerald-400"></i>
-            <span>By <strong class="text-white font-medium"><?= htmlspecialchars($post['author']) ?></strong></span>
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="Breadcrumb" class="flex justify-center items-center flex-wrap gap-2 text-xs sm:text-sm text-gray-300">
+          <a href="<?= $site ?>" class="hover:text-emerald-400 transition flex items-center gap-1 text-gray-300">
+            <i class="fa-solid fa-house text-xs"></i>
+            <span>Home</span>
+          </a>
+          <i class="fa-solid fa-angle-right text-[10px] text-gray-500"></i>
+          <a href="<?= $site ?>blogs/" class="hover:text-emerald-400 transition text-gray-300">Blog</a>
+          <i class="fa-solid fa-angle-right text-[10px] text-gray-500"></i>
+          <span class="text-emerald-400 font-semibold truncate max-w-[220px] sm:max-w-md">
+            <?= htmlspecialchars($post['title']) ?>
           </span>
-          <span class="text-white/30 hidden sm:inline">&bull;</span>
-          <span class="flex items-center gap-1.5">
-            <i class="fa-regular fa-calendar-check text-emerald-400"></i>
-            <span>Published <?= htmlspecialchars($post['published_display']) ?></span>
-          </span>
-          <span class="text-white/30 hidden sm:inline">&bull;</span>
-          <span class="flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-medium">
-            <i class="fa-regular fa-clock"></i>
-            <span><?= htmlspecialchars($post['read_time']) ?></span>
-          </span>
-        </div>
+        </nav>
       </div>
     </section>
 
-    <!-- Breadcrumb Navigation -->
-    <nav class="max-w-4xl mx-auto px-4 sm:px-6 pt-6 pb-2 text-xs text-gray-500 dark:text-gray-400 flex items-center space-x-1.5 overflow-x-auto whitespace-nowrap" aria-label="Breadcrumb">
-      <a href="<?= $site ?>" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition flex items-center gap-1">
-        <i class="fa-solid fa-house text-xs"></i>
-        <span>Home</span>
-      </a>
-      <span class="text-gray-400">/</span>
-      <a href="<?= $site ?>blogs/" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition">Blog</a>
-      <span class="text-gray-400">/</span>
-      <span class="text-gray-800 dark:text-gray-200 truncate max-w-[240px] sm:max-w-md font-medium" title="<?= htmlspecialchars($post['title']) ?>">
-        <?= htmlspecialchars($post['title']) ?>
-      </span>
-    </nav>
+    <!-- Main Two-Column Layout Section (Left: 8 Cols | Right: 4 Cols) -->
+    <div class="py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
 
-    <!-- Main Content Container -->
-    <article class="py-6 sm:py-10 px-4 sm:px-6 md:px-8 lg:px-0">
-      <div class="max-w-4xl mx-auto bg-white dark:bg-neutral-900 rounded-3xl shadow-xl border border-gray-200/80 dark:border-white/10 p-5 sm:p-10 md:p-14 text-slate-800 dark:text-gray-100">
+          <!-- ═════════════════════════════════════════════════════════
+               LEFT COLUMN (8 Columns): Main Content Article Area
+               ═════════════════════════════════════════════════════════ -->
+          <article class="lg:col-span-8 bg-white dark:bg-neutral-900 rounded-3xl shadow-xl border border-gray-200/80 dark:border-white/10 p-5 sm:p-10 md:p-12 text-slate-800 dark:text-gray-100">
 
-        <!-- E-E-A-T Editorial Badge -->
-        <div class="mb-6 p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-neutral-800/60 border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-gray-600 dark:text-gray-300">
-          <div class="flex items-center gap-2.5">
-            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
-              <i class="fa-solid fa-shield-check"></i>
-            </span>
-            <div>
-              <p class="font-semibold text-gray-900 dark:text-white">Fact-Checked &amp; Curated for 2026 Travel Guidelines</p>
-              <p class="text-gray-500 dark:text-gray-400 text-[11px]">Reviewed by senior destination curators and visa consultants at Vocation Travels</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 self-start sm:self-auto">
-            <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-medium text-[11px] border border-emerald-200 dark:border-emerald-800/40">
-              <i class="fa-solid fa-rotate mr-1"></i> Updated <?= htmlspecialchars(date('M Y', strtotime($post['updated']))) ?>
-            </span>
-          </div>
-        </div>
-
-        <!-- Quick Answer / AI Overview (AEO Callout) -->
-        <div class="p-5 sm:p-6 mb-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-neutral-900 border border-emerald-300 dark:border-emerald-500/30 shadow-sm">
-          <div class="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold uppercase tracking-wider mb-2.5">
-            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs">
-              <i class="fa-solid fa-bolt"></i>
-            </span>
-            <span>Key Takeaway &amp; Summary</span>
-          </div>
-          <p class="text-gray-900 dark:text-emerald-100 text-base sm:text-lg leading-relaxed font-normal">
-            <?= htmlspecialchars($post['quick_answer']) ?>
-          </p>
-        </div>
-
-        <!-- Featured Image -->
-        <div class="mb-10 overflow-hidden rounded-2xl border border-gray-100 dark:border-white/10 shadow-lg group">
-          <img src="<?= $site . $post['featured_image'] ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-64 sm:h-80 md:h-96 object-cover transform group-hover:scale-102 transition duration-500">
-          <div class="bg-gray-50 dark:bg-neutral-800 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-white/10 flex justify-between items-center">
-            <span><i class="fa-solid fa-camera mr-1"></i> <?= htmlspecialchars($post['title']) ?></span>
-            <span class="font-medium text-emerald-600 dark:text-emerald-400">Vocation Travels Curated Guide</span>
-          </div>
-        </div>
-
-        <!-- Table of Contents (TOC) with Alpine Collapsible on Mobile -->
-        <?php if (!empty($toc_items)): ?>
-          <div x-data="{ tocOpen: true }" class="mb-10 p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-neutral-800/60 border border-slate-200 dark:border-white/10 shadow-sm">
-            <div class="flex items-center justify-between cursor-pointer select-none" @click="tocOpen = !tocOpen">
-              <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
-                <i class="fa-solid fa-list-ul text-emerald-500"></i>
-                <span>In This Guide (Table of Contents)</span>
-              </h3>
-              <button type="button" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 focus:outline-none">
-                <span x-text="tocOpen ? 'Hide' : 'Show'">Hide</span>
-                <i :class="tocOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" class="text-xs transition-transform"></i>
-              </button>
-            </div>
-            <div x-show="tocOpen" x-transition class="mt-4 pt-4 border-t border-slate-200 dark:border-white/10">
-              <ol class="space-y-2 text-sm sm:text-base">
-                <?php foreach ($toc_items as $tidx => $item): ?>
-                  <li>
-                    <a href="#<?= htmlspecialchars($item['id']) ?>" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-start gap-2">
-                      <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1"><?= ($tidx + 1) ?>.</span>
-                      <span class="hover:underline"><?= htmlspecialchars($item['title']) ?></span>
-                    </a>
-                  </li>
-                <?php endforeach; ?>
-              </ol>
-            </div>
-          </div>
-        <?php endif; ?>
-
-        <!-- Article Body -->
-        <div class="article-body">
-          <?php foreach ($post['body'] as $bidx => $block): ?>
-            <?php render_blog_block($block, $site, $bidx); ?>
-          <?php endforeach; ?>
-        </div>
-
-        <!-- In-Content Contextual Cross-Pillar CTA -->
-        <div class="my-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-700 to-emerald-800 text-white shadow-xl relative overflow-hidden">
-          <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl pointer-events-none">
-            <i class="fa-solid fa-plane-departure"></i>
-          </div>
-          <div class="relative z-10 max-w-2xl">
-            <?php if (strtolower($post['category']) === 'visa'): ?>
-              <span class="inline-block px-3 py-1 mb-3 rounded-full text-xs font-bold bg-white/20 text-white uppercase tracking-wider backdrop-blur-sm">
-                <i class="fa-solid fa-passport mr-1"></i> Pan-India Visa Advisory
+            <!-- Meta Bar (Author, Date, Read time, Comments/Category) -->
+            <div class="flex flex-wrap items-center gap-3 sm:gap-6 pb-4 mb-6 border-b border-gray-200 dark:border-white/10 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              <span class="flex items-center gap-1.5 font-medium text-gray-900 dark:text-white">
+                <i class="fa-solid fa-user text-emerald-500"></i>
+                <span><?= htmlspecialchars($post['author']) ?></span>
               </span>
-              <h3 class="text-xl sm:text-2xl font-bold mb-2">Need Professional Visa Assistance?</h3>
-              <p class="text-white/90 text-sm sm:text-base leading-relaxed mb-6">
-                Our accredited visa desk serves travelers across New Delhi, Bangalore, Hyderabad, Pune, Chennai, and Mumbai with slot booking, 100% document scrutiny, and mock interview training.
-              </p>
-              <div class="flex flex-wrap gap-3">
-                <a href="https://api.whatsapp.com/send?phone=91<?= $clean_wp ?>&text=<?= urlencode('Hi Vocation Travels, I am reading your guide "' . $post['title'] . '" and would like visa assistance.') ?>" target="_blank" rel="noopener"
-                  class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-lg">
-                  <i class="fa-brands fa-whatsapp text-lg"></i>
-                  <span>WhatsApp Consultant</span>
-                </a>
-                <a href="<?= $site ?>visa-services/"
-                  class="px-5 py-2.5 bg-white text-emerald-800 hover:bg-gray-100 font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-lg">
-                  <span>Explore Visa Services</span>
-                  <i class="fa-solid fa-arrow-right text-xs"></i>
-                </a>
+              <span class="text-gray-300 dark:text-gray-600">&bull;</span>
+              <span class="flex items-center gap-1.5">
+                <i class="fa-regular fa-calendar text-emerald-500"></i>
+                <span><?= htmlspecialchars($post['published_display']) ?></span>
+              </span>
+              <span class="text-gray-300 dark:text-gray-600">&bull;</span>
+              <span class="flex items-center gap-1.5">
+                <i class="fa-regular fa-clock text-emerald-500"></i>
+                <span><?= htmlspecialchars($post['read_time']) ?></span>
+              </span>
+              <span class="text-gray-300 dark:text-gray-600">&bull;</span>
+              <span class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>2026 Guidelines</span>
+              </span>
+            </div>
+
+            <!-- In-Content Title Header -->
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
+              <?= htmlspecialchars($post['title']) ?>
+            </h2>
+
+            <!-- Featured Image -->
+            <div class="mb-8 overflow-hidden rounded-2xl border border-gray-100 dark:border-white/10 shadow-lg group">
+              <img src="<?= $site . $post['featured_image'] ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-64 sm:h-80 md:h-[420px] object-cover transform group-hover:scale-102 transition duration-500">
+              <div class="bg-gray-50 dark:bg-neutral-800 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-white/10 flex justify-between items-center">
+                <span><i class="fa-solid fa-camera mr-1"></i> Featured: <?= htmlspecialchars($post['title']) ?></span>
+                <span class="font-medium text-emerald-600 dark:text-emerald-400">Vocation Travels Curated</span>
               </div>
-            <?php else: ?>
-              <span class="inline-block px-3 py-1 mb-3 rounded-full text-xs font-bold bg-white/20 text-white uppercase tracking-wider backdrop-blur-sm">
-                <i class="fa-solid fa-umbrella-beach mr-1"></i> Bespoke Holiday Concierge
-              </span>
-              <h3 class="text-xl sm:text-2xl font-bold mb-2">Turn This Dream Trip Into Reality</h3>
-              <p class="text-white/90 text-sm sm:text-base leading-relaxed mb-6">
-                Looking for a private custom itinerary with 5-star handpicked resorts, chauffeur transfers, and zero hassle? Speak with our luxury travel specialists today.
+            </div>
+
+            <!-- E-E-A-T Editorial Badge -->
+            <div class="mb-6 p-4 rounded-2xl bg-slate-50 dark:bg-neutral-800/60 border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-gray-600 dark:text-gray-300">
+              <div class="flex items-center gap-2.5">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                  <i class="fa-solid fa-shield-check"></i>
+                </span>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-white">Fact-Checked &amp; Curated for 2026 Travel &amp; Visa Guidelines</p>
+                  <p class="text-gray-500 dark:text-gray-400 text-[11px]">Reviewed by senior destination curators and visa consultants at Vocation Travels</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 self-start sm:self-auto">
+                <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-medium text-[11px] border border-emerald-200 dark:border-emerald-800/40">
+                  <i class="fa-solid fa-rotate mr-1"></i> Updated <?= htmlspecialchars(date('M Y', strtotime($post['updated']))) ?>
+                </span>
+              </div>
+            </div>
+
+            <!-- Quick Answer / AI Overview (AEO Callout) -->
+            <div class="p-5 sm:p-6 mb-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-neutral-900 border border-emerald-300 dark:border-emerald-500/30 shadow-sm">
+              <div class="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold uppercase tracking-wider mb-2.5">
+                <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs">
+                  <i class="fa-solid fa-bolt"></i>
+                </span>
+                <span>Key Takeaway &amp; Summary</span>
+              </div>
+              <p class="text-gray-900 dark:text-emerald-100 text-base sm:text-lg leading-relaxed font-normal">
+                <?= htmlspecialchars($post['quick_answer']) ?>
               </p>
-              <div class="flex flex-wrap gap-3">
-                <a href="https://api.whatsapp.com/send?phone=91<?= $clean_wp ?>&text=<?= urlencode('Hi Vocation Travels, I loved your article "' . $post['title'] . '" and want to customize a holiday package.') ?>" target="_blank" rel="noopener"
-                  class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-lg">
-                  <i class="fa-brands fa-whatsapp text-lg"></i>
-                  <span>WhatsApp Trip Planner</span>
-                </a>
-                <a href="<?= $site ?>travel-package/"
-                  class="px-5 py-2.5 bg-white text-emerald-800 hover:bg-gray-100 font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-lg">
-                  <span>Browse Holiday Packages</span>
-                  <i class="fa-solid fa-arrow-right text-xs"></i>
-                </a>
+            </div>
+
+            <!-- Table of Contents (TOC) with Alpine Collapsible on Mobile -->
+            <?php if (!empty($toc_items)): ?>
+              <div x-data="{ tocOpen: true }" class="mb-10 p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-neutral-800/60 border border-slate-200 dark:border-white/10 shadow-sm">
+                <div class="flex items-center justify-between cursor-pointer select-none" @click="tocOpen = !tocOpen">
+                  <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                    <i class="fa-solid fa-list-ul text-emerald-500"></i>
+                    <span>In This Guide (Table of Contents)</span>
+                  </h3>
+                  <button type="button" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 focus:outline-none">
+                    <span x-text="tocOpen ? 'Hide' : 'Show'">Hide</span>
+                    <i :class="tocOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" class="text-xs transition-transform"></i>
+                  </button>
+                </div>
+                <div x-show="tocOpen" x-transition class="mt-4 pt-4 border-t border-slate-200 dark:border-white/10">
+                  <ol class="space-y-2 text-sm sm:text-base">
+                    <?php foreach ($toc_items as $tidx => $item): ?>
+                      <li>
+                        <a href="#<?= htmlspecialchars($item['id']) ?>" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-start gap-2">
+                          <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1"><?= ($tidx + 1) ?>.</span>
+                          <span class="hover:underline"><?= htmlspecialchars($item['title']) ?></span>
+                        </a>
+                      </li>
+                    <?php endforeach; ?>
+                  </ol>
+                </div>
               </div>
             <?php endif; ?>
-          </div>
-        </div>
 
-        <!-- FAQ Accordion (AEO + FAQPage Schema) -->
-        <?php if (!empty($post['faqs'])): ?>
-          <div class="mt-12 border-t border-gray-200 dark:border-white/10 pt-10" x-data="{ openFaq: null }">
-            <div class="flex items-center gap-2 mb-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
-              <i class="fa-solid fa-circle-question"></i>
-              <span>Common Questions &amp; Clear Answers</span>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
-            <div class="space-y-4">
-              <?php foreach ($post['faqs'] as $fidx => $faq): ?>
-                <div class="bg-gray-50 dark:bg-neutral-800/70 rounded-2xl p-5 border border-gray-200 dark:border-white/10 hover:border-emerald-500/50 transition cursor-pointer select-none"
-                     @click="openFaq = (openFaq === <?= $fidx ?> ? null : <?= $fidx ?>)">
-                  <div class="flex justify-between items-center gap-4">
-                    <h3 class="font-bold text-gray-900 dark:text-white text-base sm:text-lg flex items-center gap-2.5">
-                      <span class="text-emerald-600 dark:text-emerald-400 font-extrabold">Q.</span>
-                      <span><?= htmlspecialchars($faq['q']) ?></span>
-                    </h3>
-                    <div class="w-8 h-8 rounded-full bg-white dark:bg-neutral-700 flex items-center justify-center flex-shrink-0 shadow-sm">
-                      <i :class="openFaq === <?= $fidx ?> ? 'fa-solid fa-chevron-up text-emerald-500' : 'fa-solid fa-chevron-down text-gray-400'" class="text-xs transition-transform"></i>
-                    </div>
-                  </div>
-                  <div x-show="openFaq === <?= $fidx ?>" x-transition class="mt-3.5 pt-3.5 border-t border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base">
-                    <?= htmlspecialchars($faq['a']) ?>
-                  </div>
-                </div>
+            <!-- Article Body Content -->
+            <div class="article-body">
+              <?php foreach ($post['body'] as $bidx => $block): ?>
+                <?php render_blog_block($block, $site, $bidx); ?>
               <?php endforeach; ?>
             </div>
-          </div>
-        <?php endif; ?>
 
-        <!-- Author Bio Box -->
-        <div class="mt-12 p-6 rounded-2xl bg-slate-50 dark:bg-neutral-800/60 border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-          <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center text-2xl font-bold shadow-md flex-shrink-0">
-            <i class="fa-solid fa-user-tie"></i>
-          </div>
-          <div>
-            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
-              <h4 class="font-bold text-gray-900 dark:text-white text-lg"><?= htmlspecialchars($post['author']) ?></h4>
-              <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold">Editorial Team</span>
+            <!-- In-Content Contextual Cross-Pillar CTA -->
+            <div class="my-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-700 to-emerald-800 text-white shadow-xl relative overflow-hidden">
+              <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl pointer-events-none">
+                <i class="fa-solid fa-plane-departure"></i>
+              </div>
+              <div class="relative z-10 max-w-2xl">
+                <?php if (strtolower($post['category']) === 'visa'): ?>
+                  <span class="inline-block px-3 py-1 mb-3 rounded-full text-xs font-bold bg-white/20 text-white uppercase tracking-wider backdrop-blur-sm">
+                    <i class="fa-solid fa-passport mr-1"></i> Pan-India Visa Advisory
+                  </span>
+                  <h3 class="text-xl sm:text-2xl font-bold mb-2">Need Professional Visa Assistance?</h3>
+                  <p class="text-white/90 text-sm sm:text-base leading-relaxed mb-6">
+                    Our accredited visa desk serves travelers across New Delhi, Bangalore, Hyderabad, Pune, Chennai, and Mumbai with slot booking, 100% document scrutiny, and mock interview training.
+                  </p>
+                  <div class="flex flex-wrap gap-3">
+                    <a href="https://api.whatsapp.com/send?phone=91<?= $clean_wp ?>&text=<?= urlencode('Hi Vocation Travels, I am reading your guide "' . $post['title'] . '" and would like visa assistance.') ?>" target="_blank" rel="noopener"
+                      class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-lg">
+                      <i class="fa-brands fa-whatsapp text-lg"></i>
+                      <span>WhatsApp Consultant</span>
+                    </a>
+                    <a href="<?= $site ?>visa-services/"
+                      class="px-5 py-2.5 bg-white text-emerald-800 hover:bg-gray-100 font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-lg">
+                      <span>Explore Visa Services</span>
+                      <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                  </div>
+                <?php else: ?>
+                  <span class="inline-block px-3 py-1 mb-3 rounded-full text-xs font-bold bg-white/20 text-white uppercase tracking-wider backdrop-blur-sm">
+                    <i class="fa-solid fa-umbrella-beach mr-1"></i> Bespoke Holiday Concierge
+                  </span>
+                  <h3 class="text-xl sm:text-2xl font-bold mb-2">Turn This Dream Trip Into Reality</h3>
+                  <p class="text-white/90 text-sm sm:text-base leading-relaxed mb-6">
+                    Looking for a private custom itinerary with 5-star handpicked resorts, chauffeur transfers, and zero hassle? Speak with our luxury travel specialists today.
+                  </p>
+                  <div class="flex flex-wrap gap-3">
+                    <a href="https://api.whatsapp.com/send?phone=91<?= $clean_wp ?>&text=<?= urlencode('Hi Vocation Travels, I loved your article "' . $post['title'] . '" and want to customize a holiday package.') ?>" target="_blank" rel="noopener"
+                      class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-lg">
+                      <i class="fa-brands fa-whatsapp text-lg"></i>
+                      <span>WhatsApp Trip Planner</span>
+                    </a>
+                    <a href="<?= $site ?>travel-package/"
+                      class="px-5 py-2.5 bg-white text-emerald-800 hover:bg-gray-100 font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-lg">
+                      <span>Browse Holiday Packages</span>
+                      <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                  </div>
+                <?php endif; ?>
+              </div>
             </div>
-            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3">
-              Authored by senior destination researchers and consular documentation specialists at Vocation Travels And Tours. Helping over 25,000+ travelers experience seamless global adventures and guaranteed visa compliance.
-            </p>
-            <a href="<?= $site ?>about/" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1">
-              <span>Learn more about our advisory standards</span>
-              <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </a>
-          </div>
-        </div>
 
-        <!-- Social Share & Interactive Copy Link -->
-        <div class="mt-10 pt-6 border-t border-gray-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4" x-data="{ copied: false }">
-          <span class="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-            <i class="fa-solid fa-share-nodes text-emerald-500"></i>
-            <span>Share this travel guide:</span>
-          </span>
-          <div class="flex items-center gap-2.5 flex-wrap justify-center">
-            <!-- WhatsApp -->
-            <a href="https://api.whatsapp.com/send?text=<?= urlencode($post['title'] . ' - Read here: ' . $site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener"
-              class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-950/60 text-green-600 hover:bg-green-500 hover:text-white transition flex items-center justify-center border border-green-200 dark:border-green-800 shadow-sm" title="Share via WhatsApp">
-              <i class="fab fa-whatsapp"></i>
-            </a>
-            <!-- Facebook -->
-            <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener"
-              class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center border border-blue-200 dark:border-blue-800 shadow-sm" title="Share on Facebook">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <!-- Twitter / X -->
-            <a href="https://twitter.com/intent/tweet?url=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>&text=<?= urlencode($post['title']) ?>" target="_blank" rel="noopener"
-              class="w-10 h-10 rounded-full bg-slate-100 dark:bg-neutral-800 text-gray-800 dark:text-gray-200 hover:bg-black hover:text-white transition flex items-center justify-center border border-gray-200 dark:border-white/10 shadow-sm" title="Share on X">
-              <i class="fa-brands fa-x-twitter"></i>
-            </a>
-            <!-- LinkedIn -->
-            <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener"
-              class="w-10 h-10 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 hover:bg-sky-700 hover:text-white transition flex items-center justify-center border border-sky-200 dark:border-sky-800 shadow-sm" title="Share on LinkedIn">
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-            <!-- Copy Link Button -->
-            <button type="button"
-              @click="navigator.clipboard.writeText('<?= $site . 'blog-details/' . $slug . '/' ?>'); copied = true; setTimeout(() => copied = false, 2500)"
-              class="px-3.5 py-2 rounded-full bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 hover:bg-emerald-500 hover:text-white text-xs font-semibold transition flex items-center gap-1.5 border border-gray-200 dark:border-white/10 shadow-sm">
-              <i :class="copied ? 'fa-solid fa-check text-white' : 'fa-regular fa-copy'"></i>
-              <span x-text="copied ? 'Link Copied!' : 'Copy Link'">Copy Link</span>
-            </button>
-          </div>
-        </div>
+            <!-- Tags Section (nikhilworks style) -->
+            <?php if (!empty($post['meta_keywords'])): ?>
+              <div class="my-8 pt-6 border-t border-gray-200 dark:border-white/10">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mr-1">Tags:</span>
+                  <?php foreach ($post['meta_keywords'] as $tag): ?>
+                    <a href="<?= $site ?>blogs/?q=<?= urlencode($tag) ?>"
+                      class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 hover:bg-emerald-600 hover:text-white transition">
+                      #<?= htmlspecialchars($tag) ?>
+                    </a>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            <?php endif; ?>
 
+            <!-- Social Share Section (nikhilworks style) -->
+            <div class="my-8 pt-6 border-t border-gray-200 dark:border-white/10" x-data="{ copied: false }">
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <i class="fa-regular fa-share-from-square text-emerald-500"></i>
+                  <span>Share this article:</span>
+                </span>
+                <div class="flex items-center gap-2 flex-wrap justify-center">
+                  <!-- WhatsApp -->
+                  <a href="https://api.whatsapp.com/send?text=<?= urlencode($post['title'] . ' - ' . $site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener"
+                    class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-950/60 text-green-600 hover:bg-green-500 hover:text-white transition flex items-center justify-center border border-green-200 dark:border-green-800 shadow-sm" title="Share via WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                  </a>
+                  <!-- Facebook -->
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener"
+                    class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center border border-blue-200 dark:border-blue-800 shadow-sm" title="Share on Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                  </a>
+                  <!-- Twitter / X -->
+                  <a href="https://twitter.com/intent/tweet?url=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>&text=<?= urlencode($post['title']) ?>" target="_blank" rel="noopener"
+                    class="w-10 h-10 rounded-full bg-slate-100 dark:bg-neutral-800 text-gray-800 dark:text-gray-200 hover:bg-black hover:text-white transition flex items-center justify-center border border-gray-200 dark:border-white/10 shadow-sm" title="Share on X">
+                    <i class="fa-brands fa-x-twitter"></i>
+                  </a>
+                  <!-- LinkedIn -->
+                  <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode($site . 'blog-details/' . $slug . '/') ?>" target="_blank" rel="noopener"
+                    class="w-10 h-10 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 hover:bg-sky-700 hover:text-white transition flex items-center justify-center border border-sky-200 dark:border-sky-800 shadow-sm" title="Share on LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                  </a>
+                  <!-- Copy Link Button -->
+                  <button type="button"
+                    @click="navigator.clipboard.writeText('<?= $site . 'blog-details/' . $slug . '/' ?>'); copied = true; setTimeout(() => copied = false, 2500)"
+                    class="px-3.5 py-2 rounded-full bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 hover:bg-emerald-500 hover:text-white text-xs font-semibold transition flex items-center gap-1.5 border border-gray-200 dark:border-white/10 shadow-sm">
+                    <i :class="copied ? 'fa-solid fa-check text-white' : 'fa-regular fa-copy'"></i>
+                    <span x-text="copied ? 'Link Copied!' : 'Copy Link'">Copy Link</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Author Bio Box (nikhilworks style) -->
+            <div class="my-8 p-6 rounded-2xl bg-slate-50 dark:bg-neutral-800/60 border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center text-2xl font-bold shadow-md flex-shrink-0">
+                <i class="fa-solid fa-user-tie"></i>
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
+                  <h4 class="font-bold text-gray-900 dark:text-white text-lg"><?= htmlspecialchars($post['author']) ?></h4>
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold">Editorial Team</span>
+                </div>
+                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3">
+                  Authored by senior destination researchers and consular documentation specialists at Vocation Travels And Tours. Helping over 25,000+ travelers experience seamless global adventures and guaranteed visa compliance across India.
+                </p>
+                <a href="<?= $site ?>about/" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1">
+                  <span>Learn more about our advisory practice</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- FAQ Accordion (AEO + FAQPage Schema) -->
+            <?php if (!empty($post['faqs'])): ?>
+              <div class="mt-12 border-t border-gray-200 dark:border-white/10 pt-10" x-data="{ openFaq: null }">
+                <div class="flex items-center gap-2 mb-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <i class="fa-solid fa-circle-question"></i>
+                  <span>Common Questions &amp; Clear Answers</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
+                <div class="space-y-4">
+                  <?php foreach ($post['faqs'] as $fidx => $faq): ?>
+                    <div class="bg-gray-50 dark:bg-neutral-800/70 rounded-2xl p-5 border border-gray-200 dark:border-white/10 hover:border-emerald-500/50 transition cursor-pointer select-none"
+                         @click="openFaq = (openFaq === <?= $fidx ?> ? null : <?= $fidx ?>)">
+                      <div class="flex justify-between items-center gap-4">
+                        <h3 class="font-bold text-gray-900 dark:text-white text-base sm:text-lg flex items-center gap-2.5">
+                          <span class="text-emerald-600 dark:text-emerald-400 font-extrabold">Q.</span>
+                          <span><?= htmlspecialchars($faq['q']) ?></span>
+                        </h3>
+                        <div class="w-8 h-8 rounded-full bg-white dark:bg-neutral-700 flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <i :class="openFaq === <?= $fidx ?> ? 'fa-solid fa-chevron-up text-emerald-500' : 'fa-solid fa-chevron-down text-gray-400'" class="text-xs transition-transform"></i>
+                        </div>
+                      </div>
+                      <div x-show="openFaq === <?= $fidx ?>" x-transition class="mt-3.5 pt-3.5 border-t border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base">
+                        <?= htmlspecialchars($faq['a']) ?>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            <?php endif; ?>
+
+          </article>
+          <!-- ── End Left Column ── -->
+
+          <!-- ═════════════════════════════════════════════════════════
+               RIGHT COLUMN (4 Columns): Sidebar Area (nikhilworks model)
+               ═════════════════════════════════════════════════════════ -->
+          <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+
+            <!-- Sidebar Widget 1: Search (nikhilworks style) -->
+            <div class="sidebar-widget bg-white dark:bg-neutral-900 rounded-3xl p-6 border border-gray-200/80 dark:border-white/10 shadow-lg">
+              <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass text-emerald-500"></i>
+                <span>Search Articles</span>
+              </h3>
+              <form action="<?= $site ?>blogs/" method="GET" class="relative">
+                <input type="text" name="q" placeholder="Search guides, visas, places..."
+                  class="w-full pl-4 pr-11 py-3 text-sm rounded-2xl bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button type="submit" aria-label="Search"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center transition shadow-md">
+                  <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+              </form>
+            </div>
+
+            <!-- Sidebar Widget 2: Recent Posts (nikhilworks post-auhtor-area style) -->
+            <div class="sidebar-widget bg-white dark:bg-neutral-900 rounded-3xl p-6 border border-gray-200/80 dark:border-white/10 shadow-lg">
+              <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-100 dark:border-white/10 flex items-center justify-between">
+                <span>Recent Posts</span>
+                <span class="text-xs text-emerald-500 font-semibold"><?= count($sidebar_recent) ?> Guides</span>
+              </h3>
+              <div class="space-y-4">
+                <?php foreach ($sidebar_recent as $s_slug => $s_post): ?>
+                  <div class="recent-post-item flex items-center gap-3.5 group">
+                    <a href="<?= $site ?>blog-details/<?= htmlspecialchars($s_slug) ?>/" class="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-neutral-800 shadow-sm block">
+                      <img src="<?= $site . $s_post['featured_image'] ?>" alt="<?= htmlspecialchars($s_post['title']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                    </a>
+                    <div class="flex-grow min-w-0">
+                      <div class="flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-gray-500 mb-1">
+                        <i class="fa-regular fa-calendar-days text-emerald-500 text-[10px]"></i>
+                        <span><?= htmlspecialchars($s_post['published_display']) ?></span>
+                      </div>
+                      <a href="<?= $site ?>blog-details/<?= htmlspecialchars($s_slug) ?>/"
+                        class="recent-post-title font-bold text-xs sm:text-sm text-gray-900 dark:text-white line-clamp-2 leading-snug transition group-hover:text-emerald-500 block">
+                        <?= htmlspecialchars($s_post['title']) ?>
+                      </a>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            </div>
+
+            <!-- Sidebar Widget 3: Contact / Conversion CTA (nikhilworks others-area style) -->
+            <div class="sidebar-widget rounded-3xl p-6 bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-900 border border-emerald-500/30 text-white shadow-xl relative overflow-hidden">
+              <div class="absolute -right-6 -bottom-6 text-7xl text-emerald-500/10 pointer-events-none">
+                <i class="fa-solid fa-headset"></i>
+              </div>
+              <span class="inline-block px-2.5 py-1 mb-3 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 uppercase tracking-wider border border-emerald-500/30">
+                24/7 Travel &amp; Visa Desk
+              </span>
+              <h3 class="text-xl font-extrabold mb-2 text-white">Need Help? Let's Talk</h3>
+              <p class="text-xs sm:text-sm text-gray-300 leading-relaxed mb-5">
+                Whether you're planning a luxury holiday or preparing an urgent visa filing across Bangalore, Hyderabad, Pune, Chennai or Delhi — our team is available to assist.
+              </p>
+              <div class="space-y-2.5">
+                <a href="tel:+91<?= $clean_phone ?>"
+                  class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition transform hover:-translate-y-0.5">
+                  <i class="fa-solid fa-phone"></i>
+                  <span>Call +91 <?= htmlspecialchars($phone) ?></span>
+                </a>
+                <a href="https://api.whatsapp.com/send?phone=91<?= $clean_wp ?>&text=<?= urlencode('Hi Vocation Travels, I am reading your article "' . $post['title'] . '" and would like to talk with a travel/visa consultant.') ?>" target="_blank" rel="noopener"
+                  class="w-full py-3 px-4 rounded-xl bg-green-600 hover:bg-green-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition transform hover:-translate-y-0.5">
+                  <i class="fa-brands fa-whatsapp text-base"></i>
+                  <span>WhatsApp Consultant</span>
+                </a>
+              </div>
+              <div class="mt-4 text-center">
+                <a href="<?= $site ?>contact/#contactform" class="text-xs text-gray-300 hover:text-emerald-400 transition inline-flex items-center gap-1 font-medium">
+                  <span>Or submit custom enquiry form</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Sidebar Widget 4: Popular Tags Cloud (nikhilworks tags-area style) -->
+            <div class="sidebar-widget bg-white dark:bg-neutral-900 rounded-3xl p-6 border border-gray-200/80 dark:border-white/10 shadow-lg">
+              <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-100 dark:border-white/10 flex items-center gap-2">
+                <i class="fa-solid fa-tags text-emerald-500"></i>
+                <span>Popular Tags</span>
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                <?php foreach ($popular_tags as $ptag): ?>
+                  <a href="<?= $site ?>blogs/?q=<?= urlencode($ptag) ?>"
+                    class="px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 hover:bg-[#104041] hover:text-[#1ec700] transition">
+                    #<?= htmlspecialchars($ptag) ?>
+                  </a>
+                <?php endforeach; ?>
+              </div>
+            </div>
+
+            <!-- Sidebar Widget 5: Top Tour Packages -->
+            <div class="sidebar-widget bg-white dark:bg-neutral-900 rounded-3xl p-6 border border-gray-200/80 dark:border-white/10 shadow-lg">
+              <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-100 dark:border-white/10 flex items-center justify-between">
+                <span>Featured Packages</span>
+                <a href="<?= $site ?>travel-package/" class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">View All</a>
+              </h3>
+              <div class="space-y-3.5">
+                <?php foreach ($sidebar_packages as $pkg): ?>
+                  <a href="<?= $site ?>package/<?= htmlspecialchars($pkg['slug']) ?>/" class="block p-3 rounded-2xl bg-gray-50 dark:bg-neutral-800/70 border border-gray-100 dark:border-white/5 hover:border-emerald-500/40 transition group">
+                    <div class="flex items-center gap-3">
+                      <img src="<?= $site . $pkg['image'] ?>" alt="<?= htmlspecialchars($pkg['title']) ?>" class="w-12 h-12 rounded-xl object-cover flex-shrink-0 group-hover:scale-105 transition">
+                      <div class="min-w-0 flex-grow">
+                        <div class="flex items-center justify-between text-[11px] text-gray-400 mb-0.5">
+                          <span><?= htmlspecialchars($pkg['duration']) ?></span>
+                          <span class="text-emerald-500 font-bold">Luxury</span>
+                        </div>
+                        <h4 class="font-bold text-xs sm:text-sm text-gray-900 dark:text-white group-hover:text-emerald-500 transition truncate">
+                          <?= htmlspecialchars($pkg['title']) ?>
+                        </h4>
+                        <p class="text-[11px] text-gray-500 truncate"><?= htmlspecialchars($pkg['highlight']) ?></p>
+                      </div>
+                    </div>
+                  </a>
+                <?php endforeach; ?>
+              </div>
+            </div>
+
+          </aside>
+          <!-- ── End Right Column ── -->
+
+        </div>
       </div>
-    </article>
+    </div>
 
-    <!-- Rich Related Posts Section -->
+    <!-- ═════════════════════════════════════════════════════════
+         MORE BLOGS & NEWS (Related Posts Grid - nikhilworks style)
+         ═════════════════════════════════════════════════════════ -->
     <?php if (!empty($related_slugs)): ?>
-      <section class="py-12 px-4 sm:px-6 md:px-8 bg-slate-100/70 dark:bg-neutral-900/50 border-t border-gray-200 dark:border-white/10">
-        <div class="max-w-6xl mx-auto">
+      <section class="py-14 px-4 sm:px-6 lg:px-8 bg-slate-100/70 dark:bg-neutral-900/50 border-t border-gray-200 dark:border-white/10">
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header (nikhilworks style) -->
           <div class="text-center mb-10">
-            <span class="inline-block px-3 py-1 mb-2 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">
-              More Insights
-            </span>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">Related Travel &amp; Visa Guides</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 max-w-xl mx-auto">Continue reading expert itineraries and consular advice curated by our team.</p>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-[#104041] dark:text-emerald-400 mb-2">More Blogs &amp; News</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 max-w-xl mx-auto">Keep reading — more useful travel guides and visa insights for you</p>
           </div>
 
+          <!-- Related Posts Cards -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <?php foreach ($related_slugs as $rslug):
               $rpost = $posts[$rslug] ?? null;
               if (!$rpost) continue;
             ?>
               <article class="bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden shadow-md border border-gray-200 dark:border-white/10 flex flex-col hover:-translate-y-1.5 transition-all duration-300">
-                <a href="<?= $site ?>blog-details/<?= htmlspecialchars($rslug) ?>/" class="block relative h-48 overflow-hidden group">
+                <a href="<?= $site ?>blog-details/<?= htmlspecialchars($rslug) ?>/" class="block relative h-52 overflow-hidden group">
                   <img src="<?= $site . $rpost['featured_image'] ?>" alt="<?= htmlspecialchars($rpost['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                   <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white bg-black/60 backdrop-blur-md">
                     <?= htmlspecialchars($rpost['category']) ?>
@@ -521,8 +728,12 @@ if (!function_exists('render_blog_block')) {
                     <i class="fa-regular fa-clock mr-1"></i><?= htmlspecialchars($rpost['read_time']) ?>
                   </span>
                 </a>
-                <div class="p-5 flex flex-col flex-grow">
-                  <h3 class="font-bold text-gray-900 dark:text-white text-base sm:text-lg mb-2 line-clamp-2 hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+                <div class="p-6 flex flex-col flex-grow">
+                  <div class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
+                    <i class="fa-regular fa-calendar-days text-emerald-500"></i>
+                    <span><?= htmlspecialchars($rpost['published_display']) ?></span>
+                  </div>
+                  <h3 class="font-bold text-gray-900 dark:text-white text-base sm:text-lg mb-2 line-clamp-2 hover:text-emerald-600 dark:hover:text-emerald-400 transition leading-snug">
                     <a href="<?= $site ?>blog-details/<?= htmlspecialchars($rslug) ?>/">
                       <?= htmlspecialchars($rpost['title']) ?>
                     </a>
@@ -531,9 +742,9 @@ if (!function_exists('render_blog_block')) {
                     <?= htmlspecialchars($rpost['excerpt']) ?>
                   </p>
                   <div class="pt-3 border-t border-gray-100 dark:border-white/10 flex items-center justify-between text-xs">
-                    <span class="text-gray-400"><?= htmlspecialchars($rpost['published_display']) ?></span>
+                    <span class="text-gray-400"><?= htmlspecialchars($rpost['author']) ?></span>
                     <a href="<?= $site ?>blog-details/<?= htmlspecialchars($rslug) ?>/" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
-                      <span>Read Guide</span>
+                      <span>Learn More</span>
                       <i class="fa-solid fa-arrow-right text-[10px]"></i>
                     </a>
                   </div>
@@ -556,7 +767,7 @@ if (!function_exists('render_blog_block')) {
     <section class="py-12 px-4 sm:px-6 md:px-8">
       <div class="bg-gradient-to-r from-emerald-700 via-teal-800 to-emerald-900 text-white rounded-3xl shadow-xl p-8 sm:p-12 text-center max-w-5xl mx-auto relative overflow-hidden">
         <div class="relative z-10">
-          <span class="inline-block px-4 py-1.5 mb-3 rounded-full text-xs font-bold bg-white/20 text-white uppercase tracking-wider backdrop-blur-md">
+          <span class="inline-block px-4 py-1.5 mb-3 rounded-full text-xs font-bold bg-white/20 text-white uppercase tracking-wider backdrop-blur-sm">
             Pan-India Travel &amp; Visa Advisory
           </span>
           <h3 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3">Planning a Holiday or Visa Filing?</h3>

@@ -282,6 +282,19 @@ $blog_schema = [
         noResults.classList.toggle('hidden', visibleCount > 0);
       }
     }
+
+    // Auto-search if ?q= param is present in URL
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const q = urlParams.get('q');
+      if (q) {
+        const input = document.getElementById('blogSearch');
+        if (input) {
+          input.value = q;
+          filterBlogs();
+        }
+      }
+    });
   </script>
 </body>
 </html>
