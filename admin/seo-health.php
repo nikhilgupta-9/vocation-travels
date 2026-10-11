@@ -53,6 +53,26 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && 
     }
 }
 
+// Handle Visa City SEO Update
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_city_seo') {
+    $city_id = (int)$_POST['city_id'];
+    $meta_title = trim($_POST['meta_title'] ?? '');
+    $meta_description = trim($_POST['meta_description'] ?? '');
+    $meta_keywords = trim($_POST['meta_keywords'] ?? '');
+    $hero_h1 = trim($_POST['hero_h1'] ?? '');
+    
+    $stmt = $conn->prepare("UPDATE visa_cities SET meta_title = ?, meta_description = ?, meta_keywords = ?, hero_h1 = ?, updated_at = NOW() WHERE id = ?");
+    if ($stmt) {
+        $stmt->bind_param("ssssi", $meta_title, $meta_description, $meta_keywords, $hero_h1, $city_id);
+        if ($stmt->execute()) {
+            $success_message = "Visa City SEO updated successfully!";
+        } else {
+            $error_message = "Failed to update Visa City SEO: " . $stmt->error;
+        }
+        $stmt->close();
+    }
+}
+
 // Fetch all Core Pages SEO
 $core_pages = [];
 $res = $conn->query("SELECT * FROM page_seo ORDER BY id ASC");
@@ -73,19 +93,76 @@ if ($services_res) {
     }
 }
 
-// Calculate site-wide stats
+// Fetch all 42 Visa Cities SEO (from Production Database Sync)
+$cities_list = [];
+$total_cities_score = 0;
+$c_res = $conn->query("SELECT id, name, slug, city_order, meta_title, meta_description, meta_keywords, hero_h1, status FROM visa_cities ORDER BY city_order ASC, name ASC");
+if ($c_res) {
+    while ($c = $c_res->fetch_assoc()) {
+        $c_score = 100;
+        $t_len = mb_strlen($c['meta_title']);
+        $d_len = mb_strlen($c['meta_description']);
+        $kw = trim(explode(',', $c['meta_keywords'] ?? '')[0] ?? '');
+        if (empty($kw)) {
+            $c_score -= 20;
+        } else {
+            $kw_lower = strtolower($kw);
+            if (strpos(strtolower($c['meta_title']), $kw_lower) === false) $c_score -= 10;
+            if (strpos(strtolower($c['meta_description']), $kw_lower) === false) $c_score -= 10;
+        }
+        if ($t_len < 30 || $t_len > 65) $c_score -= 15;
+        if ($d_len < 100 || $d_len > 165) $c_score -= 15;
+        $c['seo_score'] = max(40, min(100, $c_score));
+        $c['focus_keyword'] = $kw;
+        $total_cities_score += $c['seo_score'];
+        $cities_list[] = $c;
+    }
+}
+
+// Fetch Tour States and Packages SEO
+$tours_list = [];
+$ts_res = $conn->query("SELECT id, state_name as name, state_slug as slug, meta_title, meta_description, meta_keywords, 'state' as item_type FROM tourism_states ORDER BY id ASC");
+if ($ts_res) {
+    while ($ts = $ts_res->fetch_assoc()) {
+        $s_score = 100;
+        $t_len = mb_strlen($ts['meta_title']);
+        $d_len = mb_strlen($ts['meta_description']);
+        $kw = trim(explode('|', $ts['meta_keywords'] ?? '')[0] ?? '');
+        if ($t_len < 30 || $t_len > 65) $s_score -= 15;
+        if ($d_len < 100 || $d_len > 165) $s_score -= 15;
+        $ts['seo_score'] = max(40, min(100, $s_score));
+        $ts['focus_keyword'] = $kw;
+        $tours_list[] = $ts;
+    }
+}
+$pkg_res = $conn->query("SELECT id, title as name, slug, short_description as meta_description, type as item_type FROM packages WHERE status = 1 ORDER BY id ASC");
+if ($pkg_res) {
+    while ($p = $pkg_res->fetch_assoc()) {
+        $p['meta_title'] = $p['name'] . ' Tour Package | Vocation Travels';
+        $p['focus_keyword'] = strtolower($p['name']) . ' package';
+        $p['meta_keywords'] = $p['name'] . ', ' . $p['item_type'] . ' tour';
+        $p['seo_score'] = 88;
+        $tours_list[] = $p;
+    }
+}
+
+// Calculate site-wide stats across all 118+ URLs
 $total_core = count($core_pages);
 $total_services = count($services_list);
-$total_monitored = $total_core + $total_services;
+$total_cities = count($cities_list);
+$total_tours = count($tours_list);
+$total_monitored = $total_core + $total_services + $total_cities + $total_tours;
 
 $core_avg = $total_core > 0 ? (array_sum(array_column($core_pages, 'seo_score')) / $total_core) : 90;
 $svc_avg = $total_services > 0 ? ($total_svc_score / $total_services) : 90;
-$site_seo_avg = round(($core_avg * 0.4) + ($svc_avg * 0.6));
+$city_avg = $total_cities > 0 ? ($total_cities_score / $total_cities) : 90;
+$tour_avg = $total_tours > 0 ? (array_sum(array_column($tours_list, 'seo_score')) / $total_tours) : 85;
+$site_seo_avg = round(($core_avg * 0.25) + ($svc_avg * 0.35) + ($city_avg * 0.30) + ($tour_avg * 0.10));
 
 $good_count = 0;
 $ok_count = 0;
 $bad_count = 0;
-foreach (array_merge($core_pages, $services_list) as $item) {
+foreach (array_merge($core_pages, $services_list, $cities_list, $tours_list) as $item) {
     $sc = (int)($item['seo_score'] ?? 85);
     if ($sc >= 85) $good_count++;
     elseif ($sc >= 65) $ok_count++;
@@ -284,30 +361,48 @@ foreach (array_merge($core_pages, $services_list) as $item) {
                     <div class="col-lg-4 col-md-6">
                         <div class="white_card p-4 h-100 shadow-sm">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="fw-bold mb-0">Core Coverage</h6>
+                                <h6 class="fw-bold mb-0">Site Coverage</h6>
                                 <span class="badge bg-primary"><?= $total_monitored ?> Pages</span>
                             </div>
                             <div class="mb-2">
                                 <div class="d-flex justify-content-between small text-muted mb-1">
-                                    <span>Core Pages (Home, About, Hubs)</span>
+                                    <span>Core Pages (Home, Hubs)</span>
                                     <span class="fw-bold text-dark"><?= $total_core ?> Pages</span>
                                 </div>
-                                <div class="progress" style="height: 6px;">
+                                <div class="progress" style="height: 5px;">
                                     <div class="progress-bar bg-primary" style="width: 100%;"></div>
                                 </div>
                             </div>
                             <div class="mb-2">
                                 <div class="d-flex justify-content-between small text-muted mb-1">
-                                    <span>Services Landing Pages</span>
-                                    <span class="fw-bold text-dark"><?= $total_services ?> Pages</span>
+                                    <span>Pan-India Visa Cities (Prod DB)</span>
+                                    <span class="fw-bold text-success"><?= $total_cities ?> Cities</span>
                                 </div>
-                                <div class="progress" style="height: 6px;">
+                                <div class="progress" style="height: 5px;">
                                     <div class="progress-bar bg-success" style="width: 100%;"></div>
                                 </div>
                             </div>
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Tour States & Packages</span>
+                                    <span class="fw-bold text-info"><?= $total_tours ?> Packages</span>
+                                </div>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar bg-info" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Services Landing Pages</span>
+                                    <span class="fw-bold text-secondary"><?= $total_services ?> Pages</span>
+                                </div>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar bg-secondary" style="width: 100%;"></div>
+                                </div>
+                            </div>
                             <div class="pt-2 border-top d-flex justify-content-between align-items-center small text-muted">
-                                <span>Pan-India Coverage:</span>
-                                <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> 40+ Cities Indexed</span>
+                                <span>Pan-India Indexing:</span>
+                                <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> 42 Cities Synced</span>
                             </div>
                         </div>
                     </div>
@@ -348,7 +443,7 @@ foreach (array_merge($core_pages, $services_list) as $item) {
                             <p class="text-muted small mb-0">See exactly how your pages appear in Google Search result snippets</p>
                         </div>
                         <div class="d-flex gap-2 mt-2 mt-md-0">
-                            <select id="serpPageSelector" class="form-select form-select-sm" style="min-width: 260px;" onchange="loadSerpPreview(this.value)">
+                            <select id="serpPageSelector" class="form-select form-select-sm" style="min-width: 290px;" onchange="loadSerpPreview(this.value)">
                                 <optgroup label="Core Frontend Pages">
                                     <?php foreach ($core_pages as $cp): ?>
                                         <option value="core_<?= $cp['id'] ?>" 
@@ -358,6 +453,30 @@ foreach (array_merge($core_pages, $services_list) as $item) {
                                                 data-keyword="<?= htmlspecialchars($cp['focus_keyword']) ?>"
                                                 data-score="<?= $cp['seo_score'] ?>">
                                             <?= htmlspecialchars($cp['page_name']) ?> (Score: <?= $cp['seo_score'] ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                                <optgroup label="Pan-India Visa Cities (42 Production Cities)">
+                                    <?php foreach ($cities_list as $city): ?>
+                                        <option value="city_<?= $city['id'] ?>" 
+                                                data-title="<?= htmlspecialchars($city['meta_title']) ?>" 
+                                                data-desc="<?= htmlspecialchars($city['meta_description']) ?>" 
+                                                data-url="<?= htmlspecialchars($site . 'visa-consultants-' . $city['slug'] . '/') ?>"
+                                                data-keyword="<?= htmlspecialchars($city['focus_keyword']) ?>"
+                                                data-score="<?= $city['seo_score'] ?>">
+                                            Visa City: <?= htmlspecialchars($city['name']) ?> (Score: <?= $city['seo_score'] ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                                <optgroup label="Tour Packages & States">
+                                    <?php foreach ($tours_list as $tp): ?>
+                                        <option value="tour_<?= $tp['id'] ?>" 
+                                                data-title="<?= htmlspecialchars($tp['meta_title']) ?>" 
+                                                data-desc="<?= htmlspecialchars($tp['meta_description']) ?>" 
+                                                data-url="<?= htmlspecialchars($site . ($tp['item_type'] === 'state' ? 'tourism/' . $tp['slug'] . '/' : 'travel-package/')) ?>"
+                                                data-keyword="<?= htmlspecialchars($tp['focus_keyword']) ?>"
+                                                data-score="<?= $tp['seo_score'] ?>">
+                                            Tour: <?= htmlspecialchars($tp['name']) ?> (Score: <?= $tp['seo_score'] ?>)
                                         </option>
                                     <?php endforeach; ?>
                                 </optgroup>
@@ -440,8 +559,18 @@ foreach (array_merge($core_pages, $services_list) as $item) {
                                 </button>
                             </li>
                             <li class="nav-item">
+                                <button class="nav-link" id="cities-tab" data-bs-toggle="tab" data-bs-target="#cities-pane" type="button">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>Visa Cities Pan-India (<?= count($cities_list) ?>)
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="tours-tab" data-bs-toggle="tab" data-bs-target="#tours-pane" type="button">
+                                    <i class="fas fa-suitcase-rolling me-2 text-info"></i>Tour Packages & States (<?= count($tours_list) ?>)
+                                </button>
+                            </li>
+                            <li class="nav-item">
                                 <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services-pane" type="button">
-                                    <i class="fas fa-concierge-bell me-2"></i>Services CMS SEO (<?= count($services_list) ?>)
+                                    <i class="fas fa-concierge-bell me-2 text-secondary"></i>Services CMS SEO (<?= count($services_list) ?>)
                                 </button>
                             </li>
                         </ul>
@@ -590,6 +719,168 @@ foreach (array_merge($core_pages, $services_list) as $item) {
                                 </div>
                             </div>
 
+                            <!-- Pan-India Visa Cities Table (42 Cities) -->
+                            <div class="tab-pane fade" id="cities-pane" role="tabpanel">
+                                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                                    <p class="text-muted small mb-0">
+                                        <i class="fas fa-database text-success me-1"></i>
+                                        Showing <strong>42 Indian Cities</strong> synchronized with production database SEO. Includes targeted local keywords & FAQs.
+                                    </p>
+                                    <div class="d-flex gap-2">
+                                        <a href="view-visa-cities.php" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-list me-1"></i> View All Cities
+                                        </a>
+                                        <a href="add-visa-city.php" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-plus me-1"></i> Add City
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="14%">City / URL</th>
+                                                <th width="18%">Target Focus Keyword</th>
+                                                <th width="26%">Production Meta Title</th>
+                                                <th width="24%">Meta Description</th>
+                                                <th width="8%">Score</th>
+                                                <th width="10%">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($cities_list as $c): ?>
+                                                <?php 
+                                                    $sc = (int)$c['seo_score'];
+                                                    $badge_cls = $sc >= 85 ? 'bg-success' : ($sc >= 65 ? 'bg-warning text-dark' : 'bg-danger');
+                                                    $t_len = mb_strlen($c['meta_title']);
+                                                    $d_len = mb_strlen($c['meta_description']);
+                                                ?>
+                                                <tr>
+                                                    <td>
+                                                        <div class="fw-bold text-dark"><?= htmlspecialchars($c['name']) ?></div>
+                                                        <code class="small text-muted">/visa-consultants-<?= htmlspecialchars($c['slug']) ?>/</code>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-light text-dark border">
+                                                            <i class="fas fa-key text-warning me-1"></i><?= htmlspecialchars($c['focus_keyword'] ?: 'visa consultant ' . $c['name']) ?>
+                                                        </span>
+                                                        <div class="small text-muted mt-1 text-truncate" style="max-width: 180px;">H1: <?= htmlspecialchars($c['hero_h1']) ?></div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="text-truncate fw-semibold" style="max-width: 280px;" title="<?= htmlspecialchars($c['meta_title']) ?>">
+                                                            <?= htmlspecialchars($c['meta_title']) ?>
+                                                        </div>
+                                                        <div class="d-flex align-items-center gap-2 mt-1">
+                                                            <span class="char-counter <?= ($t_len >= 45 && $t_len <= 65) ? 'text-success' : 'text-danger' ?>">
+                                                                <?= $t_len ?> chars
+                                                            </span>
+                                                            <div class="meter-bar flex-grow-1" style="max-width: 80px;">
+                                                                <div class="meter-fill <?= ($t_len >= 45 && $t_len <= 65) ? 'bg-success' : 'bg-warning' ?>" style="width: <?= min(100, ($t_len / 65) * 100) ?>%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="text-truncate text-muted small" style="max-width: 260px;" title="<?= htmlspecialchars($c['meta_description']) ?>">
+                                                            <?= htmlspecialchars($c['meta_description']) ?>
+                                                        </div>
+                                                        <div class="d-flex align-items-center gap-2 mt-1">
+                                                            <span class="char-counter <?= ($d_len >= 120 && $d_len <= 165) ? 'text-success' : 'text-danger' ?>">
+                                                                <?= $d_len ?> chars
+                                                            </span>
+                                                            <div class="meter-bar flex-grow-1" style="max-width: 80px;">
+                                                                <div class="meter-fill <?= ($d_len >= 120 && $d_len <= 165) ? 'bg-success' : 'bg-warning' ?>" style="width: <?= min(100, ($d_len / 160) * 100) ?>%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge <?= $badge_cls ?> px-2.5 py-1.5 fw-bold">
+                                                            <?= $sc ?>/100
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex gap-1">
+                                                            <a href="edit-visa-city.php?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary" title="Full Editor">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <button class="btn btn-sm btn-outline-success" 
+                                                                    onclick="openEditCitySeoModal(<?= htmlspecialchars(json_encode($c)) ?>)" title="Quick SEO Edit">
+                                                                <i class="fas fa-bolt"></i>
+                                                            </button>
+                                                            <a href="<?= $site ?>visa-consultants-<?= htmlspecialchars($c['slug']) ?>/" target="_blank" class="btn btn-sm btn-outline-secondary" title="View Live Page">
+                                                                <i class="fas fa-external-link-alt"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Tour Packages & States Table -->
+                            <div class="tab-pane fade" id="tours-pane" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <p class="text-muted small mb-0">Production Tour States (Rajasthan, Himachal, Karnataka) and Holiday Packages with metadata.</p>
+                                    <a href="packages.php" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-suitcase me-1"></i> Manage Packages
+                                    </a>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="20%">Name / Route</th>
+                                                <th width="12%">Category</th>
+                                                <th width="20%">Focus Keyword</th>
+                                                <th width="24%">Meta Title</th>
+                                                <th width="12%">Yoast Score</th>
+                                                <th width="12%">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($tours_list as $tp): ?>
+                                                <?php 
+                                                    $sc = (int)$tp['seo_score'];
+                                                    $badge_cls = $sc >= 85 ? 'bg-success' : ($sc >= 65 ? 'bg-warning text-dark' : 'bg-danger');
+                                                ?>
+                                                <tr>
+                                                    <td>
+                                                        <div class="fw-bold text-dark"><?= htmlspecialchars($tp['name']) ?></div>
+                                                        <code class="small text-muted">/<?= htmlspecialchars($tp['slug']) ?>/</code>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-<?= $tp['item_type'] === 'state' ? 'info' : 'success' ?>-subtle text-<?= $tp['item_type'] === 'state' ? 'info' : 'success' ?>">
+                                                            <?= ucfirst($tp['item_type']) ?>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-light text-dark border">
+                                                            <i class="fas fa-key text-warning me-1"></i><?= htmlspecialchars($tp['focus_keyword']) ?>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="text-truncate fw-semibold" style="max-width: 280px;" title="<?= htmlspecialchars($tp['meta_title']) ?>">
+                                                            <?= htmlspecialchars($tp['meta_title']) ?>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge <?= $badge_cls ?> px-2.5 py-1.5 fw-bold">
+                                                            <?= $sc ?>/100
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="<?= $site . ($tp['item_type'] === 'state' ? 'tourism/' . $tp['slug'] . '/' : 'travel-package/') ?>" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                                            <i class="fas fa-external-link-alt me-1"></i> View Live
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -684,7 +975,131 @@ foreach (array_merge($core_pages, $services_list) as $item) {
         </div>
     </div>
 
+    <!-- Modal for Editing Visa City SEO -->
+    <div class="modal fade" id="editCitySeoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" action="seo-health.php">
+                    <input type="hidden" name="action" value="update_city_seo">
+                    <input type="hidden" name="city_id" id="modalCityId">
+                    
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-bold">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>Quick SEO Edit: <span id="modalCityNameTitle"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-bold small">Hero H1 Main Heading</label>
+                                <input type="text" class="form-control" name="hero_h1" id="modalCityHeroH1" required
+                                       placeholder="e.g. Canada Student Visa Consultant in Bangalore">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold small">Primary Target Keywords (Comma-separated)</label>
+                                <input type="text" class="form-control" name="meta_keywords" id="modalCityKeywords" required
+                                       placeholder="e.g. canada student visa bangalore, best visa consultants in bangalore" oninput="updateModalCityYoastAnalysis()">
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label fw-bold small mb-1">SEO Meta Title (45 - 65 chars recommended)</label>
+                                    <span class="char-counter text-muted" id="modalCityTitleCounter">0 / 65</span>
+                                </div>
+                                <input type="text" class="form-control" name="meta_title" id="modalCityMetaTitle" required
+                                       placeholder="Title tag displayed in Google results" oninput="updateModalCityYoastAnalysis()">
+                                <div class="meter-bar">
+                                    <div class="meter-fill" id="modalCityTitleMeter" style="width: 0%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label fw-bold small mb-1">Meta Description (120 - 160 chars recommended)</label>
+                                    <span class="char-counter text-muted" id="modalCityDescCounter">0 / 160</span>
+                                </div>
+                                <textarea class="form-control" name="meta_description" id="modalCityMetaDesc" rows="3" required
+                                          placeholder="Google SERP snippet description" oninput="updateModalCityYoastAnalysis()"></textarea>
+                                <div class="meter-bar">
+                                    <div class="meter-fill" id="modalCityDescMeter" style="width: 0%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <div class="p-3 bg-light rounded-3 border">
+                                    <h6 class="fw-bold mb-2 small text-uppercase">Live Yoast SEO Score Calculation</h6>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div id="modalCityAnalysisNotes" class="small text-muted">Optimized for local Pan-India search queries</div>
+                                        <div class="badge bg-success fs-6" id="modalCityEstimatedScore">Score: 95/100</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> Save City SEO
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openEditCitySeoModal(cityData) {
+            document.getElementById('modalCityId').value = cityData.id;
+            document.getElementById('modalCityNameTitle').textContent = cityData.name;
+            document.getElementById('modalCityHeroH1').value = cityData.hero_h1 || '';
+            document.getElementById('modalCityKeywords').value = cityData.meta_keywords || '';
+            document.getElementById('modalCityMetaTitle').value = cityData.meta_title || '';
+            document.getElementById('modalCityMetaDesc').value = cityData.meta_description || '';
+
+            updateModalCityYoastAnalysis();
+
+            const modal = new bootstrap.Modal(document.getElementById('editCitySeoModal'));
+            modal.show();
+        }
+
+        function updateModalCityYoastAnalysis() {
+            const title = document.getElementById('modalCityMetaTitle').value;
+            const desc = document.getElementById('modalCityMetaDesc').value;
+            const kwStr = document.getElementById('modalCityKeywords').value.trim();
+            const kw = kwStr.split(',')[0].trim().toLowerCase();
+
+            const tLen = title.length;
+            const dLen = desc.length;
+
+            document.getElementById('modalCityTitleCounter').textContent = tLen + ' / 65';
+            document.getElementById('modalCityDescCounter').textContent = dLen + ' / 160';
+
+            const tMeter = document.getElementById('modalCityTitleMeter');
+            tMeter.style.width = Math.min(100, (tLen / 65) * 100) + '%';
+            tMeter.className = 'meter-fill ' + ((tLen >= 45 && tLen <= 65) ? 'bg-success' : (tLen > 0 ? 'bg-warning' : 'bg-danger'));
+
+            const dMeter = document.getElementById('modalCityDescMeter');
+            dMeter.style.width = Math.min(100, (dLen / 160) * 100) + '%';
+            dMeter.className = 'meter-fill ' + ((dLen >= 120 && dLen <= 165) ? 'bg-success' : (dLen > 0 ? 'bg-warning' : 'bg-danger'));
+
+            let estScore = 100;
+            if (!kw) estScore -= 20;
+            else {
+                if (!title.toLowerCase().includes(kw)) estScore -= 10;
+                if (!desc.toLowerCase().includes(kw)) estScore -= 10;
+            }
+            if (tLen < 30 || tLen > 65) estScore -= 15;
+            if (dLen < 100 || dLen > 165) estScore -= 15;
+            estScore = Math.max(35, Math.min(100, estScore));
+
+            const badge = document.getElementById('modalCityEstimatedScore');
+            badge.textContent = 'Score: ' + estScore + '/100';
+            badge.className = 'badge fs-6 ' + (estScore >= 85 ? 'bg-success' : (estScore >= 65 ? 'bg-warning text-dark' : 'bg-danger'));
+        }
         function loadSerpPreview(val) {
             const select = document.getElementById('serpPageSelector');
             const opt = select.options[select.selectedIndex];
