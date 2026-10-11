@@ -465,6 +465,215 @@ function get_blog_posts()
       'related' => ['kashmir-holiday-itinerary-planning-guide', 'top-10-destinations'],
     ],
 
+    // 9. NEW BLOG: UK Standard Visitor Visa Guide 2026 for Indian Applicants
+    'uk-visitor-visa-guide-india-2026' => [
+      'title' => 'UK Standard Visitor Visa Guide 2026: Documents Checklist, VFS Priority Slots & Financial Proof for Indians',
+      'category' => 'Visa',
+      'author' => 'UK & Commonwealth Consular Practice',
+      'published' => '2026-03-15',
+      'published_display' => 'March 15, 2026',
+      'updated' => '2026-10-11',
+      'read_time' => '11 min read',
+      'hero_image' => 'assets/images/uk_visitor_visa_london.jpg',
+      'featured_image' => 'assets/images/uk_visitor_visa_london.jpg',
+      'excerpt' => 'A master guide on applying for a 6-month UK Standard Visitor Visa from India in 2026: Step-by-step GOV.UK filing, original bank statement proof, avoiding Section V 4.2 refusal, and VFS biometric booking.',
+      'meta_title' => 'UK Standard Visitor Visa Guide 2026 for Indian Travelers | Vocation Travels',
+      'meta_description' => 'Complete UK Standard Visitor Visa 2026 application guide from India: VFS appointment booking, bank balance rules, proof of ties, accommodation proof, and avoiding refusal.',
+      'meta_keywords' => ['uk visitor visa guide 2026', 'uk tourist visa india documents', 'vfs uk visa appointment slot india', 'uk visa bank balance requirement', 'uk visa rejection reasons india', 'uk visa consultants delhi bangalore hyderabad'],
+      'quick_answer' => 'A UK Standard Visitor Visa (valid for 6 months, multiple entries) costs approximately £115 and requires online application via GOV.UK followed by biometric submission at VFS Global in India. Key required documents include 6 months of original stamped bank statements demonstrating regular income and unencumbered savings (recommended minimum ₹4 to ₹6 Lakhs per applicant), ITR acknowledgement for 2-3 assessment years, employer NOC with approved leave, confirmed travel itinerary, and proof of residence/employment ties to India to prevent Section V 4.2 refusal.',
+      'body' => [
+        ['type' => 'p', 'text' => 'From watching the Changing of the Guard at Buckingham Palace and exploring the historic Tower of London to strolling through the Scottish Highlands, the United Kingdom is one of the most aspirational international destinations for Indian travelers.'],
+        ['type' => 'p', 'text' => 'However, UK Visas and Immigration (UKVI) enforces strict document scrutiny. The UK does not conduct face-to-face interviews for tourist applicants; an Entry Clearance Officer (ECO) evaluates your application purely on the strength of your uploaded paperwork. Below is the definitive 2026 blueprint to ensure your visa is granted smoothly.'],
+
+        ['type' => 'h2', 'text' => 'Understanding the UK Standard Visitor Visa in 2026'],
+        ['type' => 'p', 'text' => 'The UK Standard Visitor Visa consolidates tourism, family visits, short business conferences, and professional training into a single visa route. It allows stays of up to 6 months per entry with multiple entries during its validity period.'],
+        ['type' => 'ul', 'items' => [
+          'Validity: 6 Months (Standard), 2 Years, 5 Years, or 10 Years long-term multiple-entry visas',
+          'Application Window: You can apply up to 3 months prior to your intended date of travel',
+          'Government Visa Fee: £115 for the 6-month visa',
+          'Biometrics: Mandatory in-person photo and fingerprint scan at VFS Global centres in New Delhi, Mumbai, Bengaluru, Chennai, Hyderabad, Kolkata, Pune, Ahmedabad, or Chandigarh',
+        ]],
+
+        ['type' => 'h2', 'text' => 'Mandatory Documents Checklist for Indian Passport Holders'],
+        ['type' => 'ul', 'items' => [
+          'Valid Indian Passport: Current passport with at least 1 blank page (front and back), plus all expired passports showing travel stamps',
+          'Completed Online Application Form: Printed summary copy from the official GOV.UK portal',
+          'Financial Evidence (6 Months Bank Statements): Original, signed and stamped bank statements showing steady monthly income and sufficient savings balance',
+          'Income Tax Returns: ITR-V acknowledgement forms for the last 2 to 3 financial years',
+          'Employment & Leave Proof: For salaried professionals: Official NOC letter from company on corporate letterhead stating designation, tenure, approved leave dates, and last 3 months salary slips. For business owners: Certificate of Incorporation, GST certificates, and corporate account statements',
+          'Travel Itinerary & Accommodation: Day-wise breakdown of planned sightseeing and hotel booking confirmations or sponsorship accommodation letter',
+        ]],
+
+        ['type' => 'h2', 'text' => 'The Origin of Funds Rule: How Much Bank Balance Is Needed?'],
+        ['type' => 'p', 'text' => 'A frequent misconception among Indian travelers is that having a large sum of money deposited days before applying will guarantee a visa. In reality, UKVI officers scrutinize the source of funds much more than the final balance figure.'],
+        ['type' => 'ul', 'items' => [
+          'Minimum Recommended Balance: For a 10 to 14 day holiday, maintain a clear disposable savings balance of ₹4,00,000 to ₹6,00,000 per person',
+          'No Sudden Large Credits: Every credit that does not match your regular monthly salary or known business income must be supported by an explanatory letter and documentary proof (e.g. mutual fund redemption, FD maturity, property sale)',
+          'Daily Expense Calculation: Demonstrate that your total trip budget represents a realistic proportion of your annual net savings without depleting your entire wealth',
+        ]],
+
+        ['type' => 'h2', 'text' => 'Top 4 Refusal Traps Under Appendix V (Paragraph V 4.2)'],
+        ['type' => 'table', 'headers' => ['Refusal Ground', 'What The Visa Officer Suspects', 'How To Bulletproof Your Filing'], 'rows' => [
+          ['Unexplained Bank Deposits', 'Money was temporarily deposited from family/friends to inflate financial standing', 'Provide 6 months of continuous statement showing organic savings growth'],
+          ['Weak Ties to India', 'Applicant might overstay and work illegally in the UK', 'Demonstrate permanent employment, ongoing business contracts, family dependents, and Indian property assets'],
+          ['Disproportionate Trip Cost', 'Vacation expenses exceed applicant\'s entire annual earnings', 'Align travel duration and hotel choices realistically with your monthly income tier'],
+          ['Vague Itinerary / Missing NOC', 'Applicant lacks genuine tourist motivation or unapproved absence from work', 'Submit comprehensive day-by-day sightseeing schedule and authenticated HR leave approval'],
+        ]],
+
+        ['type' => 'quote', 'text' => 'UK Visas and Immigration does not evaluate what you promise; they evaluate what your paperwork proves. When your salary slips match your bank credits to the exact rupee, approvals become routine.'],
+
+        ['type' => 'h2', 'text' => 'VFS Global Biometrics & Fast-Track Processing Options'],
+        ['type' => 'p', 'text' => 'In 2026, UKVI offers three processing tiers across major Indian application centres:'],
+        ['type' => 'ul', 'items' => [
+          'Standard Processing (15 Working Days): Regular timeline from biometric submission',
+          'Priority Visa Service (5 Working Days): Available for an additional fee of approximately £500, ideal when travel dates are approaching',
+          'Super Priority Visa Service (24-Hour / Next Working Day): Available in select metros (New Delhi, Mumbai) for urgent departures',
+        ]],
+
+        ['type' => 'html', 'text' => 'Need professional assistance? Our consular desk provides complete document verification, appointment slot securing, and cover letter drafting. Visit our <a href="{{site}}visa-services/uk/" class="text-blue-600 font-semibold underline">UK Visa Consultancy Hub</a>.'],
+      ],
+      'faqs' => [
+        ['q' => 'How much bank balance is required for a UK tourist visa from India?', 'a' => 'UKVI does not state a rigid minimum balance, but recommend maintaining at least ₹4 to ₹6 Lakhs in liquid savings for a 10-day trip. Most importantly, all funds must show steady, authentic origin without sudden unexplained deposits.'],
+        ['q' => 'What is the standard processing time for a UK visitor visa in 2026?', 'a' => 'Standard processing is 3 weeks (15 working days). Priority service delivers decisions in 5 working days, and Super Priority service takes 24 hours.'],
+        ['q' => 'Can I travel to Scotland and Northern Ireland on a UK Standard Visitor visa?', 'a' => 'Yes! The UK Standard Visitor visa permits unrestricted domestic travel across England, Scotland, Wales, and Northern Ireland.'],
+        ['q' => 'Should I purchase confirmed non-refundable flight tickets before my visa is approved?', 'a' => 'No. UKVI explicitly advises applicants NOT to purchase non-refundable air tickets until their visa has been approved and passport collected.'],
+      ],
+      'related' => ['schengen-visa-guide-india-2026', 'us-visa-appointment-interview-tips-india', 'visa-guide-bangalore-hyderabad-pune-chennai'],
+    ],
+
+    // 10. NEW BLOG: Dubai Luxury Holiday Planning Guide 2026
+    'dubai-luxury-holiday-guide-2026' => [
+      'title' => 'Dubai Luxury Holiday Planning Guide 2026: 5-Day Itinerary, Desert Glamping & VIP Experiences',
+      'category' => 'Travel',
+      'author' => 'Middle East Luxury Travel Desk',
+      'published' => '2026-03-20',
+      'published_display' => 'March 20, 2026',
+      'updated' => '2026-10-11',
+      'read_time' => '9 min read',
+      'hero_image' => 'assets/images/dubai_luxury_skyline_tour.jpg',
+      'featured_image' => 'assets/images/dubai_luxury_skyline_tour.jpg',
+      'excerpt' => 'Discover the definitive Dubai luxury holiday guide for 2026: 5-day itinerary, private desert safaris, Burj Khalifa VIP access, luxury yacht charters, and express 24-hr UAE visa.',
+      'meta_title' => 'Dubai Luxury Holiday Guide 2026: 5-Day Itinerary & VIP Experiences – Vocation Travels',
+      'meta_description' => 'Discover the definitive Dubai luxury holiday guide for 2026: 5-day itinerary, private desert safaris, Burj Khalifa VIP access, luxury yacht charters, and express 24-hr UAE visa.',
+      'meta_keywords' => ['dubai luxury holiday guide 2026', 'dubai 5 day itinerary', 'dubai luxury tour package price', 'burj khalifa lounge vip tickets', 'dubai desert safari luxury', 'dubai express visa online india'],
+      'quick_answer' => 'A luxury Dubai vacation in 2026 is best enjoyed across 4 Nights and 5 Days: Day 1: Arrival, luxury limousine transfer & Dubai Marina private sunset yacht charter; Day 2: Downtown Dubai, Burj Khalifa VIP Lounge (Level 154) & Dubai Mall shopping; Day 3: Premium desert conservation reserve safari with vintage Land Rover & Bedouin stargazing feast; Day 4: Palm Jumeirah luxury beach club, Atlantis Aquaventure & helicopter tour; Day 5: Old Dubai heritage gold and spice souks with private Abra cruise before departure. Indian travelers can secure 30-day or 60-day tourist visas within 24 to 48 hours.',
+      'body' => [
+        ['type' => 'p', 'text' => 'Just 3.5 hours by air from New Delhi and Mumbai, and under 4 hours from Bangalore, Hyderabad, and Chennai, Dubai has solidified its status as the world\'s undisputed capital of futuristic luxury and hospitality.'],
+        ['type' => 'p', 'text' => 'In 2026, Dubai blends Michelin-starred gastronomic experiences, ultra-exclusive desert conservation glamping, and private superyacht charters with seamless connectivity and hassle-free electronic visas. Below is your curated VIP roadmap.'],
+
+        ['type' => 'h2', 'text' => 'The Ultimate 5-Day High-End Dubai Circuit'],
+        ['type' => 'ul', 'items' => [
+          'Day 1: Chauffeur Transfer & Dubai Marina Yacht Charter &bull; Check-in at luxury waterfront resort &bull; Sunset private 50-foot motor yacht cruise around Bluewaters Island and Ain Dubai &bull; Waterfront dinner at Pier 7',
+          'Day 2: Downtown Grandeur & Burj Khalifa VIP Lounge &bull; Skip-the-line VIP access to Burj Khalifa "The Lounge" (Levels 152, 153, 154) with afternoon tea &bull; Private shopping experience at Fashion Avenue, Dubai Mall &bull; Front-row dinner overlooking the Dubai Fountain',
+          'Day 3: Dubai Desert Conservation Reserve Safari &bull; Afternoon departure in a private vintage Land Rover &bull; Falconry demonstration and dune drive &bull; Private candlelit dinner inside an authentic royal desert camp with live Arabian Oud music',
+          'Day 4: Palm Jumeirah & Aerial Helicopter Flight &bull; 25-minute scenic helicopter flight over Palm Jumeirah, Burj Al Arab, and World Islands &bull; Afternoon cabana retreat at an exclusive Palm Jumeirah beach club &bull; Dinner at Atlantis The Royal',
+          'Day 5: Old Dubai Cultural Immersion & Departure &bull; Private Abra boat crossing on Dubai Creek &bull; Exclusive guided stroll through the Gold & Spice Souks &bull; Afternoon high tea at Burj Al Arab before evening airport chauffeur drop-off',
+        ]],
+
+        ['type' => 'h2', 'text' => 'Signature VIP Experiences You Must Pre-Book in 2026'],
+        ['type' => 'ul', 'items' => [
+          'Burj Khalifa The Lounge (154th Floor): Skip the tourist observation decks and relax on the outdoor terrace at 585 meters above the clouds with champagne and gourmet canapés',
+          'Al Maha Desert Resort & Spa: Nestled in pristine sand dunes with private plunge pools where Arabian oryx and gazelles roam freely outside your luxury Bedouin suite',
+          'Helicopter Tours from Atlantis Helipad: Marvel at Dubai\'s audacious man-made archipelago and coastline from 1,500 feet',
+          'Private Yacht Charter: Cruise from Dubai Harbour to the base of Burj Al Arab with a dedicated onboard captain, chef, and water sports equipment',
+        ]],
+
+        ['type' => 'h2', 'text' => 'Where to Stay: Curated 5-Star Luxury Stays'],
+        ['type' => 'table', 'headers' => ['Property', 'Location', 'Best Suited For', 'Signature Highlight'], 'rows' => [
+          ['Atlantis The Royal', 'Palm Jumeirah', 'Celebrity Luxury & Dining', 'Sky pool 90 meters high and 17 world-class celebrity chef restaurants'],
+          ['Armani Hotel Dubai', 'Downtown Dubai', 'Shopping & Urban Sophistication', 'Located directly inside Burj Khalifa with private elevator to Dubai Mall'],
+          ['One&Only The Palm', 'Palm Jumeirah West Crescent', 'Secluded Romantic Retreat', 'Private marina, lush Andalusian courtyards, and Michelin-starred dining'],
+          ['Al Maha Luxury Collection', 'Dubai Desert Reserve', 'Serene Glamping & Wildlife', 'Individual luxury tented villas with private heated infinity pools'],
+        ]],
+
+        ['type' => 'quote', 'text' => 'Dubai redefines what is possible in luxury travel. From private desert stargazing to 7-star coastal dining, our concierge team handles every reservation, VIP pass, and private transfer.'],
+
+        ['type' => 'h2', 'text' => 'Fast-Track UAE Visas for Indian Passport Holders'],
+        ['type' => 'p', 'text' => 'Acquiring a tourist visa for Dubai is one of the easiest international travel experiences for Indians:'],
+        ['type' => 'ul', 'items' => [
+          'Express Online eVisa: 30-day or 60-day single or multiple entry tourist visas processed within 24 to 48 hours using just a passport front/back scan and photograph',
+          'Visa on Arrival for US/UK/EU Visa Holders: Indian citizens with a valid US B1/B2 visa, UK visitor visa, or Schengen residence permit receive a 14-day Visa on Arrival at Dubai International Airport (DXB)',
+        ]],
+
+        ['type' => 'html', 'text' => 'Ready for your Dubai getaway? Explore our handpicked <a href="{{site}}package/dubai-delight/" class="text-emerald-600 font-semibold underline">Dubai Delight 5-Day Luxury Package</a> or apply for your <a href="{{site}}visa-services/uae/" class="text-blue-600 font-semibold underline">Express Dubai UAE Visa</a> today.'],
+      ],
+      'faqs' => [
+        ['q' => 'When is the best time of year to visit Dubai for pleasant weather?', 'a' => 'November to March is the peak travel season with daytime temperatures between 22°C and 28°C, perfect for open-air dining, beach clubs, and desert safaris.'],
+        ['q' => 'How fast can Vocation Travels process an emergency Dubai visa?', 'a' => 'Our express visa desk processes 30-day and 60-day Dubai tourist visas within 24 hours, including express weekend processing.'],
+        ['q' => 'Is Dubai suitable for luxury family holidays with young children?', 'a' => 'Exceptionally so. Dubai is widely ranked among the world\'s safest cities with world-class entertainment like Aquaventure Waterpark, Museum of the Future, Green Planet, and luxury family resort suites.'],
+        ['q' => 'What currency should Indian travelers carry to Dubai?', 'a' => 'The local currency is the UAE Dirham (AED). We recommend carrying an international multi-currency forex card alongside a small amount of cash for local souk transactions.'],
+      ],
+      'related' => ['top-10-destinations', 'top-tour-travel-packages-india', 'luxury-travel-hacks'],
+    ],
+
+    // 11. NEW BLOG: Kerala Luxury Backwaters & Munnar Travel Guide 2026
+    'kerala-luxury-travel-backwaters-guide' => [
+      'title' => 'Kerala Luxury Holiday Guide 2026: Alleppey Houseboats, Munnar Tea Plantations & Ayurveda Retreats',
+      'category' => 'Travel',
+      'author' => 'South India Luxury Concierge',
+      'published' => '2026-03-25',
+      'published_display' => 'March 25, 2026',
+      'updated' => '2026-10-11',
+      'read_time' => '10 min read',
+      'hero_image' => 'assets/images/kerala_backwaters_luxury_houseboat.jpg',
+      'featured_image' => 'assets/images/kerala_backwaters_luxury_houseboat.jpg',
+      'excerpt' => 'Plan an unforgettable Kerala luxury vacation in 2026: Alleppey private houseboats, Munnar cloud-kissed tea estates, Thekkady spice plantations, and authentic Ayurveda wellness.',
+      'meta_title' => 'Kerala Luxury Travel Guide 2026: Alleppey Houseboats & Munnar – Vocation Travels',
+      'meta_description' => 'Plan an unforgettable Kerala luxury vacation in 2026: Alleppey private houseboats, Munnar cloud-kissed tea estates, Thekkady spice plantations, and authentic Ayurveda wellness.',
+      'meta_keywords' => ['kerala luxury travel guide 2026', 'alleppey luxury houseboat price', 'munnar luxury tea resort', 'kerala 6 day itinerary', 'kerala honeymoon tour package', 'kerala tour packages from bangalore hyderabad'],
+      'quick_answer' => 'The ideal Kerala luxury vacation spans 5 Nights and 6 Days: 1 Night in Kochi (heritage Dutch Palace & Fort Kochi art cafes), 2 Nights in Munnar (5-star tea estate retreat amid misty hills), 1 Night in Thekkady (spice sanctuary & wildlife boating), and 1 Night aboard a private luxury cedarwood houseboat in Alleppey backwaters. Best visited between September and March for crisp mountain air and calm coastal backwaters, Kerala provides supreme luxury without international flights or visa paperwork.',
+      'body' => [
+        ['type' => 'p', 'text' => 'Dubbed "God\'s Own Country", Kerala is South India\'s crown jewel. With tranquil emerald backwaters, rolling mountain tea plantations kissed by morning mist, sun-drenched Arabian Sea coastlines, and centuries-old Ayurvedic traditions, Kerala delivers a rejuvenating travel experience unmatched across Asia.'],
+        ['type' => 'p', 'text' => 'For couples, multi-generational families, and wellness seekers, Kerala offers 5-star colonial heritage bungalows, private-chef houseboats, and award-winning wellness sanctuaries. Here is the definitive 2026 guide crafted by our destination experts.'],
+
+        ['type' => 'h2', 'text' => 'The Quintessential 6-Day Kerala Luxury Circuit'],
+        ['type' => 'ul', 'items' => [
+          'Day 1: Arrival in Cochin & Cultural Heritage &bull; Private transfer to luxury Fort Kochi heritage hotel &bull; Sunset view of the iconic Chinese Fishing Nets &bull; Evening private Kathakali dance recital and seafood feast',
+          'Day 2: Kochi to Munnar: Into the Misty Western Ghats (130 km / 4 hrs) &bull; Scenic hill drive passing Valara and Cheeyappara waterfalls &bull; Check-in at cliffside tea estate retreat &bull; Evening aroma tea tasting session by the fireplace',
+          'Day 3: Munnar Tea Trail & Wildlife Sanctuary &bull; Early morning 4x4 Jeep excursion to Kolukkumalai (world\'s highest organic tea plantation) &bull; Visit to Eravikulam National Park to spot the rare Nilgiri Tahr mountain goat &bull; Stroll through Tata Tea Museum',
+          'Day 4: Munnar to Thekkady Spice Sanctuary (90 km / 3 hrs) &bull; Drive through fragrant cardamom and pepper plantations &bull; Private guided spice walk learning about organic cinnamon, nutmeg, and vanilla cultivation &bull; Sunset boat safari on Periyar Lake',
+          'Day 5: Thekkady to Alleppey: The Private Houseboat Cruise (140 km / 3.5 hrs) &bull; Board your private luxury Kettuvallam cedarwood houseboat at noon &bull; Cruise through tranquil canals, palm-shaded lagoons, and paddy fields &bull; Traditional Kerala sadhya lunch and fresh Karimeen Pollichathu dinner prepared by private onboard chef',
+          'Day 6: Houseboat Sunrise & Departure via Cochin &bull; Wake up to misty morning views of village life on the backwaters &bull; Village canoe ride through shallow channels &bull; Private transfer to Cochin International Airport',
+        ]],
+
+        ['type' => 'h2', 'text' => 'How to Book an Authentic Luxury Houseboat in Alleppey'],
+        ['type' => 'p', 'text' => 'Not all houseboats are created equal. Travelers often face disappointing budget boats with loud generator noise and restricted air conditioning. When booking a luxury experience with Vocation Travels, you are guaranteed:'],
+        ['type' => 'ul', 'items' => [
+          'Full-Time AC Operation: Guaranteed 24-hour whisper-quiet air conditioning throughout the bedroom, living salon, and glass dining area',
+          'Authentic Cedarwood Construction: Handcrafted Kettuvallam boats built using Anjili wood held together with coir ropes without a single iron nail',
+          'Dedicated 3-Person Crew: Experienced captain, engine driver, and personal gourmet chef catering to your custom vegetarian or non-vegetarian culinary preferences',
+          'Upper Deck Sundeck: Panoramic open-air upper lounge for golden hour photography and sunset cocktails',
+        ]],
+
+        ['type' => 'h2', 'text' => 'Signature Luxury Resorts of Kerala'],
+        ['type' => 'table', 'headers' => ['Property', 'Location', 'Vibe', 'Exclusive Highlights'], 'rows' => [
+          ['Kumarakom Lake Resort', 'Vembanad Lake, Kumarakom', 'Heritage Luxury', 'Meandering pool villas, traditional 16th-century ancestral Kerala villas, and royal Ayurvedic spa'],
+          ['Windermere Estate', 'Munnar', 'Boutique Plantation Retreat', 'Perched amid 60 acres of coffee and cardamom with breathtaking valley vistas'],
+          ['Spice Village (CGH Earth)', 'Thekkady', 'Eco-Luxury Nature Living', 'Thatched-roof cottages inspired by the indigenous Mannan tribe surrounded by spice gardens'],
+          ['Brunton Boatyard', 'Fort Kochi', 'Victorian Colonial Charm', 'Historic harbor views, antique teakwood furnishings, and Anglo-Indian culinary heritage'],
+        ]],
+
+        ['type' => 'quote', 'text' => 'Kerala is not just a holiday; it is sensory therapy. Listening to rain patter against the thatched roof of an Alleppey houseboat while sipping freshly brewed cardamom tea is pure bliss.'],
+
+        ['type' => 'h2', 'text' => 'Authentic Ayurvedic Wellness & Rejuvenation'],
+        ['type' => 'p', 'text' => 'Kerala is the birthplace of Ayurveda. Beyond basic hotel massages, world-class Ayurvedic retreats offer genuine physician-prescribed treatments:'],
+        ['type' => 'ul', 'items' => [
+          'Abhyanga: Full-body warm herbal oil synchronized massage improving circulation and vitality',
+          'Shirodhara: Continuous pouring of warm medicated oil across the third-eye chakra to alleviate stress, insomnia, and mental exhaustion',
+          'Panchakarma: Multi-day cellular detoxification customized by certified BAMS Ayurvedic doctors',
+        ]],
+
+        ['type' => 'html', 'text' => 'Experience Kerala\'s magic: Discover our customizable <a href="{{site}}package/kerala-backwaters-tour/" class="text-emerald-600 font-semibold underline">Kerala Backwaters & Munnar Holiday Package</a> with guaranteed premium houseboats and private transfers.'],
+      ],
+      'faqs' => [
+        ['q' => 'What is the best month to visit Kerala for a luxury holiday?', 'a' => 'September to March is the ideal season with pleasant sunny weather and cool mountain evenings in Munnar. For Ayurvedic wellness retreats, the monsoon months of June to August are traditionally considered the best season as the atmosphere is humid and pores are most receptive to herbal oils.'],
+        ['q' => 'Is an Alleppey houseboat stay safe for elderly travelers and children?', 'a' => 'Yes, luxury houseboats are wide, highly stable vessels that move at slow, tranquil speeds along calm inland waters. They are equipped with modern lifejackets, certified crew members, and child-safe railings.'],
+        ['q' => 'What are the flight options to reach Kerala from major Indian cities?', 'a' => 'Cochin International Airport (COK) has non-stop direct flights from Bangalore (1 hr), Hyderabad (1.5 hrs), Mumbai (2 hrs), Delhi (3 hrs), and Chennai (1 hr 15 mins).'],
+        ['q' => 'What clothes should I pack for a Kerala trip covering Munnar and backwaters?', 'a' => 'Carry light cotton clothing for Kochi and Alleppey backwaters, and a light jacket, shawl, or fleece for Munnar hill station where evening temperatures can drop to 12°C-15°C.'],
+      ],
+      'related' => ['top-tour-travel-packages-india', 'hidden-gems-india', 'kashmir-holiday-itinerary-planning-guide'],
+    ],
+
   ];
 }
 
@@ -473,3 +682,4 @@ function get_blog_post($slug)
   $posts = get_blog_posts();
   return $posts[$slug] ?? null;
 }
+

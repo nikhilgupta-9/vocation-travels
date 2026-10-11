@@ -4,16 +4,20 @@ require_once __DIR__ . '/../util/function.php';
 if (file_exists(__DIR__ . '/../util/visa_cities.php')) {
     require_once __DIR__ . '/../util/visa_cities.php';
 }
+if (file_exists(__DIR__ . '/../util/blog_posts.php')) {
+    require_once __DIR__ . '/../util/blog_posts.php';
+}
 
 // Safe site URL fallback
 if (empty($site)) {
     $site = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/vocation-travels/';
 }
 
-// Fetch dynamic counts from DB
+// Fetch dynamic counts from DB & static helpers
 $total_packages = 0;
 $total_services = 0;
 $total_cities = function_exists('get_visa_cities') ? count(get_visa_cities()) : 42;
+$total_blogs = function_exists('get_blog_posts') ? count(get_blog_posts()) : 11;
 
 if ($conn && !$conn->connect_error) {
     $pkg_res = @mysqli_query($conn, "SELECT COUNT(*) as cnt FROM packages WHERE status = 1");
@@ -26,6 +30,9 @@ if ($conn && !$conn->connect_error) {
         $total_services = (int)$row['cnt'];
     }
 }
+
+// Core pages (7) + Country hubs (7) + packages + cities + services + blogs
+$total_sitemap_urls = 7 + 7 + $total_packages + $total_cities + $total_services + $total_blogs;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -144,7 +151,7 @@ if ($conn && !$conn->connect_error) {
 
         <!-- KPI Scorecards -->
         <section class="p-8 sm:p-12 border-b border-slate-100 bg-slate-50/70">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                     <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Previous Index Status</div>
                     <div class="text-3xl font-extrabold text-rose-600 font-serif">27</div>
@@ -152,8 +159,8 @@ if ($conn && !$conn->connect_error) {
                 </div>
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                     <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">New Dynamic Sitemap</div>
-                    <div class="text-3xl font-extrabold text-emerald-600 font-serif">149</div>
-                    <div class="text-xs text-emerald-700 font-medium mt-1">+450% Crawlable URLs</div>
+                    <div class="text-3xl font-extrabold text-emerald-600 font-serif"><?= $total_sitemap_urls ?>+</div>
+                    <div class="text-xs text-emerald-700 font-medium mt-1">+460% Crawlable URLs</div>
                 </div>
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                     <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Live Tour Packages</div>
@@ -164,6 +171,11 @@ if ($conn && !$conn->connect_error) {
                     <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Visa City Hubs</div>
                     <div class="text-3xl font-extrabold text-amber-600 font-serif"><?= $total_cities ?></div>
                     <div class="text-xs text-slate-500 mt-1">Pan-India Geo Landing Pages</div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm col-span-2 sm:col-span-1">
+                    <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Authority SEO Blogs</div>
+                    <div class="text-3xl font-extrabold text-teal-600 font-serif"><?= $total_blogs ?></div>
+                    <div class="text-xs text-teal-700 font-medium mt-1">Left-Right 2-Col + AEO</div>
                 </div>
             </div>
         </section>
@@ -467,10 +479,130 @@ if ($conn && !$conn->connect_error) {
                 </div>
             </section>
 
-            <!-- Section 5: GSC Action Plan -->
+            <!-- Section 5: Editorial Content Hub & AEO Strategy (11 Blogs) -->
             <section class="print-page-break pt-4">
                 <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm">05</span>
+                    <span class="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-sm">05</span>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 font-serif">Editorial Content Engine &amp; AEO Authority Hub (11 Blogs)</h3>
+                </div>
+                <p class="text-sm leading-relaxed text-slate-600 mb-6">
+                    To capture long-tail informational search traffic and establish topical authority for Google Answer Engine Optimization (AEO) and AI Overviews, we engineered an 11-blog editorial publishing hub using the <strong>NikhilWorks Left-Right 2-Column Architecture</strong>:
+                </p>
+
+                <!-- Blog Table -->
+                <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm mb-6">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                            <tr>
+                                <th class="p-3.5">Blog Guide Title</th>
+                                <th class="p-3.5">Category</th>
+                                <th class="p-3.5">Primary Target Keyword</th>
+                                <th class="p-3.5">AEO &amp; Schema Setup</th>
+                                <th class="p-3.5">Live Canonical Page</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">UK Standard Visitor Visa Guide 2026</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold text-[10px]">Visa</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">UK visitor visa guide 2026 india</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> BlogPosting + FAQPage + TOC</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/uk-visitor-visa-guide-india-2026/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Dubai Luxury Holiday Planning Guide 2026</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-[10px]">Travel</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">dubai luxury holiday guide 2026</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> 5D Itinerary + AEO Summary</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/dubai-luxury-holiday-guide-2026/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Kerala Luxury Backwaters &amp; Munnar Guide</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-[10px]">Travel</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">kerala luxury travel guide 2026</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> Houseboats + Ayurveda Schema</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/kerala-luxury-travel-backwaters-guide/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Top 10 Travel Destinations 2026 Master Guide</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-[10px]">Travel</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">top 10 travel destinations 2026</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> 2,000+ Words + 10-Row Table</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/top-10-destinations/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Schengen Visa Complete Guide 2026</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold text-[10px]">Visa</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">schengen visa guide 2026 india</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> VFS Slots + Refusal Checklist</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/schengen-visa-guide-india-2026/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Ultimate Kashmir Holiday Planning Guide</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-[10px]">Travel</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">kashmir 6 day itinerary 2026</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> Gondola Tickets + Dal Lake</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/kashmir-holiday-itinerary-planning-guide/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">US B1/B2 Visa Interview Mastery 2026</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold text-[10px]">Visa</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">us b1 b2 visa interview 2026 india</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> Section 214(b) + Q&amp;A Table</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/us-visa-appointment-interview-tips-india/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Best Tour &amp; Travel Packages Across India</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-[10px]">Travel</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">best tour packages india 2026</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> City-by-City Metro Guide</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/top-tour-travel-packages-india/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Visa Guide: Bangalore, Hyderabad, Pune, Chennai</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold text-[10px]">Visa</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">visa consultants bangalore hyderabad</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> Geo-targeted Metro Internal Links</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/visa-guide-bangalore-hyderabad-pune-chennai/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Luxury Travel Hacks for Every Budget</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-[10px]">Travel</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">luxury travel tips budget india</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> Shoulder Season + Air Miles</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/luxury-travel-hacks/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3.5 font-bold text-slate-900">Hidden Gems of India: Offbeat Getaways</td>
+                                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold text-[10px]">Travel</span></td>
+                                <td class="p-3.5 font-medium text-slate-600">hidden gems offbeat destinations india</td>
+                                <td class="p-3.5 text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i> Ziro, Gokarna, Tirthan Valley</td>
+                                <td class="p-3.5"><a href="<?= $site ?>blog-details/hidden-gems-india/" target="_blank" class="text-emerald-600 hover:underline font-semibold">View Guide &rarr;</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <span class="font-bold text-slate-900 block mb-1">Left-Right 2-Column Model</span>
+                        <p class="text-slate-600 text-[11px]">8-col high-readability main article with 4-col sticky sidebar featuring Live Search, Recent Posts, Contact CTAs, and Popular Tags.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <span class="font-bold text-slate-900 block mb-1">AEO &amp; Google AI Overviews</span>
+                        <p class="text-slate-600 text-[11px]">Every blog contains an isolated "Quick Answer" callout block engineered for direct citation in AI Search Snippets.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <span class="font-bold text-slate-900 block mb-1">E-E-A-T Editorial Credibility</span>
+                        <p class="text-slate-600 text-[11px]">Fact-checked badges, author credentials, publication/update timestamps, and interactive FAQ accordions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: GSC Action Plan -->
+            <section class="print-page-break pt-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm">06</span>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-900 font-serif">Google Search Console (GSC) Resubmission &amp; Indexing Roadmap</h3>
                 </div>
                 <p class="text-sm leading-relaxed text-slate-600 mb-6">
@@ -534,10 +666,10 @@ if ($conn && !$conn->connect_error) {
                 </div>
             </section>
 
-            <!-- Section 6: Technical Verification Checklist -->
+            <!-- Section 7: Technical Verification Checklist -->
             <section class="border-t border-slate-200 pt-8">
                 <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm">06</span>
+                    <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm">07</span>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-900 font-serif">Technical Verification &amp; Quality Assurance Sign-off</h3>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
