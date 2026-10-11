@@ -56,10 +56,9 @@ $structured_data = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google-site-verification" content="_u8DS_RrIpZN0NS6YGupNfmZZvRtNRiZj3TPcVjuA2s" />
+    <?php include('seo-meta.php') ?>
     <title><?= htmlspecialchars($meta_title) ?></title>
     <?php include('link.php') ?>
-    <?php include('seo-meta.php') ?>
     <script type="application/ld+json"><?= json_encode($structured_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
     <style>
@@ -126,7 +125,7 @@ $structured_data = [
                 </div>
 
                 <h1 class="text-white font-extrabold leading-tight text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 drop-shadow-2xl max-w-4xl">
-                    For Those <span class="bg-gradient-to-r from-[#1ec700] via-emerald-400 to-[#e11d48] text-transparent bg-clip-text">Who Demand</span> the <span class="bg-gradient-to-r from-[#1ec700] via-emerald-400 to-[#e11d48] text-transparent bg-clip-text">Extraordinary.</span>
+                    Curated Tour Packages &amp; <span class="bg-gradient-to-r from-[#1ec700] via-emerald-400 to-[#e11d48] text-transparent bg-clip-text">Visa Solutions</span> for the Extraordinary.
                 </h1>
 
                 <p class="text-gray-200 text-base sm:text-xl max-w-2xl mb-8 font-light leading-relaxed">
@@ -444,6 +443,15 @@ $structured_data = [
                     <a href="<?= $site ?>travel-package/" class="inline-block px-5 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#1ec700] to-[#e11d48] hover:scale-105 transition">
                         Explore Holiday Packages
                     </a>
+                    <div class="mt-4 pt-4 border-t border-white/10 text-xs text-gray-400">
+                        <span class="font-semibold text-gray-300">Trending Packages: </span>
+                        <a href="<?= $site ?>package/kashmir-paradise-tour/" class="hover:text-emerald-400 underline">Kashmir (5N/6D)</a>,
+                        <a href="<?= $site ?>package/himachal-hill-stations/" class="hover:text-emerald-400 underline">Himachal (5N/6D)</a>,
+                        <a href="<?= $site ?>package/vaishno-devi-kashmir-tour/" class="hover:text-emerald-400 underline">Vaishno Devi</a>,
+                        <a href="<?= $site ?>package/kerala-luxury-retreat/" class="hover:text-emerald-400 underline">Kerala Retreat</a>,
+                        <a href="<?= $site ?>package/ladakh-high-altitude-expedition/" class="hover:text-emerald-400 underline">Ladakh</a>,
+                        <a href="<?= $site ?>package/golden-triangle-package/" class="hover:text-emerald-400 underline">Golden Triangle</a>.
+                    </div>
                 </div>
 
                 <div class="bg-neutral-950 rounded-2xl p-8 border border-white/10 shadow-xl">

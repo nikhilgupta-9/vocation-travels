@@ -106,9 +106,9 @@ function render_blog_block($block, $site)
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php include('seo-meta.php') ?>
   <title><?= htmlspecialchars($meta_title) ?></title>
   <?php include('link.php') ?>
-  <?php include('seo-meta.php') ?>
   <script type="application/ld+json"><?= json_encode($blog_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
   <style>

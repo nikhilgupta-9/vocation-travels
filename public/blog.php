@@ -11,15 +11,42 @@ $meta_title = 'Travel & Visa Blog | Tips for Bangalore, Hyderabad, Pune, Chennai
 $meta_description = 'Travel guides and visa tips for travelers in Bangalore, Hyderabad, Pune, Chennai and across India — tour packages, destination guides and visa application advice.';
 $meta_keywords = ['travel blog india', 'visa tips bangalore', 'visa tips hyderabad', 'tour packages blog', 'travel guide pune', 'travel guide chennai'];
 $canonical_path = 'blogs/';
+
+$blog_schema = [
+  '@context' => 'https://schema.org',
+  '@graph' => [
+    [
+      '@type' => 'Blog',
+      '@id' => $site . 'blogs/#blog',
+      'url' => $site . 'blogs/',
+      'name' => $meta_title,
+      'description' => $meta_description,
+      'publisher' => [
+        '@type' => 'TravelAgency',
+        'name' => $contact['company_name'] ?? 'VOCATION TRAVELS AND TOURS PRIVATE LIMITED',
+        'url' => $site,
+        'logo' => $site . 'assets/images/logo.png',
+      ],
+      'breadcrumb' => [
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+          ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $site],
+          ['@type' => 'ListItem', 'position' => 2, 'name' => 'Blog', 'item' => $site . 'blogs/'],
+        ]
+      ]
+    ]
+  ]
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php include('seo-meta.php') ?>
   <title><?= htmlspecialchars($meta_title) ?></title>
   <?php include('link.php') ?>
-  <?php include('seo-meta.php') ?>
+  <script type="application/ld+json"><?= json_encode($blog_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
   <style>
     .logo-g.text-center {

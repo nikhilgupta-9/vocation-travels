@@ -8,16 +8,59 @@ $meta_title = 'About Us | ' . $contact['company_name'] . ' – Visa & Travel Exp
 $meta_description = 'Vocation Travels And Tours has curated bespoke luxury travel and visa experiences since 2011. Learn about our story, values and the team behind trusted visa and tour services across India (Delhi, Mumbai, Bangalore, Hyderabad & 40+ cities).';
 $meta_keywords = ['about Vocation Travels', 'travel agency India', 'visa consultants India', 'luxury travel company India', 'visa and tour consultants Delhi Mumbai Bangalore'];
 $canonical_path = 'about/';
+
+$about_schema = [
+  '@context' => 'https://schema.org',
+  '@graph' => [
+    [
+      '@type' => 'AboutPage',
+      '@id' => $site . 'about/#webpage',
+      'url' => $site . 'about/',
+      'name' => $meta_title,
+      'description' => $meta_description,
+      'breadcrumb' => [
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+          ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $site],
+          ['@type' => 'ListItem', 'position' => 2, 'name' => 'About Us', 'item' => $site . 'about/'],
+        ]
+      ]
+    ],
+    [
+      '@type' => 'TravelAgency',
+      '@id' => $site . '#organization',
+      'name' => $contact['company_name'] ?? 'VOCATION TRAVELS AND TOURS PRIVATE LIMITED',
+      'url' => $site,
+      'logo' => $site . 'assets/images/logo.png',
+      'foundingDate' => '2011',
+      'email' => $contact['email'] ?? 'visa@vocationtravels.com',
+      'telephone' => '+91-' . ($contact['phone'] ?? '9999447373'),
+      'address' => [
+        '@type' => 'PostalAddress',
+        'streetAddress' => $contact['address'] ?? 'Room No. 309, 3rd Floor, Transport Authority Building, District Centre, Near Janakpuri Police Station, Janakpuri',
+        'addressLocality' => 'New Delhi',
+        'postalCode' => '110058',
+        'addressCountry' => 'IN'
+      ],
+      'sameAs' => [
+        'https://share.google/EzOt9py4AbwOfVnO1',
+        'https://www.instagram.com/vocationtravels/',
+        'https://www.facebook.com/share/1ZXsmimYf7/?mibextid=wwXIfr',
+        'https://www.linkedin.com/company/vocationtravels/'
+      ]
+    ]
+  ]
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= htmlspecialchars($meta_title) ?></title>
-  <meta name="google-site-verification" content="_u8DS_RrIpZN0NS6YGupNfmZZvRtNRiZj3TPcVjuA2s" />
-  <?php include('link.php') ?>
   <?php include('seo-meta.php') ?>
+  <title><?= htmlspecialchars($meta_title) ?></title>
+  <?php include('link.php') ?>
+  <script type="application/ld+json"><?= json_encode($about_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
   <style>
     .logo-g.text-center {
       display: flex;
@@ -258,6 +301,88 @@ $canonical_path = 'about/';
         </p>
       </div>
     </section> -->
+    <!-- SEO Internal Linking Section: Explore Our Core Services & Packages -->
+    <section class="py-16 px-4 sm:px-8 md:px-16 lg:px-24 bg-gradient-to-b from-gray-50 to-white border-t border-gray-200">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <span class="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100 border border-emerald-200 mb-3">
+            What We Do
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+            Discover Our Comprehensive Travel &amp; Visa Offerings
+          </h2>
+          <p class="text-gray-600 mt-3 text-base sm:text-lg">
+            Whether you are booking a breathtaking luxury holiday, applying for a fast-track global visa, or demanding VIP concierge transfers — Vocation Travels delivers excellence.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Card 1: Tour Packages -->
+          <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-plane-departure"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">Curated Tour Packages</h3>
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                Handcrafted domestic circuits and international holiday itineraries with 4/5-star accommodation, chauffeur transfers, and 24/7 on-ground assistance.
+              </p>
+              <ul class="text-xs text-gray-700 space-y-2 mb-6">
+                <li><a href="<?=$site?>package/kashmir-paradise-tour/" class="hover:text-emerald-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-emerald-500 mr-2"></i>Kashmir Paradise (5N/6D)</a></li>
+                <li><a href="<?=$site?>package/himachal-hill-stations/" class="hover:text-emerald-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-emerald-500 mr-2"></i>Himachal Mountain Escapade (5N/6D)</a></li>
+                <li><a href="<?=$site?>package/kerala-luxury-retreat/" class="hover:text-emerald-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-emerald-500 mr-2"></i>Kerala Luxury Backwaters (5N/6D)</a></li>
+              </ul>
+            </div>
+            <a href="<?=$site?>travel-package/" class="inline-flex items-center text-emerald-700 font-bold text-sm hover:text-emerald-800">
+              Explore All 12+ Packages <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+            </a>
+          </div>
+
+          <!-- Card 2: Visa Services -->
+          <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-passport"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">Global Visa Consultancy</h3>
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                End-to-end documentation, visa appointment scheduling, and mock interview coaching for top destinations across 40+ Indian cities.
+              </p>
+              <ul class="text-xs text-gray-700 space-y-2 mb-6">
+                <li><a href="<?=$site?>visa-services/usa/" class="hover:text-blue-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-blue-500 mr-2"></i>USA B1/B2 Tourist &amp; Business Visa</a></li>
+                <li><a href="<?=$site?>visa-services/uk/" class="hover:text-blue-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-blue-500 mr-2"></i>UK Standard Visitor Visa</a></li>
+                <li><a href="<?=$site?>visa-services/europe/" class="hover:text-blue-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-blue-500 mr-2"></i>Schengen Europe Tourist Visa</a></li>
+              </ul>
+            </div>
+            <a href="<?=$site?>visa-services/" class="inline-flex items-center text-blue-700 font-bold text-sm hover:text-blue-800">
+              View Visa Services (40+ Cities) <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+            </a>
+          </div>
+
+          <!-- Card 3: VIP Concierge -->
+          <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-crown"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">VIP Concierge &amp; Transfers</h3>
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                Private aircraft charters, ultra-luxury chauffeur transfers, 5-star suite reservations, and destination wedding management.
+              </p>
+              <ul class="text-xs text-gray-700 space-y-2 mb-6">
+                <li><a href="<?=$site?>services/private-jet-charter/" class="hover:text-amber-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-amber-500 mr-2"></i>Private Jet Charter</a></li>
+                <li><a href="<?=$site?>services/luxury-chauffeur-transfers/" class="hover:text-amber-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-amber-500 mr-2"></i>Luxury Chauffeur Fleet</a></li>
+                <li><a href="<?=$site?>services/luxury-hotels-resorts/" class="hover:text-amber-600 font-medium flex items-center"><i class="fa-solid fa-angle-right text-amber-500 mr-2"></i>Bespoke 5-Star Hotel Suites</a></li>
+              </ul>
+            </div>
+            <a href="<?=$site?>vip-concierge/" class="inline-flex items-center text-amber-700 font-bold text-sm hover:text-amber-800">
+              Experience VIP Concierge <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Footer -->

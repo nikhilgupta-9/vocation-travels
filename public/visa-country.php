@@ -22,6 +22,37 @@ $canonical_path = 'visa-services/' . $slug . '/';
 // Related countries for internal linking (excluding current one)
 $related = array_filter($countries, fn($k) => $k !== $slug, ARRAY_FILTER_USE_KEY);
 $related = array_slice($related, 0, 3, true);
+
+$country_schema = [
+  '@context' => 'https://schema.org',
+  '@graph' => [
+    [
+      '@type' => 'Service',
+      '@id' => $site . 'visa-services/' . $slug . '/#service',
+      'name' => $country['name'] . ' Visa Consultation & Application Filing Assistance',
+      'serviceType' => 'Visa Consultancy',
+      'provider' => [
+        '@type' => 'TravelAgency',
+        'name' => $contact['company_name'] ?? 'VOCATION TRAVELS AND TOURS PRIVATE LIMITED',
+        'url' => $site,
+        'telephone' => '+91-' . ($contact['phone'] ?? '9999447373'),
+      ],
+      'areaServed' => [
+        '@type' => 'Country',
+        'name' => 'India'
+      ],
+      'description' => $meta_description,
+    ],
+    [
+      '@type' => 'BreadcrumbList',
+      'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $site],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Visa Services', 'item' => $site . 'visa-services/'],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $country['name'] . ' Visa', 'item' => $site . 'visa-services/' . $slug . '/'],
+      ]
+    ]
+  ]
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,9 +60,10 @@ $related = array_slice($related, 0, 3, true);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php include('seo-meta.php') ?>
   <title><?= htmlspecialchars($meta_title) ?></title>
   <?php include('link.php') ?>
-  <?php include('seo-meta.php') ?>
+  <script type="application/ld+json"><?= json_encode($country_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
   <style>
     .logo-g.text-center {
@@ -178,6 +210,43 @@ $related = array_slice($related, 0, 3, true);
             class="px-5 py-2 rounded-full text-white font-medium text-sm bg-gradient-to-r from-[#1ec700] to-[#e11d48] transition">
             View All Visa Services
           </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cross-Pillar Internal Links: City Consultants & Tour Packages -->
+    <section class="py-10 bg-slate-50 border-t border-b border-slate-200">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+            <h4 class="font-bold text-gray-900 text-sm mb-2 flex items-center">
+              <i class="fa-solid fa-map-location-dot text-emerald-600 mr-2"></i>
+              Apply Locally Across 40+ Indian Cities
+            </h4>
+            <p class="text-xs text-gray-600 mb-3">Our dedicated visa consultants assist applicants in all major hubs:</p>
+            <div class="flex flex-wrap gap-1.5 text-[11px]">
+              <a href="<?= $site ?>visa-consultants-delhi/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 transition font-medium">Delhi NCR</a>
+              <a href="<?= $site ?>visa-consultants-mumbai/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 transition font-medium">Mumbai</a>
+              <a href="<?= $site ?>visa-consultants-bangalore/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 transition font-medium">Bangalore</a>
+              <a href="<?= $site ?>visa-consultants-hyderabad/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 transition font-medium">Hyderabad</a>
+              <a href="<?= $site ?>visa-consultants-chennai/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 transition font-medium">Chennai</a>
+              <a href="<?= $site ?>visa-consultants-pune/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 transition font-medium">Pune</a>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+            <h4 class="font-bold text-gray-900 text-sm mb-2 flex items-center">
+              <i class="fa-solid fa-suitcase-rolling text-blue-600 mr-2"></i>
+              Curated Holiday Packages for Your Trip
+            </h4>
+            <p class="text-xs text-gray-600 mb-3">Complete your vacation planning with our luxury holiday packages:</p>
+            <div class="flex flex-wrap gap-1.5 text-[11px]">
+              <a href="<?= $site ?>package/kashmir-paradise-tour/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-700 transition font-medium">Kashmir (5N/6D)</a>
+              <a href="<?= $site ?>package/himachal-hill-stations/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-700 transition font-medium">Himachal (5N/6D)</a>
+              <a href="<?= $site ?>package/kerala-luxury-retreat/" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-700 transition font-medium">Kerala (5N/6D)</a>
+              <a href="<?= $site ?>travel-package/" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition font-medium">All 12+ Packages &rarr;</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>

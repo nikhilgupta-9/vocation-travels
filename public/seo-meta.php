@@ -51,12 +51,15 @@ $__default_description = 'Vocation Travels provides premier domestic and interna
 
 $__title = isset($meta_title) && $meta_title !== '' ? $meta_title : $__default_title;
 $__description = isset($meta_description) && $meta_description !== '' ? $meta_description : $__default_description;
+$meta_title = $__title;
+$meta_description = $__description;
 
 if (isset($meta_keywords)) {
   $__keywords = is_array($meta_keywords) ? implode(', ', $meta_keywords) : $meta_keywords;
 } else {
   $__keywords = 'visa consultants India, tour packages India, travel agency Delhi, travel agency Mumbai, travel agency Bangalore, travel agency Hyderabad, Schengen visa agent, USA visa consultant, holiday packages 2026';
 }
+$meta_keywords = $__keywords;
 
 $__canonical = $site . (isset($canonical_path) ? ltrim($canonical_path, '/') : '');
 $__og_image = (isset($og_image) && strpos($og_image, 'http') === 0) ? $og_image : ($site . (isset($og_image) && $og_image !== '' ? ltrim($og_image, '/') : 'assets/images/luxury_travel_hero.jpg'));

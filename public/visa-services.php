@@ -14,6 +14,71 @@ $meta_title = 'Best Visa Consultants in India | Tourist, Student & PR Visa Servi
 $meta_description = 'India\'s top-rated visa consultants providing expert assistance across Delhi, Mumbai, Bangalore, Hyderabad, Pune, Chennai, Kolkata, Ahmedabad and 40+ Indian cities for USA, UK, Canada, Schengen, Australia, Japan, Dubai visas.';
 $meta_keywords = ['visa consultants India', 'best visa agency India', 'tourist visa agent', 'student visa consultants', 'Schengen visa Delhi', 'US visa Bangalore', 'Canada visa Hyderabad', 'UK visa Mumbai', 'Australia visa Pune', 'Dubai visa online India'];
 $canonical_path = 'visa-services/';
+
+$visa_services_schema = [
+  '@context' => 'https://schema.org',
+  '@graph' => [
+    [
+      '@type' => 'CollectionPage',
+      '@id' => $site . 'visa-services/#webpage',
+      'url' => $site . 'visa-services/',
+      'name' => $meta_title,
+      'description' => $meta_description,
+      'breadcrumb' => [
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+          ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $site],
+          ['@type' => 'ListItem', 'position' => 2, 'name' => 'Visa Services', 'item' => $site . 'visa-services/'],
+        ]
+      ]
+    ],
+    [
+      '@type' => 'Service',
+      'name' => 'Global Visa Consultation & Application Processing',
+      'serviceType' => 'Visa Consultancy',
+      'provider' => [
+        '@type' => 'TravelAgency',
+        'name' => $contact['company_name'] ?? 'VOCATION TRAVELS AND TOURS PRIVATE LIMITED',
+        'url' => $site,
+        'telephone' => '+91-' . ($contact['phone'] ?? '9999447373'),
+      ],
+      'areaServed' => [
+        '@type' => 'Country',
+        'name' => 'India'
+      ],
+      'description' => $meta_description,
+    ],
+    [
+      '@type' => 'FAQPage',
+      'mainEntity' => [
+        [
+          '@type' => 'Question',
+          'name' => 'Which countries does Vocation Travels provide visa assistance for?',
+          'acceptedAnswer' => [
+            '@type' => 'Answer',
+            'text' => 'We provide expert tourist, business, student, and transit visa processing for the United States (B1/B2), United Kingdom, Canada, Schengen Europe (29 member countries), Australia, United Arab Emirates (Dubai), and Japan.'
+          ]
+        ],
+        [
+          '@type' => 'Question',
+          'name' => 'Do you provide local visa consultancy across Indian cities?',
+          'acceptedAnswer' => [
+            '@type' => 'Answer',
+            'text' => 'Yes. We provide complete documentation and appointment booking support for applicants in Delhi NCR, Mumbai, Bangalore, Hyderabad, Chennai, Pune, Kolkata, Ahmedabad, and over 40 Indian cities.'
+          ]
+        ],
+        [
+          '@type' => 'Question',
+          'name' => 'Can you also book flights and hotel packages after my visa is approved?',
+          'acceptedAnswer' => [
+            '@type' => 'Answer',
+            'text' => 'Yes, our team specializes in complete luxury travel packages, flight ticketing, and hotel reservations tailored to your approved travel dates.'
+          ]
+        ]
+      ]
+    ]
+  ]
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,9 +86,10 @@ $canonical_path = 'visa-services/';
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php include('seo-meta.php') ?>
   <title><?= htmlspecialchars($meta_title) ?></title>
   <?php include('link.php') ?>
-  <?php include('seo-meta.php') ?>
+  <script type="application/ld+json"><?= json_encode($visa_services_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
   <style>
     .country-card {
@@ -192,6 +258,55 @@ $canonical_path = 'visa-services/';
               </p>
             </div>
           <?php endforeach; ?>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cross-Pillar Internal Linking: Tour Packages for Approved Travelers -->
+    <section class="py-14 bg-white border-t border-gray-200">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-10">
+          <span class="inline-block px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 mb-2">
+            Complete Vacation Planning
+          </span>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900">
+            Planning a Holiday Tour After Visa Approval?
+          </h3>
+          <p class="text-gray-600 text-sm mt-2">
+            Vocation Travels pairs seamless visa approval with handpicked luxury holiday itineraries across India and worldwide.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <a href="<?= $site ?>package/kashmir-paradise-tour/" class="group block p-4 rounded-2xl bg-gray-50 border border-gray-200 hover:border-emerald-500 hover:shadow-lg transition">
+            <span class="text-xs font-bold text-emerald-600 uppercase">5N / 6D Tour</span>
+            <h4 class="font-bold text-gray-900 group-hover:text-emerald-700 transition mt-1 text-sm">Kashmir Paradise Tour</h4>
+            <p class="text-xs text-gray-500 mt-1">Srinagar Houseboat, Gulmarg Gondola &amp; Pahalgam</p>
+            <span class="inline-block mt-3 text-xs font-semibold text-emerald-600 group-hover:translate-x-1 transition-transform">Explore Itinerary &rarr;</span>
+          </a>
+
+          <a href="<?= $site ?>package/himachal-hill-stations/" class="group block p-4 rounded-2xl bg-gray-50 border border-gray-200 hover:border-emerald-500 hover:shadow-lg transition">
+            <span class="text-xs font-bold text-blue-600 uppercase">5N / 6D Tour</span>
+            <h4 class="font-bold text-gray-900 group-hover:text-blue-700 transition mt-1 text-sm">Himachal Mountain Escapade</h4>
+            <p class="text-xs text-gray-500 mt-1">Shimla, Kufri, Manali &amp; Solang Snow Valley</p>
+            <span class="inline-block mt-3 text-xs font-semibold text-blue-600 group-hover:translate-x-1 transition-transform">Explore Itinerary &rarr;</span>
+          </a>
+
+          <a href="<?= $site ?>package/kerala-luxury-retreat/" class="group block p-4 rounded-2xl bg-gray-50 border border-gray-200 hover:border-emerald-500 hover:shadow-lg transition">
+            <span class="text-xs font-bold text-teal-600 uppercase">5N / 6D Tour</span>
+            <h4 class="font-bold text-gray-900 group-hover:text-teal-700 transition mt-1 text-sm">Kerala Luxury Backwaters</h4>
+            <p class="text-xs text-gray-500 mt-1">Munnar Tea Valleys &amp; Alleppey Private Houseboat</p>
+            <span class="inline-block mt-3 text-xs font-semibold text-teal-600 group-hover:translate-x-1 transition-transform">Explore Itinerary &rarr;</span>
+          </a>
+
+          <a href="<?= $site ?>travel-package/" class="group block p-4 rounded-2xl bg-emerald-950 text-white hover:bg-emerald-900 transition flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold text-emerald-400 uppercase">All 12+ Packages</span>
+              <h4 class="font-bold text-white mt-1 text-sm">Discover Domestic &amp; Global Tours</h4>
+              <p class="text-xs text-gray-300 mt-1">Dubai, Bali, Vietnam, Ladakh &amp; more</p>
+            </div>
+            <span class="inline-block mt-3 text-xs font-semibold text-emerald-300 group-hover:translate-x-1 transition-transform">View All Packages &rarr;</span>
+          </a>
         </div>
       </div>
     </section>
